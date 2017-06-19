@@ -1,135 +1,71 @@
-project( Castor3D )
+project( GameEngine )
 
-set( ${PROJECT_NAME}_DESCRIPTION "Castor3D Core engine" )
-set( ${PROJECT_NAME}_VERSION_MAJOR	0 )
-set( ${PROJECT_NAME}_VERSION_MINOR	9 )
+set( ${PROJECT_NAME}_DESCRIPTION "Exiled From Orastus game engine" )
+set( ${PROJECT_NAME}_VERSION_MAJOR	1 )
+set( ${PROJECT_NAME}_VERSION_MINOR	0 )
 set( ${PROJECT_NAME}_VERSION_BUILD	0 )
 
-configure_file(
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/RequiredVersion.hpp.in
-	${CMAKE_CURRENT_BINARY_DIR}/Src/RequiredVersion.hpp
-	NEWLINE_STYLE LF
-)
-
-set( CastorBinsDependencies
-	${CastorBinsDependencies}
+set( BinsDependencies
+	${BinsDependencies}
 	${PROJECT_NAME}
 	PARENT_SCOPE
 )
 
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 include_directories( ${CMAKE_CURRENT_BINARY_DIR}/Src )
-include_directories( ${CMAKE_BINARY_DIR}/Core/CastorUtils/Src )
-include_directories( ${CMAKE_SOURCE_DIR}/Core/GlslWriter/Src )
+include_directories( ${CMAKE_BINARY_DIR}/Core/GameEngine/Src )
 
 add_target(
 	${PROJECT_NAME}
 	api_dll
-	"CastorUtils;GlslWriter"
-	"${CastorMinLibraries}"
-	"Castor3DPch.hpp"
-	"Castor3DPch.cpp"
+	""
+	"${OrastusMinLibraries}"
+	"GameEnginePch.hpp"
+	"GameEnginePch.cpp"
 )
 
-file( GLOB ${PROJECT_NAME}_Prerequisites_HEADER_FILES
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/*Prerequisites*.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/*Prerequisites*.inl
+file( GLOB ${PROJECT_NAME}_HEADER_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/Src/*.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Src/*.inl
 )
-file( GLOB ${PROJECT_NAME}_Prerequisites_SOURCE_FILES
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/*Prerequisites*.cpp
+file( GLOB ${PROJECT_NAME}_SOURCE_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp
 )
-source_group( "Header Files\\Prerequisites" FILES ${${PROJECT_NAME}_Prerequisites_HEADER_FILES} )
-source_group( "Source Files\\Prerequisites" FILES ${${PROJECT_NAME}_Prerequisites_SOURCE_FILES} )
+source_group( "Header Files" FILES ${${PROJECT_NAME}_HEADER_FILES} )
+source_group( "Source Files" FILES ${${PROJECT_NAME}_SOURCE_FILES} )
 
-file( GLOB ${PROJECT_NAME}_Cache_HEADER_FILES
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/*Cache*.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/*Cache*.inl
-)
-file( GLOB ${PROJECT_NAME}_Cache_SOURCE_FILES
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/*Cache*.cpp
-)
-source_group( "Header Files\\Cache" FILES ${${PROJECT_NAME}_Cache_HEADER_FILES} )
-source_group( "Source Files\\Cache" FILES ${${PROJECT_NAME}_Cache_SOURCE_FILES} )
-
-parse_subdir_files( Animation "Animation" )
-parse_subdir_files( Animation/Skeleton "Animation\\\\Skeleton" )
-parse_subdir_files( Animation/Mesh "Animation\\\\Mesh" )
-parse_subdir_files( Binary "Binary" )
-parse_subdir_files( Cache "Cache" )
-parse_subdir_files( EnvironmentMap "EnvironmentMap" )
-parse_subdir_files( Event "Event" )
-parse_subdir_files( Event/Frame "Event\\\\Frame" )
-parse_subdir_files( Event/UserInput "Event\\\\UserInput" )
-parse_subdir_files( FrameBuffer "FrameBuffer" )
-parse_subdir_files( HDR "HDR" )
-parse_subdir_files( Material "Material" )
-parse_subdir_files( Mesh "Mesh" )
-parse_subdir_files( Mesh/Generator "Mesh\\\\Generator" )
-parse_subdir_files( Mesh/Buffer "Mesh\\\\Buffer" )
-parse_subdir_files( Mesh/Skeleton "Mesh\\\\Skeleton" )
-parse_subdir_files( Miscellaneous "Miscellaneous" )
-parse_subdir_files( Overlay "Overlay" )
-parse_subdir_files( Plugin "Plugin" )
-parse_subdir_files( Prerequisites "Prerequisites" )
-parse_subdir_files( PostEffect "PostEffect" )
-parse_subdir_files( RenderToTexture "RenderToTexture" )
-parse_subdir_files( Render "Render" )
-parse_subdir_files( Render/RenderNode "Render\\\\RenderNode" )
-parse_subdir_files( Scene "Scene" )
-parse_subdir_files( Scene/Animation "Scene\\\\Animation" )
-parse_subdir_files( Scene/Animation/Skeleton "Scene\\\\Animation\\\\Skeleton" )
-parse_subdir_files( Scene/Animation/Mesh "Scene\\\\Animation\\\\Mesh" )
-parse_subdir_files( Scene/Light "Scene\\\\Light" )
-parse_subdir_files( Scene/ParticleSystem "Scene\\\\ParticleSystem" )
-parse_subdir_files( Shader "Shader" )
-parse_subdir_files( ShadowMap "ShadowMap" )
-parse_subdir_files( State "State" )
-parse_subdir_files( Technique "Technique" )
-parse_subdir_files( Technique/Opaque "Technique\\\\Opaque" )
-parse_subdir_files( Technique/Transparent "Technique\\\\Transparent" )
-parse_subdir_files( Texture "Texture" )
-
-set( CastorMinLibraries
-	${CastorMinLibraries}
+set( OrastusMinLibraries
+	${OrastusMinLibraries}
 	${PROJECT_NAME}
 	PARENT_SCOPE
 )
 
-set_property( TARGET ${PROJECT_NAME} PROPERTY FOLDER "Core" )
+set_property( TARGET ${PROJECT_NAME} PROPERTY FOLDER "GameEngine" )
 add_target_astyle( ${PROJECT_NAME} ".h;.hpp;.inl;.cpp" )
 target_add_doc( ${PROJECT_NAME} "French" "*.h *.hpp" )
 target_add_doc( ${PROJECT_NAME} "English" "*.h *.hpp" )
 
-# Copying core zip data files
-file(
-	GLOB
-		CoreZipFiles
-		${CMAKE_CURRENT_SOURCE_DIR}/Data/*.zip
-)
-copy_target_files( ${PROJECT_NAME} "" ${CoreZipFiles} )
+if ( WIN32 )
+	include( InstallRequiredSystemLibraries )
+	copy_dll( ${PROJECT_NAME}
+		${Castor3D_Castor3D_LIBRARY_DEBUG}
+		${Castor3D_Castor3D_LIBRARY_RELEASE} )
+	copy_dll( ${PROJECT_NAME}
+		${Castor3D_CastorUtils_LIBRARY_DEBUG}
+		${Castor3D_CastorUtils_LIBRARY_RELEASE} )
+	set( Castor3D_BIN_DIR "${Castor3D_ROOT_DIR}/bin" )
+	copy_dll( ${PROJECT_NAME}
+		${Castor3D_BIN_DIR}/Debug/assimp-vc140-mtd.dll
+		${Castor3D_BIN_DIR}/assimp-vc140-mt.dll )
+	copy_dll( ${PROJECT_NAME}
+		${Castor3D_BIN_DIR}/Debug/FreeImage.dll
+		${Castor3D_BIN_DIR}/FreeImage.dll )
+	copy_dll( ${PROJECT_NAME}
+		${Castor3D_BIN_DIR}/Debug/zlib.dll
+		${Castor3D_BIN_DIR}/zlib.dll )
+endif ()
 
-# Copying shader languages files
-file(
-	GLOB
-		ShaderLanguagesFiles
-		${CMAKE_CURRENT_SOURCE_DIR}/Languages/*.lang
-)
-copy_target_files( ${PROJECT_NAME} "" ${ShaderLanguagesFiles} )
-
-# Preparing sample scene files installation
-file(
-	GLOB
-		SampleSceneFiles
-		${CMAKE_CURRENT_SOURCE_DIR}/Test/Data/Scene/*.cscn
-		${CMAKE_CURRENT_SOURCE_DIR}/Test/Data/Scene/*.cmtl
-		${CMAKE_CURRENT_SOURCE_DIR}/Test/Data/Scene/*.cmsh
-		${CMAKE_CURRENT_SOURCE_DIR}/Test/Data/Scene/*.zip
-)
-install(
-	FILES ${SampleSceneFiles}
-	DESTINATION share/${PROJECT_NAME}/samples
-	COMPONENT ${PROJECT_NAME}_Samples
-)
-
-set( Build "yes (version ${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_BUILD})" PARENT_SCOPE )
+if ( ORASTUS_BUILDGRP_TEST )
+	add_subdirectory( Test )
+endif ()
 
