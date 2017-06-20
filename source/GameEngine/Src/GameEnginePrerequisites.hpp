@@ -5,7 +5,7 @@ See licence file in root folder, MIT.txt
 #ifndef ___EFO_GameEnginePrerequisites_HPP___
 #define ___EFO_GameEnginePrerequisites_HPP___
 
-#include <CastorUtilsPrerequisites.hpp>
+#include <Castor3DPrerequisites.hpp>
 
 #include <string>
 #include <sstream>
@@ -23,20 +23,29 @@ See licence file in root folder, MIT.txt
 
 namespace orastus
 {
-	using String = Castor::String;
-	using StringStream = Castor::StringStream;
+	using Castor::String;
+	using Castor::StringStream;
+
 	using Milliseconds = std::chrono::milliseconds;
 
-	template< typename T >
-	class Ability;
+	class EntityId;
+	class Entity;
+	class Component;
+	class Game;
 
-	class AbilitySet;
+	template< typename T >
+	class ComponentData;
+
 	class Resource;
 	class Tower;
+	class SplashTower;
+	class Enemy;
+	class Bullet;
 
 	using TowerPtr = std::unique_ptr< Tower >;
-	using TowerRPtr = Tower *;
-	using TowerArray = std::vector< TowerPtr >;
+	using SplashTowerPtr = std::unique_ptr< SplashTower >;
+	using EnemyPtr = std::unique_ptr< Enemy >;
+	using BulletPtr = std::unique_ptr< Bullet >;
 }
 
 #endif

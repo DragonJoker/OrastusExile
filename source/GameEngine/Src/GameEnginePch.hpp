@@ -6,6 +6,7 @@ See licence file in root folder, MIT.txt
 #define ___EFO_GameEnginePch_HPP___
 
 #include <CastorUtilsPrerequisites.hpp>
+#include <Design/Named.hpp>
 
 #include <functional>
 #include <string>

@@ -37,6 +37,10 @@ source_group( "Source Files" FILES ${${PROJECT_NAME}_SOURCE_FILES} )
 set( OrastusMinLibraries
 	${OrastusMinLibraries}
 	${PROJECT_NAME}
+)
+
+set( OrastusMinLibraries
+	${OrastusMinLibraries}
 	PARENT_SCOPE
 )
 

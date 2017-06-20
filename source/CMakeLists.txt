@@ -246,7 +246,7 @@ if ( Castor3D_FOUND )
 
 		add_subdirectory( GameEngine )
 		add_subdirectory( ConsoleOutput )
-		add_subdirectory( ExiledFromOrastus )
+		#add_subdirectory( ExiledFromOrastus )
 	else()
 		message( SEND_ERROR "Please select a build type (Debug or Release)" )
 	endif()

@@ -2,8 +2,8 @@
 See licence file in root folder, MIT.txt
 */
 #pragma once
-#ifndef ___EOFT_AbilityTest_HPP___
-#define ___EOFT_AbilityTest_HPP___
+#ifndef ___EOFT_EntityTest_HPP___
+#define ___EOFT_EntityTest_HPP___
 
 #include <UnitTest.hpp>
 
@@ -11,19 +11,18 @@ namespace orastus
 {
 	namespace test
 	{
-		class AbilityTest
+		class EntityTest
 			: public Testing::TestCase
 		{
 		public:
-			AbilityTest();
-			~AbilityTest();
+			EntityTest();
+			~EntityTest();
 
 		private:
 			void DoRegisterTests()override;
 
 		private:
-			void AbilityCreation();
-			void AbilityComparison();
+			void Creation();
 		};
 	}
 }

@@ -2,8 +2,8 @@
 See licence file in root folder, MIT.txt
 */
 #pragma once
-#ifndef ___EOFT_TowerTest_HPP___
-#define ___EOFT_TowerTest_HPP___
+#ifndef ___EOFT_EnemyTest_HPP___
+#define ___EOFT_EnemyTest_HPP___
 
 #include <UnitTest.hpp>
 
@@ -11,12 +11,12 @@ namespace orastus
 {
 	namespace test
 	{
-		class TowerTest
+		class EnemyTest
 			: public Testing::TestCase
 		{
 		public:
-			TowerTest();
-			~TowerTest();
+			EnemyTest();
+			~EnemyTest();
 
 		private:
 			void DoRegisterTests()override;

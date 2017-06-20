@@ -14,7 +14,6 @@ add_target(
 	"GameEngine"
 	"${OrastusMinLibraries}"
 )
-
 target_link_libraries( ${PROJECT_NAME} ${Castor3D_CastorTest_LIBRARIES} )
 
 set_property( TARGET ${PROJECT_NAME} PROPERTY FOLDER "Test" )

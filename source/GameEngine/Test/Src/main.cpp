@@ -1,10 +1,13 @@
 ﻿/**
 See licence file in root folder, MIT.txt
 */
-#include "AbilityTest.hpp"
-#include "AbilitySetTest.hpp"
+#include "EntityTest.hpp"
+#include "ComponentTest.hpp"
+#include "ComponentDataTest.hpp"
 #include "ResourceTest.hpp"
 #include "TowerTest.hpp"
+#include "EnemyTest.hpp"
+#include "BulletTest.hpp"
 
 #include <Log/Logger.hpp>
 #include <Data/File.hpp>
@@ -33,10 +36,13 @@ int main( int argc, char * const * const argv )
 #if defined( CASTOR_USE_OCL )
 	Testing::Register( std::make_unique< Testing::OpenCLBench >() );
 #endif
-	Testing::Register( std::make_unique< orastus::test::AbilityTest >() );
-	Testing::Register( std::make_unique< orastus::test::AbilitySetTest >() );
+	Testing::Register( std::make_unique< orastus::test::EntityTest >() );
+	Testing::Register( std::make_unique< orastus::test::ComponentTest >() );
+	Testing::Register( std::make_unique< orastus::test::ComponentDataTest >() );
 	Testing::Register( std::make_unique< orastus::test::ResourceTest >() );
 	Testing::Register( std::make_unique< orastus::test::TowerTest >() );
+	Testing::Register( std::make_unique< orastus::test::EnemyTest >() );
+	Testing::Register( std::make_unique< orastus::test::BulletTest >() );
 	BENCHLOOP( l_count, l_result );
 	Castor::Logger::Cleanup();
 	return l_result;
