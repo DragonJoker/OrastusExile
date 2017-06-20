@@ -1,7 +1,9 @@
 ﻿#include "RenderPanel.hpp"
 
 #include "ExiledFromOrastus.hpp"
-#include "Game.hpp"
+
+#include <Game.hpp>
+#include <GridCell.hpp>
 
 #include <Event/Frame/FrameListener.hpp>
 #include <Event/UserInput/UserInputListener.hpp>
@@ -162,7 +164,7 @@ namespace orastus
 				}
 				else
 				{
-					Cell l_cell{ 0u, 0u, Cell::State::Invalid };
+					GridCell l_cell{ 0u, 0u, GridCell::State::eInvalid };
 
 					if ( p_geometry->GetName().find( cuT( "Tower" ) ) == String::npos )
 					{
@@ -173,11 +175,11 @@ namespace orastus
 						l_cell = m_game.GetCell( p_geometry->GetParent()->GetParent()->GetPosition() );
 					}
 
-					if ( l_cell.m_state != Cell::State::Invalid )
+					if ( l_cell.m_state != GridCell::State::eInvalid )
 					{
 						switch ( l_cell.m_state )
 						{
-						case Cell::State::Empty:
+						case GridCell::State::eEmpty:
 							l_freeCell = true;
 							m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender, [this, p_geometry]()
 							{
@@ -188,15 +190,15 @@ namespace orastus
 							m_selectedTower = nullptr;
 							break;
 
-						case Cell::State::Tower:
+						case GridCell::State::eTower:
 							m_selectedTower = m_game.SelectTower( l_cell );
 							break;
 
-						case Cell::State::Target:
+						case GridCell::State::eTarget:
 							m_selectedTower = nullptr;
 							break;
 
-						case Cell::State::Path:
+						case GridCell::State::ePath:
 							m_selectedTower = nullptr;
 							break;
 
@@ -527,7 +529,7 @@ namespace orastus
 
 			if ( l_window )
 			{
-				if ( m_game.IsRunning() && m_selectedTower )
+				if ( m_game.IsRunning()/* && m_selectedTower*/ )
 				{
 					//wxMenu l_menu;
 

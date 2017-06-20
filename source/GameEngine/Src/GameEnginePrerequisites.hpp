@@ -26,12 +26,13 @@ namespace orastus
 	using Castor::String;
 	using Castor::StringStream;
 
+	using Clock = std::chrono::high_resolution_clock;
 	using Milliseconds = std::chrono::milliseconds;
 
 	class EntityId;
 	class Entity;
 	class Component;
-	class Game;
+	class Ecs;
 
 	template< typename T >
 	class ComponentData;
@@ -42,10 +43,12 @@ namespace orastus
 	class Enemy;
 	class Bullet;
 
-	using TowerPtr = std::unique_ptr< Tower >;
-	using SplashTowerPtr = std::unique_ptr< SplashTower >;
-	using EnemyPtr = std::unique_ptr< Enemy >;
-	using BulletPtr = std::unique_ptr< Bullet >;
+	class Game;
+
+	using TowerPtr = std::shared_ptr< Tower >;
+	using SplashTowerPtr = std::shared_ptr< SplashTower >;
+	using EnemyPtr = std::shared_ptr< Enemy >;
+	using BulletPtr = std::shared_ptr< Bullet >;
 }
 
 #endif

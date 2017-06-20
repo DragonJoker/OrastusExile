@@ -19,10 +19,10 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor, retrieves the components.
-		*\param[in] p_game
-		*	The game instance, from which the components are retrieved.
+		*\param[in] p_ecs
+		*	The ECS instance, from which the components are retrieved.
 		*/
-		EFO_API Enemy( Game & p_game );
+		EFO_API Enemy( Ecs & p_ecs );
 		/**
 		*\brief
 		*	Creates the component data for an enemy.
@@ -38,7 +38,7 @@ namespace orastus
 			, uint32_t p_life );
 
 	private:
-		Game & m_game;
+		Ecs & m_ecs;
 		Component const & m_speed;
 		Component const & m_life;
 		Component const & m_state;

@@ -19,10 +19,10 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor, retrieves the components.
-		*\param[in] p_game
-		*	The game instance, from which the components are retrieved.
+		*\param[in] p_ecs
+		*	The ECS instance, from which the components are retrieved.
 		*/
-		EFO_API SplashTower( Game & p_game );
+		EFO_API SplashTower( Ecs & p_ecs );
 		/**
 		*\brief
 		*	Creates the component data for a splash tower.
@@ -53,7 +53,7 @@ namespace orastus
 			, uint32_t p_requiredLevel );
 
 	private:
-		Game & m_game;
+		Ecs & m_ecs;
 		Component const & m_cooldown;
 		Component const & m_damage;
 		Component const & m_range;

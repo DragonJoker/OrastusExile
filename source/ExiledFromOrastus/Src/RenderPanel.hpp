@@ -87,9 +87,7 @@ namespace orastus
 			Castor3D::GeometryWPtr m_selectedGeometry;
 			Castor3D::SceneNodeSPtr m_marker;
 			Game & m_game;
-			orastus::TowerRPtr m_selectedTower;
-			//LongRangeTower m_longRange;
-			//ShortRangeTower m_shortRange;
+			Entity * m_selectedTower{ nullptr };
 		};
 	}
 }

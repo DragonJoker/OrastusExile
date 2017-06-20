@@ -1,15 +1,13 @@
-﻿/**
+/**
 See licence file in root folder, MIT.txt
 */
 #pragma once
 #ifndef ___EFO_Game_HPP___
 #define ___EFO_Game_HPP___
 
-#include "Bullet.hpp"
-#include "Enemy.hpp"
-#include "EntityComponentData.hpp"
-#include "Tower.hpp"
-#include "SplashTower.hpp"
+#include "Ecs.hpp"
+#include "Grid.hpp"
+#include "Hud.hpp"
 
 namespace orastus
 {
@@ -19,185 +17,163 @@ namespace orastus
 	*/
 	class Game
 	{
-	public:
-		/**
-		*\brief
-		*	An exception thrown when no component data is found for given entity and component.
-		*/
-		class ComponentDataMatchException
-			: public std::exception
+	private:
+		enum class State
 		{
-		public:
-			/**
-			*\brief
-			*	Constructor, builds the message.
-			*\param[in] p_entity
-			*	The entity ID.
-			*\param[in] p_component
-			*	The component ID.
-			*/
-			ComponentDataMatchException( Id const & p_entity, Id const & p_component )
-				: std::exception{}
-				, m_message{ "No component data for entity [" + ToString( p_entity ) + "] and component [" + ToString( p_component ) + "]" }
-			{
-			}
-			/**
-			*\return
-			*	The exception message.
-			*/
-			inline char const * what()const override
-			{
-				return m_message.c_str();
-			}
-
-		private:
-			std::string m_message;
+			eInitial,
+			eStarted,
+			ePaused,
+			eEnded,
 		};
 
 	public:
 		/**
 		*\brief
 		*	Constructor, initialises the base components.
+		*\param[in] p_scene
+		*	The 3D scene.
 		*/
-		EFO_API Game();
+		EFO_API Game( Castor3D::Scene & p_scene );
 		/**
 		*\brief
-		*	Retrieves a component, given its name.
-		*\remarks
-		*	If the name doesn't match any existing component, a
-		*	ComponentDataMatchException will be thrown.
-		*\param[in] p_name
-		*	The component name.
+		*	Resets the game so a new game can be played.
+		*/
+		EFO_API void Reset();
+		/**
+		*\brief
+		*	Starts the game.
+		*/
+		EFO_API void Start();
+		/**
+		*\brief
+		*	Pauses the game.
+		*/
+		EFO_API void Pause();
+		/**
+		*\brief
+		*	Resumes to the game from a pause.
+		*/
+		EFO_API void Resume();
+		/**
+		*\brief
+		*	Displays help.
+		*/
+		EFO_API void Help();
+		/**
+		*\brief
+		*	Game loop function.
+		*/
+		EFO_API void Update();
+		/**
+		*\name GridCell retrieval.
+		*/
+		/**@{*/
+		//! From a 3D float position.
+		EFO_API GridCell & GetCell( Castor::Point3r const & p_position );
+		//! From a 2D int position.
+		EFO_API GridCell & GetCell( Castor::Point2i const & p_position );
+		//! From a 2D int position.
+		EFO_API GridCell & GetCell( int p_x, int p_y );
+		//! From a 3D float position.
+		EFO_API GridCell const & GetCell( Castor::Point3r const & p_position )const;
+		//! From a 2D int position.
+		EFO_API GridCell const & GetCell( Castor::Point2i const & p_position )const;
+		//! From a 2D int position.
+		EFO_API GridCell const & GetCell( int p_x, int p_y )const;
+		/**
+		*\brief
+		*	Converts a 2D grid cell position to a 3D in-scene position.
+		*\param[in] p_position
+		*	The cell position.
 		*\return
-		*	The component.
+		*	The in-scene position.
 		*/
-		EFO_API Component const & GetComponent( String const & p_name )const;
+		EFO_API Castor::Point3r Convert( Castor::Point2i const & p_position )const;
 		/**
 		*\brief
-		*	Creates a tower.
-		*\param[in] p_cooldown
-		*	The cooldown value.
-		*\param[in] p_damage
-		*	The damage value.
-		*\param[in] p_range
-		*	The range value.
-		*\param[in] p_bulletSpeed
-		*	The bullet speed value.
-		*\param[in] p_requiredLevel
-		*	The required level value.
+		*	Converts a 3D in-scene position to a 2D grid cell position.
+		*\param[in] p_position
+		*	The in-scene position.
 		*\return
-		*	The entity for the created tower.
+		*	The cell position.
 		*/
-		EFO_API Entity CreateTower( Milliseconds const & p_cooldown
-			, uint32_t p_damage
-			, float p_range
-			, float p_bulletSpeed
-			, uint32_t p_requiredLevel );
+		EFO_API Castor::Point2i Convert( Castor::Point3r const & p_position )const;
+		/**@}*/
 		/**
 		*\brief
-		*	Creates a tower with splash damage.
-		*\param[in] p_cooldown
-		*	The cooldown value.
-		*\param[in] p_damage
-		*	The damage value.
-		*\param[in] p_range
-		*	The range value.
-		*\param[in] p_bulletSpeed
-		*	The bullet speed value.
-		*\param[in] p_splashDamage
-		*	The splash damage value.
-		*\param[in] p_splashRange
-		*	The splash range value.
-		*\param[in] p_requiredLevel
-		*	The required level value.
+		*	Selects the tower at given cell.
+		*\param[in] p_cell
+		*	The cell.
 		*\return
-		*	The entity for the created tower.
+		*	The cell position.
 		*/
-		EFO_API Entity CreateTower( Milliseconds const & p_cooldown
-			, uint32_t p_damage
-			, float p_range
-			, float p_bulletSpeed
-			, uint32_t p_splashDamage
-			, float p_splashRange
-			, uint32_t p_requiredLevel );
+		EFO_API Entity * SelectTower( GridCell const & p_cell );
 		/**
-		*\brief
-		*	Creates an enemy.
-		*\param[in] p_speed
-		*	The speed value.
-		*\param[in] p_life
-		*	The life points.
-		*/
-		EFO_API Entity CreateEnemy( float p_speed
-			, uint32_t p_life );
-		/**
-		*\brief
-		*	Creates a bullet.
-		*\param[in] p_speed
-		*	The speed value.
-		*\param[in] p_damage
-		*	The damage value.
-		*/
-		EFO_API Entity CreateBullet( float p_speed
-			, uint32_t p_damage );
-		/**
-		*\brief
-		*	Create an entity component data.
-		*\param[in] p_entity
-		*	The entity
-		*\param[in] p_component
-		*	The component.
-		*\param[in] p_data
-		*	The component data's value.
-		*/
-		template< typename T >
-		inline void CreateComponentData( Entity const & p_entity
-			, Component const & p_component
-			, T const & p_data );
-		/**
-		*\brief
-		*	Retrieves an entity component data.
-		*\remarks
-		*	If no entity component data is found, throws a ComponentDataMatchException.\n
-		*	In debug mode, if there is a type mismatch, between the created ComponentData
-		*	and the wanted type, an assertion is raised.
-		*\param[in] p_entity
-		*	The entity.
-		*\param[in] p_component
-		*	The component.
 		*\return
-		*	The retrieved ComponentData.
+		*	\p true if the game is started.
 		*/
-		template< typename T >
-		inline ComponentData< T > const & GetComponentData( Entity const & p_entity
-			, Component const & p_component )const;
+		inline bool IsStarted()const
+		{
+			return m_state >= State::eStarted && m_state < State::eEnded;
+		}
+		/**@}*/
+		/**
+		*\return
+		*	\p true if the game is started and running.
+		*/
+		inline bool IsRunning()const
+		{
+			return m_state == State::eStarted;
+		}
+		/**@}*/
+		/**
+		*\return
+		*	\p true if the game is ended.
+		*/
+		inline bool IsEnded()const
+		{
+			return m_state == State::eEnded;
+		}
+		/**@}*/
+		/**
+		*\return
+		*	\p true if the game is paused.
+		*/
+		inline bool IsPaused()const
+		{
+			return m_state == State::ePaused;
+		}
 
 	private:
-		Entity DoCreateEntity( xchar const * const p_name );
-		void DoCreateComponent( String const & p_name, String const & p_desc );
-
-	public:
-		EFO_API static String const StateComponent;
-		EFO_API static String const CooldownComponent;
-		EFO_API static String const DamageComponent;
-		EFO_API static String const RangeComponent;
-		EFO_API static String const SplashDamageComponent;
-		EFO_API static String const SplashRangeComponent;
-		EFO_API static String const LevelComponent;
-		EFO_API static String const SpeedComponent;
-		EFO_API static String const LifeComponent;
+		void DoPrepareGrid();
+		void DoAddMapCube( GridCell & p_cell );
+		void DoAddTarget( GridCell & p_cell );
 
 	private:
-		EntityList m_entities;
-		ComponentList m_components;
-		EntityComponentsList m_entitiesComponents;
-		TowerPtr m_towerSet;
-		SplashTowerPtr m_splashTowerSet;
-		EnemyPtr m_enemySet;
-		BulletPtr m_bulletSet;
+		// Persistent data.
+		Ecs m_ecs;
+		Castor3D::Scene & m_scene;
+		Grid m_grid;
+		Hud m_hud;
+		GridPath m_path;
+		Castor::Point3r m_cellDimensions;
+		Castor3D::SceneNodeSPtr m_mapNode;
+		Castor3D::SceneNodeSPtr m_targetNode;
+		Castor3D::MeshSPtr m_mapCubeMesh;
+		Castor3D::MaterialSPtr m_mapCubeMaterial;
+		Castor3D::MeshSPtr m_shortRangeTowerMesh;
+		Castor3D::MeshSPtr m_longRangeTowerMesh;
+		Castor3D::MeshSPtr m_enemyCubeMesh;
+		Castor3D::MaterialSPtr m_enemyCubeMaterial;
+		Castor3D::MeshSPtr m_bulletMesh;
+		Castor3D::MaterialSPtr m_bulletMaterial;
+		// Varying data.
+		Entity * m_selectedTower{ nullptr };
+		Clock::time_point m_saved;
+		std::chrono::milliseconds m_elapsed;
+		State m_state;
+		Castor3D::GeometrySPtr m_lastMapCube;
 	};
 }
-
-#include "Game.inl"
 
 #endif

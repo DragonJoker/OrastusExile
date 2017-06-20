@@ -20,20 +20,6 @@ namespace orastus
 		class MainFrame;
 		class RenderPanel;
 
-		struct Cell;
-		class Grid;
-		class Game;
-		class Enemy;
-		class Bullet;
-		class Game;
-
-		using EnemyPtr = std::shared_ptr< Enemy >;
-
-		using EnemyArray = std::vector< EnemyPtr >;
-		using BulletArray = std::vector< Bullet >;
-
-		using Clock = std::chrono::high_resolution_clock;
-
 		wxString const ApplicationName = wxT( "ExiledFromOrastus" );
 
 		template< typename T, typename ... Params >

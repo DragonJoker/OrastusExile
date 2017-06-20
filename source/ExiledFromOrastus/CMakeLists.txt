@@ -49,7 +49,7 @@ if( wxWidgets_FOUND AND GTK2_FOUND )
 		${PROJECT_NAME}
 		bin
 		"GameEngine"
-		"${OrastusMinLibraries}"
+		"${OrastusMinLibraries};${wxWidgetsLibraries}"
 		"ExiledFromOrastusPch.hpp"
 		"ExiledFromOrastusPch.cpp"
 		"${wxWidgets_CFLAGS}"

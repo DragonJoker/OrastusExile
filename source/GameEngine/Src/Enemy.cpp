@@ -1,14 +1,14 @@
 ﻿#include "Enemy.hpp"
 
-#include "Game.hpp"
+#include "Ecs.hpp"
 
 namespace orastus
 {
-	Enemy::Enemy( Game & p_game )
-		: m_game{ p_game }
-		, m_speed{ p_game.GetComponent( Game::SpeedComponent ) }
-		, m_life{ p_game.GetComponent( Game::LifeComponent ) }
-		, m_state{ p_game.GetComponent( Game::StateComponent ) }
+	Enemy::Enemy( Ecs & p_ecs )
+		: m_ecs{ p_ecs }
+		, m_speed{ p_ecs.GetComponent( Ecs::SpeedComponent ) }
+		, m_life{ p_ecs.GetComponent( Ecs::LifeComponent ) }
+		, m_state{ p_ecs.GetComponent( Ecs::StateComponent ) }
 	{
 	}
 
@@ -16,8 +16,8 @@ namespace orastus
 		, float p_speed
 		, uint32_t p_life )
 	{
-		m_game.CreateComponentData( p_entity, m_speed, p_speed );
-		m_game.CreateComponentData( p_entity, m_life, p_life );
-		m_game.CreateComponentData( p_entity, m_state, EnemyState::eWalking );
+		m_ecs.CreateComponentData( p_entity, m_speed, p_speed );
+		m_ecs.CreateComponentData( p_entity, m_life, p_life );
+		m_ecs.CreateComponentData( p_entity, m_state, EnemyState::eWalking );
 	}
 }

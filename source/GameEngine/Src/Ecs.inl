@@ -1,7 +1,7 @@
 ﻿namespace orastus
 {
 	template< typename T >
-	inline void Game::CreateComponentData( Entity const & p_entity
+	inline void Ecs::CreateComponentData( Entity const & p_entity
 		, Component const & p_component
 		, T const & p_data )
 	{
@@ -11,7 +11,7 @@
 	}
 
 	template< typename T >
-	inline ComponentData< T > const & Game::GetComponentData( Entity const & p_entity
+	inline ComponentData< T > const & Ecs::GetComponentData( Entity const & p_entity
 		, Component const & p_component )const
 	{
 		auto l_it = std::find_if( std::begin( m_entitiesComponents )

@@ -1,17 +1,17 @@
 ﻿#include "Tower.hpp"
 
-#include "Game.hpp"
+#include "Ecs.hpp"
 
 namespace orastus
 {
-	Tower::Tower( Game & p_game )
-		: m_game{ p_game }
-		, m_cooldown{ p_game.GetComponent( Game::CooldownComponent ) }
-		, m_damage{ p_game.GetComponent( Game::DamageComponent ) }
-		, m_range{ p_game.GetComponent( Game::RangeComponent ) }
-		, m_bulletSpeed{ p_game.GetComponent( Game::SpeedComponent ) }
-		, m_requiredLevel{ p_game.GetComponent( Game::LevelComponent ) }
-		, m_state{ p_game.GetComponent( Game::StateComponent ) }
+	Tower::Tower( Ecs & p_ecs )
+		: m_ecs{ p_ecs }
+		, m_cooldown{ p_ecs.GetComponent( Ecs::CooldownComponent ) }
+		, m_damage{ p_ecs.GetComponent( Ecs::DamageComponent ) }
+		, m_range{ p_ecs.GetComponent( Ecs::RangeComponent ) }
+		, m_bulletSpeed{ p_ecs.GetComponent( Ecs::SpeedComponent ) }
+		, m_requiredLevel{ p_ecs.GetComponent( Ecs::LevelComponent ) }
+		, m_state{ p_ecs.GetComponent( Ecs::StateComponent ) }
 	{
 	}
 
@@ -22,11 +22,11 @@ namespace orastus
 		, float p_bulletSpeed
 		, uint32_t p_requiredLevel )
 	{
-		m_game.CreateComponentData( p_entity, m_cooldown, p_cooldown );
-		m_game.CreateComponentData( p_entity, m_damage, p_damage );
-		m_game.CreateComponentData( p_entity, m_range, p_range );
-		m_game.CreateComponentData( p_entity, m_bulletSpeed, p_bulletSpeed );
-		m_game.CreateComponentData( p_entity, m_requiredLevel, p_requiredLevel );
-		m_game.CreateComponentData( p_entity, m_state, TowerState::eIdle );
+		m_ecs.CreateComponentData( p_entity, m_cooldown, p_cooldown );
+		m_ecs.CreateComponentData( p_entity, m_damage, p_damage );
+		m_ecs.CreateComponentData( p_entity, m_range, p_range );
+		m_ecs.CreateComponentData( p_entity, m_bulletSpeed, p_bulletSpeed );
+		m_ecs.CreateComponentData( p_entity, m_requiredLevel, p_requiredLevel );
+		m_ecs.CreateComponentData( p_entity, m_state, TowerState::eIdle );
 	}
 }

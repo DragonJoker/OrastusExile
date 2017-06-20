@@ -48,26 +48,12 @@ set_property( TARGET ${PROJECT_NAME} PROPERTY FOLDER "GameEngine" )
 add_target_astyle( ${PROJECT_NAME} ".h;.hpp;.inl;.cpp" )
 target_add_doc( ${PROJECT_NAME} "French" "*.h *.hpp" )
 target_add_doc( ${PROJECT_NAME} "English" "*.h *.hpp" )
-
-if ( WIN32 )
-	include( InstallRequiredSystemLibraries )
-	copy_dll( ${PROJECT_NAME}
-		${Castor3D_Castor3D_LIBRARY_DEBUG}
-		${Castor3D_Castor3D_LIBRARY_RELEASE} )
-	copy_dll( ${PROJECT_NAME}
-		${Castor3D_CastorUtils_LIBRARY_DEBUG}
-		${Castor3D_CastorUtils_LIBRARY_RELEASE} )
-	set( Castor3D_BIN_DIR "${Castor3D_ROOT_DIR}/bin" )
-	copy_dll( ${PROJECT_NAME}
-		${Castor3D_BIN_DIR}/Debug/assimp-vc140-mtd.dll
-		${Castor3D_BIN_DIR}/assimp-vc140-mt.dll )
-	copy_dll( ${PROJECT_NAME}
-		${Castor3D_BIN_DIR}/Debug/FreeImage.dll
-		${Castor3D_BIN_DIR}/FreeImage.dll )
-	copy_dll( ${PROJECT_NAME}
-		${Castor3D_BIN_DIR}/Debug/zlib.dll
-		${Castor3D_BIN_DIR}/zlib.dll )
-endif ()
+castor3d_copy_files(
+	${PROJECT_NAME}
+	${PROJECTS_BINARIES_OUTPUT_DIR_RELEASE}
+	${PROJECTS_BINARIES_OUTPUT_DIR_RELWITHDEBINFO}
+	${PROJECTS_BINARIES_OUTPUT_DIR_DEBUG}
+)
 
 if ( ORASTUS_BUILDGRP_TEST )
 	add_subdirectory( Test )

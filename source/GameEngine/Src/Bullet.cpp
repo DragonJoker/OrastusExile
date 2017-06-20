@@ -1,13 +1,13 @@
 ﻿#include "Bullet.hpp"
 
-#include "Game.hpp"
+#include "Ecs.hpp"
 
 namespace orastus
 {
-	Bullet::Bullet( Game & p_game )
-		: m_game{ p_game }
-		, m_speed{ p_game.GetComponent( Game::SpeedComponent ) }
-		, m_damage{ p_game.GetComponent( Game::DamageComponent ) }
+	Bullet::Bullet( Ecs & p_ecs )
+		: m_ecs{ p_ecs }
+		, m_speed{ m_ecs.GetComponent( Ecs::SpeedComponent ) }
+		, m_damage{ m_ecs.GetComponent( Ecs::DamageComponent ) }
 	{
 	}
 
@@ -15,7 +15,7 @@ namespace orastus
 		, float p_speed
 		, uint32_t p_damage )
 	{
-		m_game.CreateComponentData( p_entity, m_speed, p_speed );
-		m_game.CreateComponentData( p_entity, m_damage, p_damage );
+		m_ecs.CreateComponentData( p_entity, m_speed, p_speed );
+		m_ecs.CreateComponentData( p_entity, m_damage, p_damage );
 	}
 }

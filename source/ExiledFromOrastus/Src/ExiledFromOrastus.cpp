@@ -10,7 +10,7 @@
 #include <wx/cmdline.h>
 #include <wx/display.h>
 
-//wxIMPLEMENT_APP( orastus:main::ExiledFromOrastus );
+wxIMPLEMENT_APP( orastus::main::ExiledFromOrastus );
 
 using namespace Castor;
 using namespace Castor3D;
