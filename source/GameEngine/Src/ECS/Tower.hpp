@@ -53,7 +53,7 @@ namespace orastus
 			, uint32_t p_requiredLevel
 			, Castor3D::GeometrySPtr p_geometry
 			, AnimationDataPtr p_animation
-			, TowerAttackDataPtr p_attack );
+			, AttackDataPtr p_attack );
 		/**
 		*\brief
 		*	Returns a splash tower as a string.

@@ -21,7 +21,7 @@ namespace orastus
 		virtual ~BaseComponentData() = default;
 	};
 	//! A pointer to a BaseComponentData.
-	using ComponentDataPtr = std::unique_ptr< BaseComponentData >;
+	using ComponentDataPtr = std::shared_ptr< BaseComponentData >;
 	//! A list of ComponentData pointers.
 	using ComponentDataList = std::vector< ComponentDataPtr >;
 	/**
@@ -96,9 +96,9 @@ namespace orastus
 	*	The created ComponentData.
 	*/
 	template< typename T >
-	std::unique_ptr< ComponentData< T > > MakeComponentData( T const & p_value )
+	std::shared_ptr< ComponentData< T > > MakeComponentData( T const & p_value )
 	{
-		return std::make_unique< ComponentData< T > >( p_value );
+		return std::make_shared< ComponentData< T > >( p_value );
 	}
 	/**
 	*\brief

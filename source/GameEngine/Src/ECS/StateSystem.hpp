@@ -29,10 +29,13 @@ namespace orastus
 		/**
 		*\brief
 		*	Updates the states.
+		*\param[in] p_game
+		*	The game instance.
 		*\param[in] p_elapsed
 		*	The time elapsed since last call.
 		*/
-		EFO_API void Update( Milliseconds const & p_elapsed );
+		EFO_API void Update( Game & p_game
+			, Milliseconds const & p_elapsed );
 
 	private:
 		Ecs & m_ecs;

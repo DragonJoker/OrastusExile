@@ -41,7 +41,8 @@ namespace orastus
 		*\param[in] p_elapsed
 		*	The time elapsed since last call.
 		*/
-		void Update( Milliseconds const & p_elapsed );
+		void Update( Game & p_game
+			, Milliseconds const & p_elapsed );
 		/**
 		*\brief
 		*	Restarts the machine.

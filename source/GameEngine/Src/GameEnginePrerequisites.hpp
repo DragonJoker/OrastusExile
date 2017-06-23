@@ -57,7 +57,8 @@ namespace orastus
 	class Enemy;
 	class Bullet;
 	struct AnimationData;
-	struct TowerAttackData;
+	struct AttackData;
+	struct TrackData;
 	struct WalkData;
 	using MapBlockPtr = std::shared_ptr< MapBlock >;
 	using TowerPtr = std::shared_ptr< Tower >;
@@ -65,7 +66,8 @@ namespace orastus
 	using EnemyPtr = std::shared_ptr< Enemy >;
 	using BulletPtr = std::shared_ptr< Bullet >;
 	using AnimationDataPtr = std::shared_ptr< AnimationData >;
-	using TowerAttackDataPtr = std::shared_ptr< TowerAttackData >;
+	using AttackDataPtr = std::shared_ptr< AttackData >;
+	using TrackDataPtr = std::shared_ptr< TrackData >;
 	using WalkDataPtr = std::shared_ptr< WalkData >;
 	using EntityList = std::vector< Entity >;
 

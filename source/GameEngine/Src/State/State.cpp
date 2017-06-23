@@ -8,10 +8,13 @@ namespace orastus
 	{
 	}
 
-	bool State::Run( Milliseconds const & p_elapsed )
+	bool State::Run( Game & p_game
+		, Milliseconds const & p_elapsed )
 	{
 		m_elapsed += p_elapsed;
-		auto l_result = m_function( p_elapsed, m_elapsed );
+		auto l_result = m_function( p_game
+			, p_elapsed
+			, m_elapsed );
 
 		if ( l_result )
 		{

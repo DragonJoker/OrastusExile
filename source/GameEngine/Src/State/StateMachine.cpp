@@ -25,13 +25,14 @@ namespace orastus
 		}
 	}
 
-	void StateMachine::Update( Milliseconds const & p_elapsed )
+	void StateMachine::Update( Game & p_game
+		, Milliseconds const & p_elapsed )
 	{
 		if ( m_current != std::end( m_states ) )
 		{
 			auto & l_current = *m_current;
 
-			if ( l_current.Run( p_elapsed ) )
+			if ( l_current.Run( p_game, p_elapsed ) )
 			{
 				++m_current;
 			}

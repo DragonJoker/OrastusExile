@@ -18,7 +18,9 @@ namespace orastus
 	class State
 	{
 	public:
-		using Function = std::function< bool( Milliseconds const & p_elapsed, Milliseconds const & p_total ) >;
+		using Function = std::function< bool( Game & p_game
+			, Milliseconds const & p_elapsed
+			, Milliseconds const & p_total ) >;
 
 	public:
 		/**
@@ -36,7 +38,8 @@ namespace orastus
 		*\return
 		*	\p true if the state is ended.
 		*/
-		bool Run( Milliseconds const & p_elapsed );
+		bool Run( Game & p_game
+			, Milliseconds const & p_elapsed );
 
 	private:
 		Function m_function;

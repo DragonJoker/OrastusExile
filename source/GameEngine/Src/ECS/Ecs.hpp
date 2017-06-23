@@ -96,10 +96,13 @@ namespace orastus
 		/**
 		*\brief
 		*	Game loop function.
+		*\param[in] p_game
+		*	The game instance.
 		*\param[in] p_elapsed
 		*	The time elapsed since last call.
 		*/
-		EFO_API void Update( Milliseconds const & p_elapsed );
+		EFO_API void Update( Game & p_game
+			, Milliseconds const & p_elapsed );
 		/**
 		*\brief
 		*	Retrieves a component, given its name.
@@ -150,7 +153,7 @@ namespace orastus
 			, uint32_t p_requiredLevel
 			, Castor3D::GeometrySPtr p_geometry
 			, AnimationDataPtr p_animation
-			, TowerAttackDataPtr p_attack );
+			, AttackDataPtr p_attack );
 		/**
 		*\brief
 		*	Creates a tower with splash damage.
@@ -186,7 +189,7 @@ namespace orastus
 			, uint32_t p_requiredLevel
 			, Castor3D::GeometrySPtr p_geometry
 			, AnimationDataPtr p_animation
-			, TowerAttackDataPtr p_attack );
+			, AttackDataPtr p_attack );
 		/**
 		*\brief
 		*	Creates an enemy.
@@ -225,32 +228,26 @@ namespace orastus
 		/**
 		*\brief
 		*	Creates a bullet.
-		*\param[in] p_speed
-		*	The speed value.
-		*\param[in] p_damage
-		*	The damage value.
 		*\param[in] p_geometry
 		*	The geometry value.
+		*\param[in] p_track
+		*	The track value.
 		*/
-		EFO_API Entity CreateBullet( float p_speed
-			, uint32_t p_damage
-			, Castor3D::GeometrySPtr p_geometry );
+		EFO_API Entity CreateBullet( Castor3D::GeometrySPtr p_geometry
+			, TrackDataPtr p_track );
 		/**
 		*\brief
 		*	Resets a bullet to initial state.
 		*\param[in] p_entity
 		*	The bullet entity.
-		*\param[in] p_speed
-		*	The speed value.
-		*\param[in] p_damage
-		*	The damage value.
 		*\param[in] p_geometry
 		*	The geometry value.
+		*\param[in] p_track
+		*	The track value.
 		*/
 		EFO_API void ResetBullet( Entity p_entity
-			, float p_speed
-			, uint32_t p_damage
-			, Castor3D::GeometrySPtr p_geometry );
+			, Castor3D::GeometrySPtr p_geometry
+			, TrackDataPtr p_track );
 		/**
 		*\brief
 		*	Prints a map block.
@@ -434,6 +431,7 @@ namespace orastus
 		EFO_API static ComponentId const AnimationComponent;
 		EFO_API static ComponentId const WalkComponent;
 		EFO_API static ComponentId const AttackComponent;
+		EFO_API static ComponentId const TrackComponent;
 
 	private:
 		// Components and entities.

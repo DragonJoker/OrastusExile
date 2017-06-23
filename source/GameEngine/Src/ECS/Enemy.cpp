@@ -1,6 +1,7 @@
 ﻿#include "Enemy.hpp"
 
 #include "ECS/Ecs.hpp"
+#include "ECS/WalkData.hpp"
 #include "State/EnemyState.hpp"
 #include "State/StateMachine.hpp"
 
@@ -49,10 +50,8 @@ namespace orastus
 			, m_speed ).SetValue( p_speed );
 		m_ecs.GetComponentData< uint32_t >( p_entity
 			, m_life ).SetValue( p_life );
-		m_ecs.GetComponentData< Castor3D::GeometrySPtr >( p_entity
-			, m_geometry ).SetValue( p_geometry );
-		m_ecs.GetComponentData< WalkDataPtr >( p_entity
-			, m_walk ).SetValue( p_walkData );
+		*m_ecs.GetComponentData< WalkDataPtr >( p_entity
+			, m_walk ).GetValue() = *p_walkData;
 		m_ecs.GetComponentData< StateMachinePtr >( p_entity
 			, m_state ).GetValue()->Restart();
 	}

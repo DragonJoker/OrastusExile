@@ -50,12 +50,13 @@ namespace orastus
 
 	namespace enemy
 	{
-		bool WalkToDestination( WalkData & p_data
+		bool WalkToDestination( Game & p_game
+			, WalkData & p_data
 			, float p_speed
 			, Castor3D::SceneNode & p_node
 			, Milliseconds const & p_elapsed )
 		{
-			auto & l_game = p_data.m_game;
+			auto & l_game = p_game;
 			auto l_distance = p_elapsed.count() * p_speed / 1000;
 			Castor::Point3r l_nextPosition = p_data.m_destination;
 			Castor::Point3r l_position{ p_node.GetPosition() };
@@ -80,7 +81,11 @@ namespace orastus
 				{
 					p_data.m_destination = l_game.Convert( Castor::Point2i{ p_data.m_current->m_x, p_data.m_current->m_y } )
 						+ Castor::Point3r{ 0, l_game.GetCellHeight(), 0 };
-					l_result = WalkToDestination( p_data, p_speed, p_node, p_elapsed );
+					l_result = WalkToDestination( p_game
+						, p_data
+						, p_speed
+						, p_node
+						, p_elapsed );
 				}
 				else
 				{
@@ -104,7 +109,8 @@ namespace orastus
 			return l_result;
 		}
 
-		State CreateWalkingState( Ecs & p_ecs, Entity const & p_entity )
+		State CreateWalkingState( Ecs & p_ecs
+			, Entity const & p_entity )
 		{
 			auto l_walkData = p_ecs.GetComponentData< WalkDataPtr >( p_entity
 				, p_ecs.GetComponent( Ecs::WalkComponent ) ).GetValue();
@@ -113,20 +119,34 @@ namespace orastus
 
 			if ( l_walkData )
 			{
-				auto l_node = l_geometry->GetParent()->GetParent();
+				auto l_node = Game::GetEnemyNode( l_geometry );
 				auto & l_speed = p_ecs.GetComponentData< float >( p_entity
 					, p_ecs.GetComponent( Ecs::SpeedComponent ) );
 
-				return State{ [&p_ecs, p_entity, l_walkData, l_node, &l_speed]( Milliseconds const & p_elapsed
+				return State{ [&p_ecs, p_entity, l_walkData, l_node, &l_speed]( Game & p_game
+					, Milliseconds const & p_elapsed
 					, Milliseconds const & p_total )
 				{
-					auto const l_angle = Castor::Angle::from_degrees( -p_elapsed.count() * 120 / 1000.0_r );
-					l_node->Yaw( l_angle );
-					return WalkToDestination( *l_walkData, l_speed.GetValue(), *l_node, p_elapsed );
+					auto l_life = p_ecs.GetComponentData< uint32_t >( p_entity
+						, p_ecs.GetComponent( Ecs::LifeComponent ) ).GetValue();
+
+					if ( l_life )
+					{
+						auto const l_angle = Castor::Angle::from_degrees( -p_elapsed.count() * 120 / 1000.0_r );
+						l_node->Yaw( l_angle );
+						return WalkToDestination( p_game
+							, *l_walkData
+							, l_speed.GetValue()
+							, *l_node
+							, p_elapsed );
+					}
+
+					return true;
 				} };
 			}
 
-			return State{ []( Milliseconds const & p_elapsed
+			return State{ []( Game & p_game
+				, Milliseconds const & p_elapsed
 				, Milliseconds const & p_total )
 			{
 				return false;

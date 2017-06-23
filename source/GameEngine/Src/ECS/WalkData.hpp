@@ -13,8 +13,8 @@ namespace orastus
 	{
 		EFO_API WalkData( GridPath const & p_path
 			, Game const & p_game );
+		EFO_API WalkData & operator=( WalkData const & p_rhs );
 
-		Game const & m_game;
 		GridPath m_path;
 		GridPath::const_iterator m_current;
 		Castor::Point3r m_destination;

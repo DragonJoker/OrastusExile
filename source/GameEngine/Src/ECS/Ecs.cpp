@@ -28,6 +28,7 @@ namespace orastus
 		String const ANIMATION_COMPONENT_DESC = cuT( "Animation" );
 		String const WALK_COMPONENT_DESC = cuT( "Walk" );
 		String const ATTACK_COMPONENT_DESC = cuT( "Attack" );
+		String const TRACK_COMPONENT_DESC = cuT( "Track" );
 	}
 
 	ComponentId const Ecs::StateComponent = Ecs::Hash( "state   " );
@@ -45,6 +46,7 @@ namespace orastus
 	ComponentId const Ecs::AnimationComponent = Ecs::Hash( "animtion" );
 	ComponentId const Ecs::WalkComponent = Ecs::Hash( "walk    " );
 	ComponentId const Ecs::AttackComponent = Ecs::Hash( "attack  " );
+	ComponentId const Ecs::TrackComponent = Ecs::Hash( "track   " );
 
 	Ecs::Ecs()
 		: m_stateSystem{ *this }
@@ -59,9 +61,10 @@ namespace orastus
 		m_entitiesComponents.clear();
 	}
 
-	void Ecs::Update( Milliseconds const & p_elapsed )
+	void Ecs::Update( Game & p_game
+		, Milliseconds const & p_elapsed )
 	{
-		m_stateSystem.Update( p_elapsed );
+		m_stateSystem.Update( p_game, p_elapsed );
 	}
 
 	Component const & Ecs::GetComponent( ComponentId const & p_name )const
@@ -96,7 +99,7 @@ namespace orastus
 		, uint32_t p_requiredLevel
 		, GeometrySPtr p_geometry
 		, AnimationDataPtr p_animation
-		, TowerAttackDataPtr p_attack )
+		, AttackDataPtr p_attack )
 	{
 		auto l_entity = DoCreateEntity( "Tower" );
 		m_towerSet->CreateData( l_entity
@@ -120,7 +123,7 @@ namespace orastus
 		, uint32_t p_requiredLevel
 		, GeometrySPtr p_geometry
 		, AnimationDataPtr p_animation
-		, TowerAttackDataPtr p_attack )
+		, AttackDataPtr p_attack )
 	{
 		auto l_entity = DoCreateEntity( "SplashTower" );
 		m_splashTowerSet->CreateData( l_entity
@@ -164,27 +167,23 @@ namespace orastus
 			, p_walkData );
 	}
 
-	Entity Ecs::CreateBullet( float p_speed
-		, uint32_t p_damage
-		, Castor3D::GeometrySPtr p_geometry )
+	Entity Ecs::CreateBullet( Castor3D::GeometrySPtr p_geometry
+		, TrackDataPtr p_track )
 	{
 		auto l_entity = DoCreateEntity( "Bullet" );
 		m_bulletSet->CreateData( l_entity
-			, p_speed
-			, p_damage
-			, p_geometry );
+			, p_geometry
+			, p_track );
 		return l_entity;
 	}
 
 	void Ecs::ResetBullet( Entity p_entity
-		, float p_speed
-		, uint32_t p_damage
-		, Castor3D::GeometrySPtr p_geometry )
+		, Castor3D::GeometrySPtr p_geometry
+		, TrackDataPtr p_track )
 	{
 		m_bulletSet->ResetData( p_entity
-			, p_speed
-			, p_damage
-			, p_geometry );
+			, p_geometry
+			, p_track );
 	}
 
 	void Ecs::PrintMapBlock( Entity const & p_entity )const
@@ -267,6 +266,7 @@ namespace orastus
 		DoCreateComponent( AnimationComponent, ANIMATION_COMPONENT_DESC );
 		DoCreateComponent( WalkComponent, WALK_COMPONENT_DESC );
 		DoCreateComponent( AttackComponent, ATTACK_COMPONENT_DESC );
+		DoCreateComponent( TrackComponent, TRACK_COMPONENT_DESC );
 	}
 
 	void Ecs::DoCreateAssemblages()

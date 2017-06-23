@@ -3,6 +3,7 @@
 #include "Game.hpp"
 #include "ECS/Ecs.hpp"
 #include "ECS/WalkData.hpp"
+#include "ECS/TrackData.hpp"
 
 #include <Mesh/Mesh.hpp>
 #include <Scene/Geometry.hpp>
@@ -37,7 +38,7 @@ namespace orastus
 		{
 			auto l_geometry = m_ecs.GetComponentData< GeometrySPtr >( l_bullet
 				, m_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue();
-			l_geometry->GetParent()->SetPosition( Point3r{ 0, -1000, 0 } );
+			Game::GetBulletNode( l_geometry )->SetPosition( Point3r{ 0, -1000, 0 } );
 		}
 	}
 	
@@ -54,10 +55,12 @@ namespace orastus
 			, m_ecs.GetComponent( Ecs::DamageComponent ) ).GetValue();
 		auto l_geometry = m_ecs.GetComponentData< GeometrySPtr >( l_bullet
 			, m_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue();
+		auto l_sourceNode = Game::GetTowerNode( m_ecs.GetComponentData< GeometrySPtr >( p_source
+			, m_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue() );
+		Game::GetBulletNode( l_geometry )->SetPosition( l_sourceNode->GetPosition() );
 		m_ecs.ResetBullet( l_bullet
-			, l_speed
-			, l_damage
-			, l_geometry );
+			, l_geometry
+			, std::make_shared< TrackData >( p_target, l_speed, l_damage ) );
 	}
 
 	void BulletSpawner::FireBullet( Entity p_source
@@ -68,9 +71,11 @@ namespace orastus
 			, m_ecs.GetComponent( Ecs::SpeedComponent ) ).GetValue();
 		auto l_damage = m_ecs.GetComponentData< uint32_t >( p_source
 			, m_ecs.GetComponent( Ecs::DamageComponent ) ).GetValue();
-		auto l_bullet = m_ecs.CreateBullet( l_speed
-			, l_damage
-			, p_geometry );
+		auto l_sourceNode = Game::GetTowerNode( m_ecs.GetComponentData< GeometrySPtr >( p_source
+			, m_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue() );
+		Game::GetBulletNode( p_geometry )->SetPosition( l_sourceNode->GetPosition() );
+		auto l_bullet = m_ecs.CreateBullet( p_geometry
+			, std::make_shared< TrackData >( p_target, l_speed, l_damage ) );
 		m_liveBullets.insert( m_liveBullets.end(), l_bullet );
 		++m_totalSpawned;
 	}
@@ -87,5 +92,8 @@ namespace orastus
 		}
 
 		m_bulletsCache.push_back( p_bullet );
+		auto l_geometry = m_ecs.GetComponentData< GeometrySPtr >( p_bullet
+			, m_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue();
+		Game::GetBulletNode( l_geometry )->SetPosition( Point3r{ 0, -1000, 0 } );
 	}
 }

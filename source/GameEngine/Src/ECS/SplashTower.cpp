@@ -2,6 +2,7 @@
 
 #include "ECS/Ecs.hpp"
 #include "ECS/AnimationData.hpp"
+#include "ECS/AttackData.hpp"
 #include "State/TowerState.hpp"
 #include "State/StateMachine.hpp"
 
@@ -37,7 +38,7 @@ namespace orastus
 		, uint32_t p_requiredLevel
 		, Castor3D::GeometrySPtr p_geometry
 		, AnimationDataPtr p_animation
-		, TowerAttackDataPtr p_attack )
+		, AttackDataPtr p_attack )
 	{
 		m_ecs.CreateComponentData( p_entity
 			, m_cooldown
@@ -91,7 +92,7 @@ namespace orastus
 		l_stream << cuT( "\n  Geometry: " ) << m_ecs.GetComponentData< Castor3D::GeometrySPtr >( p_entity, m_geometry ).GetValue()->GetName();
 		l_stream << cuT( "\n  Pickable: " ) << m_ecs.GetComponentData< bool >( p_entity, m_pickable ).GetValue();
 		l_stream << cuT( "\n  Animation: " ) << m_ecs.GetComponentData< AnimationDataPtr >( p_entity, m_animation ).GetValue()->m_animation->GetName();
-		l_stream << cuT( "\n  Attack: " ) << m_ecs.GetComponentData< TowerAttackDataPtr >( p_entity, m_attack ).GetValue()->m_target.GetId();
+		l_stream << cuT( "\n  Attack: " ) << m_ecs.GetComponentData< AttackDataPtr >( p_entity, m_attack ).GetValue()->m_target.GetId();
 		return l_stream.str();
 	}
 }

@@ -38,7 +38,7 @@ namespace orastus
 		{
 			auto l_geometry = m_ecs.GetComponentData< GeometrySPtr >( l_enemy
 				, m_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue();
-			l_geometry->GetParent()->GetParent()->SetPosition( Point3r{ 0, -1000, 0 } );
+			Game::GetEnemyNode( l_geometry )->SetPosition( Point3r{ 0, -1000, 0 } );
 		}
 
 		m_life.Initialise( 1u, []( uint32_t p_value, uint32_t p_level )
@@ -59,7 +59,8 @@ namespace orastus
 
 	void EnemySpawner::Update( Milliseconds const & p_elapsed )
 	{
-		if ( m_liveEnemies.empty() && DoIsWaveEnded() )
+		if ( m_liveEnemies.empty()
+			&& !m_count )
 		{
 			//m_game.Gain( m_spawner.GetWave() * 2 );
 #if !defined( NDEBUG )
@@ -77,10 +78,19 @@ namespace orastus
 
 	void EnemySpawner::KillEnemy( Entity p_enemy )
 	{
+		auto l_it = std::find( std::begin( m_liveEnemies )
+			, std::end( m_liveEnemies )
+			, p_enemy );
+
+		if ( l_it != std::end( m_liveEnemies ) )
+		{
+			m_liveEnemies.erase( l_it );
+		}
+
+		m_enemiesCache.push_back( p_enemy );
 		auto l_geometry = m_ecs.GetComponentData< GeometrySPtr >( p_enemy
 			, m_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue();
-		l_geometry->GetParent()->GetParent()->SetPosition( Point3r{ 0, -1000, 0 } );
-		m_enemiesCache.push_back( p_enemy );
+		Game::GetEnemyNode( l_geometry )->SetPosition( Point3r{ 0, -1000, 0 } );
 	}
 
 	void EnemySpawner::DoStartWave( uint32_t p_count )
@@ -89,6 +99,9 @@ namespace orastus
 		++m_totalsWaves;
 		m_timeBetweenTwoSpawns = std::chrono::milliseconds( 1000 );
 		m_timeSinceLastSpawn = m_timeBetweenTwoSpawns;
+		m_life.Upgrade();
+		m_bounty.Upgrade();
+		std::cout << "\nStarting wave " << m_totalsWaves << std::endl;
 	}
 
 	bool EnemySpawner::DoCanSpawn( std::chrono::milliseconds const & p_elapsed )
@@ -109,6 +122,8 @@ namespace orastus
 		{
 			String l_name = cuT( "EnemyCube_" ) + std::to_string( ++m_totalSpawned );
 			l_geometry = m_game.CreateEnemy( l_name );
+			Game::GetEnemyNode( l_geometry )->SetPosition( m_game.Convert( Point2i{ l_cell.m_x, l_cell.m_y - 1 } )
+				+ Point3r{ 0, m_game.GetCellHeight(), 0 } );
 			m_liveEnemies.push_back( m_ecs.CreateEnemy( 24.0f
 				, m_life.GetValue()
 				, l_geometry
@@ -117,9 +132,12 @@ namespace orastus
 		else
 		{
 			l_result = m_enemiesCache.front();
+			m_liveEnemies.push_back( l_result );
 			m_enemiesCache.erase( m_enemiesCache.begin() );
 			l_geometry = m_ecs.GetComponentData< GeometrySPtr >( l_result
 				, m_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue();
+			Game::GetEnemyNode( l_geometry )->SetPosition( m_game.Convert( Point2i{ l_cell.m_x, l_cell.m_y - 1 } )
+				+ Point3r{ 0, m_game.GetCellHeight(), 0 } );
 			m_ecs.ResetEnemy( l_result
 				, 24.0f
 				, m_life.GetValue()
@@ -127,7 +145,6 @@ namespace orastus
 				, std::make_shared< WalkData >( p_path, m_game ) );
 		}
 
-		l_geometry->GetParent()->GetParent()->SetPosition( m_game.Convert( Point2i{ l_cell.m_x, l_cell.m_y - 1 } ) + Point3r{ 0, m_game.GetCellHeight(), 0 } );
 		--m_count;
 		m_timeSinceLastSpawn = std::chrono::milliseconds{};
 		++m_totalEnemies;

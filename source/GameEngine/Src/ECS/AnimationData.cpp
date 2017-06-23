@@ -5,11 +5,9 @@
 
 namespace orastus
 {
-	AnimationData::AnimationData( Game & p_game
-		, Castor3D::AnimatedObjectGroupSPtr p_animation
+	AnimationData::AnimationData( Castor3D::AnimatedObjectGroupSPtr p_animation
 		, String const & p_name )
-		: m_game{ p_game }
-		, m_animation{ p_animation }
+		: m_animation{ p_animation }
 		, m_animName{ p_name }
 	{
 		auto & l_objects = m_animation->GetObjects();

@@ -13,11 +13,14 @@ namespace orastus
 	{
 	}
 
-	void StateSystem::Update( Milliseconds const & p_elapsed )
+	void StateSystem::Update( Game & p_game
+		, Milliseconds const & p_elapsed )
 	{
-		for ( auto & l_data : m_ecs.GetComponentDatas( m_ecs.GetComponent( Ecs::StateComponent ) ) )
+		auto l_states = m_ecs.GetComponentDatas( m_ecs.GetComponent( Ecs::StateComponent ) );
+		for ( auto & l_data : l_states )
 		{
-			static_cast< ComponentData< StateMachinePtr > & >( *l_data.m_data ).GetValue()->Update( p_elapsed );
+			static_cast< ComponentData< StateMachinePtr > & >( *l_data.m_data ).GetValue()->Update( p_game
+				, p_elapsed );
 		}
 	}
 }

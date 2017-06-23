@@ -179,7 +179,6 @@ namespace orastus
 			if ( p_geometry != l_geometry )
 			{
 				m_selectedGeometry = p_geometry;
-				auto l_position = p_geometry->GetParent()->GetPosition();
 				m_selectedTower = m_game.Select( p_geometry );
 			}
 		}

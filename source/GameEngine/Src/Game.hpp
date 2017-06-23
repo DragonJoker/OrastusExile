@@ -105,6 +105,24 @@ namespace orastus
 		EFO_API void Unselect();
 		/**
 		*\brief
+		*	Kills an enemy.
+		*\param[in] p_entity
+		*	The enemy entity.
+		*/
+		EFO_API void KillEnemy( Entity p_entity );
+		/**
+		*\brief
+		*	Hits a target.
+		*\param[in] p_source
+		*	The hit source.
+		*\param[in] p_target
+		*	The hit target.
+		*/
+		EFO_API void Hit( Entity p_source
+			, Entity p_target
+			, uint32_t p_damage );
+		/**
+		*\brief
 		*	Creates an enemy geometry.
 		*\param[in] p_name
 		*	The name.
@@ -139,7 +157,34 @@ namespace orastus
 		*\return
 		*	The 3D position
 		*/
-		EFO_API Castor::Point3r Game::Convert( Castor::Point2i const & p_position )const;
+		EFO_API Castor::Point3r Convert( Castor::Point2i const & p_position )const;
+		/**
+		*\brief
+		*	Retrieves the scene node for given enemy's geometry.
+		*\param[in] p_geometry
+		*	The geometry.
+		*\return
+		*	The scene node.
+		*/
+		EFO_API static Castor3D::SceneNodeSPtr GetEnemyNode( Castor3D::GeometrySPtr p_geometry );
+		/**
+		*\brief
+		*	Retrieves the scene node for given tower's geometry.
+		*\param[in] p_geometry
+		*	The geometry.
+		*\return
+		*	The scene node.
+		*/
+		EFO_API static Castor3D::SceneNodeSPtr GetTowerNode( Castor3D::GeometrySPtr p_geometry );
+		/**
+		*\brief
+		*	Retrieves the scene node for given bullet's geometry.
+		*\param[in] p_geometry
+		*	The geometry.
+		*\return
+		*	The scene node.
+		*/
+		EFO_API static Castor3D::SceneNodeSPtr GetBulletNode( Castor3D::GeometrySPtr p_geometry );
 		/**
 		*\return
 		*	\p true if the game is started.

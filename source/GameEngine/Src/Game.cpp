@@ -1,6 +1,7 @@
 ﻿#include "Game.hpp"
 
 #include "Ecs/AnimationData.hpp"
+#include "Ecs/AttackData.hpp"
 #include "ECS/WalkData.hpp"
 #include "State/EnemyState.hpp"
 #include "State/StateMachine.hpp"
@@ -258,7 +259,7 @@ namespace orastus
 #else
 			m_elapsed = std::chrono::duration_cast< std::chrono::milliseconds >( Clock::now() - m_saved );
 #endif
-			m_ecs.Update( m_elapsed );
+			m_ecs.Update( *this, m_elapsed );
 			m_enemySpawner.Update( m_elapsed );
 			m_saved = Clock::now();
 		}
@@ -300,6 +301,27 @@ namespace orastus
 			} ) );
 	}
 
+	void Game::KillEnemy( Entity p_entity )
+	{
+		m_enemySpawner.KillEnemy( p_entity );
+	}
+
+	void Game::Hit( Entity p_source
+		, Entity p_target
+		, uint32_t p_damage )
+	{
+		m_bulletSpawner.KillBullet( p_source );
+
+		auto & l_life = m_ecs.GetComponentData< uint32_t >( p_target
+			, m_ecs.GetComponent( Ecs::LifeComponent ) );
+		l_life.SetValue( l_life.GetValue() - std::min( l_life.GetValue(), p_damage ) );
+
+		if ( !l_life.GetValue() )
+		{
+			m_enemySpawner.KillEnemy( p_target );
+		}
+	}
+
 	Castor3D::GeometrySPtr Game::CreateEnemy( Castor::String const & p_name )
 	{
 		auto l_baseNode = m_scene.GetSceneNodeCache().Add( p_name + cuT( "_Base" ) );
@@ -337,8 +359,8 @@ namespace orastus
 
 			if ( l_tower )
 			{
-				auto l_data = std::make_shared< AnimationData >( *this, l_anim, l_animName );
-				auto l_shoot = std::make_shared< TowerAttackData >( 500_ms );
+				auto l_data = std::make_shared< AnimationData >( l_anim, l_animName );
+				auto l_shoot = std::make_shared< AttackData >( 500_ms );
 				m_selectedCell->m_entity = m_ecs.CreateTower( 1000_ms
 					, 3u
 					, 40.0f
@@ -371,8 +393,8 @@ namespace orastus
 
 			if ( l_tower )
 			{
-				auto l_data = std::make_shared< AnimationData >( *this, l_anim, l_animName );
-				auto l_shoot = std::make_shared< TowerAttackData >( 1000_ms );
+				auto l_data = std::make_shared< AnimationData >( l_anim, l_animName );
+				auto l_shoot = std::make_shared< AttackData >( 800_ms );
 				m_selectedCell->m_entity = m_ecs.CreateTower( 6000_ms
 					, 5u
 					, 100.0f
@@ -410,6 +432,21 @@ namespace orastus
 		return Point3r( ( p_position[0] - int( m_grid.GetWidth() ) / 2 ) * m_cellDimensions[0]
 			, 0
 			, ( p_position[1] - int( m_grid.GetHeight() ) / 2 ) * m_cellDimensions[2] );
+	}
+
+	Castor3D::SceneNodeSPtr Game::GetEnemyNode( Castor3D::GeometrySPtr p_geometry )
+	{
+		return p_geometry->GetParent()->GetParent();
+	}
+
+	Castor3D::SceneNodeSPtr Game::GetTowerNode( Castor3D::GeometrySPtr p_geometry )
+	{
+		return p_geometry->GetParent();
+	}
+
+	Castor3D::SceneNodeSPtr Game::GetBulletNode( Castor3D::GeometrySPtr p_geometry )
+	{
+		return p_geometry->GetParent();
 	}
 
 	void Game::DoPrepareGrid()
@@ -464,8 +501,8 @@ namespace orastus
 
 	Castor3D::GeometrySPtr Game::DoCreateBullet( Entity p_source )
 	{
-		auto l_origin = m_ecs.GetComponentData< Castor3D::GeometrySPtr >( p_source
-			, m_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue()->GetParent();
+		auto l_origin = Game::GetTowerNode( m_ecs.GetComponentData< Castor3D::GeometrySPtr >( p_source
+			, m_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue() );
 		String l_name = cuT( "Bullet_" ) + ToString( m_bulletSpawner.GetBulletsCount() );
 		auto l_node = m_scene.GetSceneNodeCache().Add( l_name );
 		auto l_geometry = m_scene.GetGeometryCache().Add( l_name, l_node, m_bulletMesh );
