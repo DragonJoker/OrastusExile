@@ -6,6 +6,8 @@ See licence file in root folder, MIT.txt
 #include "ExiledFromOrastusPrerequisites.hpp"
 #include "NodeState.hpp"
 
+#include <ECS/Entity.hpp>
+
 #include <Engine.hpp>
 
 #include <wx/panel.h>
@@ -44,9 +46,6 @@ namespace orastus
 			int DoTransformX( Castor::real x );
 			int DoTransformY( Castor::real y );
 			void DoUpdateSelectedGeometry( Castor3D::GeometrySPtr p_geometry );
-			void DoUpgradeTowerDamage();
-			void DoUpgradeTowerSpeed();
-			void DoUpgradeTowerRange();
 			void DoStartTimer( TimerID p_id );
 			void DoStopTimer( TimerID p_id );
 
@@ -60,6 +59,7 @@ namespace orastus
 			void OnKeyUp( wxKeyEvent & p_event );
 			void OnMouseLDown( wxMouseEvent & p_event );
 			void OnMouseLUp( wxMouseEvent & p_event );
+			void OnMouseRDown( wxMouseEvent & p_event );
 			void OnMouseRUp( wxMouseEvent & p_event );
 			void OnMouseMove( wxMouseEvent & p_event );
 			void OnMouseWheel( wxMouseEvent & p_event );
@@ -68,11 +68,6 @@ namespace orastus
 			void OnTimerDown( wxTimerEvent & p_event );
 			void OnTimerLeft( wxTimerEvent & p_event );
 			void OnTimerRight( wxTimerEvent & p_event );
-			void OnNewLongRangeTower( wxCommandEvent & p_event );
-			void OnNewShortRangeTower( wxCommandEvent & p_event );
-			void OnUpgradeTowerSpeed( wxCommandEvent & p_event );
-			void OnUpgradeTowerRange( wxCommandEvent & p_event );
-			void OnUpgradeTowerDamage( wxCommandEvent & p_event );
 
 		private:
 			Castor::real m_x{ 0.0_r };
@@ -85,9 +80,8 @@ namespace orastus
 			Castor3D::RenderWindowWPtr m_renderWindow;
 			Castor3D::FrameListenerSPtr m_listener;
 			Castor3D::GeometryWPtr m_selectedGeometry;
-			Castor3D::SceneNodeSPtr m_marker;
 			Game & m_game;
-			Entity * m_selectedTower{ nullptr };
+			Entity m_selectedTower;
 		};
 	}
 }

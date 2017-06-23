@@ -1,13 +1,15 @@
-/**
+﻿/**
 See licence file in root folder, MIT.txt
 */
 #pragma once
 #ifndef ___EFO_Game_HPP___
 #define ___EFO_Game_HPP___
 
-#include "Ecs.hpp"
+#include "BulletSpawner.hpp"
+#include "EnemySpawner.hpp"
 #include "Grid.hpp"
 #include "Hud.hpp"
+#include "ECS/Ecs.hpp"
 
 namespace orastus
 {
@@ -26,6 +28,28 @@ namespace orastus
 			eEnded,
 		};
 
+		struct SelectedEntity
+		{
+			void Select( Entity const & p_entity
+				, Castor3D::GeometrySPtr p_geometry );
+			void Unselect();
+
+			Entity m_entity;
+			Castor3D::GeometrySPtr m_geometry;
+			std::vector< Castor3D::MaterialSPtr > m_materials;
+		};
+
+		struct SelectedBlock
+		{
+			void Select( Entity const & p_entity
+				, Castor3D::GeometrySPtr p_geometry );
+			void Unselect();
+
+			Entity m_entity;
+			Castor3D::GeometrySPtr m_geometry;
+			Castor3D::MaterialSPtr m_material;
+		};
+
 	public:
 		/**
 		*\brief
@@ -33,7 +57,7 @@ namespace orastus
 		*\param[in] p_scene
 		*	The 3D scene.
 		*/
-		EFO_API Game( Castor3D::Scene & p_scene );
+		EFO_API explicit Game( Castor3D::Scene & p_scene );
 		/**
 		*\brief
 		*	Resets the game so a new game can be played.
@@ -65,49 +89,57 @@ namespace orastus
 		*/
 		EFO_API void Update();
 		/**
-		*\name GridCell retrieval.
-		*/
-		/**@{*/
-		//! From a 3D float position.
-		EFO_API GridCell & GetCell( Castor::Point3r const & p_position );
-		//! From a 2D int position.
-		EFO_API GridCell & GetCell( Castor::Point2i const & p_position );
-		//! From a 2D int position.
-		EFO_API GridCell & GetCell( int p_x, int p_y );
-		//! From a 3D float position.
-		EFO_API GridCell const & GetCell( Castor::Point3r const & p_position )const;
-		//! From a 2D int position.
-		EFO_API GridCell const & GetCell( Castor::Point2i const & p_position )const;
-		//! From a 2D int position.
-		EFO_API GridCell const & GetCell( int p_x, int p_y )const;
-		/**
 		*\brief
-		*	Converts a 2D grid cell position to a 3D in-scene position.
-		*\param[in] p_position
-		*	The cell position.
+		*	Selects the cell for given geometry.
+		*\param[in] p_geometry
+		*	The geometry.
 		*\return
-		*	The in-scene position.
+		*	The tower entity at selected cell.
 		*/
-		EFO_API Castor::Point3r Convert( Castor::Point2i const & p_position )const;
-		/**
-		*\brief
-		*	Converts a 3D in-scene position to a 2D grid cell position.
-		*\param[in] p_position
-		*	The in-scene position.
-		*\return
-		*	The cell position.
-		*/
-		EFO_API Castor::Point2i Convert( Castor::Point3r const & p_position )const;
+		EFO_API Entity Select( Castor3D::GeometrySPtr p_geometry );
 		/**@}*/
 		/**
 		*\brief
-		*	Selects the tower at given cell.
-		*\param[in] p_cell
-		*	The cell.
-		*\return
-		*	The cell position.
+		*	Unselects the current selection.
 		*/
-		EFO_API Entity * SelectTower( GridCell const & p_cell );
+		EFO_API void Unselect();
+		/**
+		*\brief
+		*	Creates an enemy geometry.
+		*\param[in] p_name
+		*	The name.
+		*\return
+		*	The created geometry.
+		*/
+		Castor3D::GeometrySPtr CreateEnemy( Castor::String const & p_name );
+		/**
+		*\brief
+		*	Creates a short range tower.
+		*/
+		EFO_API void CreateShortRangeTower();
+		/**
+		*\brief
+		*	Creates a long range tower.
+		*/
+		EFO_API void CreateLongRangeTower();
+		/**
+		*\brief
+		*	Creates a bullet.
+		*\param[in] p_source
+		*	The firing entity.
+		*\param[in] p_target
+		*	The target entity.
+		*/
+		EFO_API void CreateBullet( Entity p_source, Entity p_target );
+		/**
+		*\brief
+		*	Converts a cell position to 3D position.
+		*\param[in] p_position
+		*	The cell position.
+		*\return
+		*	The 3D position
+		*/
+		EFO_API Castor::Point3r Game::Convert( Castor::Point2i const & p_position )const;
 		/**
 		*\return
 		*	\p true if the game is started.
@@ -116,7 +148,6 @@ namespace orastus
 		{
 			return m_state >= State::eStarted && m_state < State::eEnded;
 		}
-		/**@}*/
 		/**
 		*\return
 		*	\p true if the game is started and running.
@@ -125,7 +156,6 @@ namespace orastus
 		{
 			return m_state == State::eStarted;
 		}
-		/**@}*/
 		/**
 		*\return
 		*	\p true if the game is ended.
@@ -134,7 +164,6 @@ namespace orastus
 		{
 			return m_state == State::eEnded;
 		}
-		/**@}*/
 		/**
 		*\return
 		*	\p true if the game is paused.
@@ -143,11 +172,48 @@ namespace orastus
 		{
 			return m_state == State::ePaused;
 		}
+		/**
+		*\return
+		*	The cell height.
+		*/
+		inline float GetCellHeight()const
+		{
+			return m_cellDimensions[2];
+		}
+		/**
+		*\return
+		*	The current enemy path.
+		*/
+		inline GridPath const & GetPath()const
+		{
+			return m_path;
+		}
+		/**
+		*\return
+		*	The current level grid.
+		*/
+		inline Grid const & GetGrid()const
+		{
+			return m_grid;
+		}
 
 	private:
 		void DoPrepareGrid();
 		void DoAddMapCube( GridCell & p_cell );
 		void DoAddTarget( GridCell & p_cell );
+		Castor3D::GeometrySPtr DoCreateBullet( Entity p_source );
+		Castor3D::GeometrySPtr DoCreateTower( Castor::String const & p_name
+			, GridCell & p_cell
+			, Castor3D::MeshSPtr p_mesh
+			, Castor::StringArray p_matNames );
+		Castor3D::AnimatedObjectGroupSPtr DoCreateAnimation( Castor3D::GeometrySPtr p_geometry
+			, Castor::String const & p_animName );
+		void DoSelectMapBlock( Entity const & p_entity );
+		void DoSelectTower( Entity const & p_entity );
+		Castor3D::GeometrySPtr DoGetGeometry( Entity const & p_entity );
+		GridCell & DoFindCell( Entity const & p_entity );
+		bool DoSelectEntity( Entity const & p_entity );
+		Castor::Point3r DoConvert( Castor::Point2i const & p_position )const;
 
 	private:
 		// Persistent data.
@@ -168,11 +234,15 @@ namespace orastus
 		Castor3D::MeshSPtr m_bulletMesh;
 		Castor3D::MaterialSPtr m_bulletMaterial;
 		// Varying data.
-		Entity * m_selectedTower{ nullptr };
+		GridCell * m_selectedCell{ nullptr };
 		Clock::time_point m_saved;
 		std::chrono::milliseconds m_elapsed;
 		State m_state;
 		Castor3D::GeometrySPtr m_lastMapCube;
+		SelectedEntity m_selectedEntity;
+		SelectedBlock m_selectedBlock;
+		EnemySpawner m_enemySpawner;
+		BulletSpawner m_bulletSpawner;
 	};
 }
 

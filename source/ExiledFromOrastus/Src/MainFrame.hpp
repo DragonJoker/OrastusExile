@@ -1,12 +1,12 @@
-/**
+﻿/**
 See licence file in root folder, MIT.txt
 */
 #pragma once
 
+#include "ExiledFromOrastusPrerequisites.hpp"
+
 #include <wx/frame.h>
 #include <wx/windowptr.h>
-
-#include "ExiledFromOrastusPrerequisites.hpp"
 
 namespace orastus
 {

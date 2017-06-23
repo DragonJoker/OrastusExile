@@ -71,7 +71,7 @@ namespace orastus
 		{
 			auto & l_engine = wxGetApp().GetCastor();
 			auto l_window = DoLoadScene( l_engine
-				, File::GetExecutableDirectory().GetPath() / cuT( "share" ) / ApplicationName.ToStdString() / cuT( "Data.zip" )
+				, File::GetExecutableDirectory().GetPath() / cuT( "share" ) / cuT( "GameEngine" ) / cuT( "Data.zip" )
 				, l_engine.GetRenderLoop().GetWantedFps()
 				, l_engine.IsThreaded() );
 

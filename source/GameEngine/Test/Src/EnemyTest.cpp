@@ -3,8 +3,8 @@ See licence file in root folder, MIT.txt
 */
 #include "EnemyTest.hpp"
 
-#include <Ecs.hpp>
-#include <EnemyState.hpp>
+#include <ECS/Ecs.hpp>
+#include <State/EnemyState.hpp>
 
 namespace
 {
@@ -38,8 +38,7 @@ namespace orastus
 			Ecs l_ecs;
 			float l_speed{ 100.0f };
 			uint32_t l_life{ 1000u };
-			auto l_enemy = l_ecs.CreateEnemy( l_speed, l_life );
-			CT_EQUAL( l_ecs.GetComponentData< EnemyState >( l_enemy, l_ecs.GetComponent( Ecs::StateComponent ) ).GetValue(), EnemyState::eWalking );
+			auto l_enemy = l_ecs.CreateEnemy( l_speed, l_life, nullptr, nullptr );
 			CT_EQUAL( l_ecs.GetComponentData< float >( l_enemy, l_ecs.GetComponent( Ecs::SpeedComponent ) ).GetValue(), l_speed );
 			CT_EQUAL( l_ecs.GetComponentData< uint32_t >( l_enemy, l_ecs.GetComponent( Ecs::LifeComponent ) ).GetValue(), l_life );
 		}

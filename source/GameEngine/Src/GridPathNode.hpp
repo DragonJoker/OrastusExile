@@ -20,8 +20,6 @@ namespace orastus
 		//! The Y coordinate.
 		uint32_t m_y;
 	};
-	//! The path nodes describing a path.
-	using GridPath = std::vector< GridPathNode >;
 }
 
 #endif

@@ -26,14 +26,38 @@ namespace orastus
 	{
 		namespace
 		{
-			enum class MenuID
+			KeyboardKey ConvertKeyCode( int p_code )
 			{
-				eNewLRTower = 1,
-				eNewSRTower,
-				eUpgradeSpeed,
-				eUpgradeRange,
-				eUpgradeDamage,
-			};
+				KeyboardKey l_return = KeyboardKey::eNone;
+
+				if ( p_code < 0x20 )
+				{
+					switch ( p_code )
+					{
+					case WXK_BACK:
+					case WXK_TAB:
+					case WXK_RETURN:
+					case WXK_ESCAPE:
+						l_return = KeyboardKey( p_code );
+						break;
+					}
+				}
+				else if ( p_code == 0x7F )
+				{
+					l_return = KeyboardKey::eDelete;
+				}
+				else if ( p_code > 0xFF )
+				{
+					l_return = KeyboardKey( p_code + int( KeyboardKey::eStart ) - WXK_START );
+				}
+				else
+				{
+					// ASCII or extended ASCII character
+					l_return = KeyboardKey( p_code );
+				}
+
+				return l_return;
+			}
 
 			static real const g_camSpeed = 10.0_r;
 		}
@@ -76,8 +100,6 @@ namespace orastus
 
 				if ( l_scene )
 				{
-					m_marker = l_scene->GetSceneNodeCache().Find( cuT( "MapMouse" ) );
-					m_marker->SetVisible( false );
 
 					m_listener = p_window->GetListener();
 					m_renderWindow = p_window;
@@ -156,99 +178,10 @@ namespace orastus
 
 			if ( p_geometry != l_geometry )
 			{
-				bool l_freeCell = false;
-
-				if ( !p_geometry || p_geometry->GetName() == cuT( "MapBase" ) )
-				{
-					m_selectedGeometry.reset();
-				}
-				else
-				{
-					GridCell l_cell{ 0u, 0u, GridCell::State::eInvalid };
-
-					if ( p_geometry->GetName().find( cuT( "Tower" ) ) == String::npos )
-					{
-						l_cell = m_game.GetCell( p_geometry->GetParent()->GetPosition() );
-					}
-					else
-					{
-						l_cell = m_game.GetCell( p_geometry->GetParent()->GetParent()->GetPosition() );
-					}
-
-					if ( l_cell.m_state != GridCell::State::eInvalid )
-					{
-						switch ( l_cell.m_state )
-						{
-						case GridCell::State::eEmpty:
-							l_freeCell = true;
-							m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender, [this, p_geometry]()
-							{
-								Point3r l_position = p_geometry->GetParent()->GetPosition();
-								auto l_height = p_geometry->GetMesh()->GetCollisionBox().GetMax()[1] - p_geometry->GetMesh()->GetCollisionBox().GetMin()[1];
-								m_marker->SetPosition( Point3r{ l_position[0], l_height + 1, l_position[2] } );
-							} ) );
-							m_selectedTower = nullptr;
-							break;
-
-						case GridCell::State::eTower:
-							m_selectedTower = m_game.SelectTower( l_cell );
-							break;
-
-						case GridCell::State::eTarget:
-							m_selectedTower = nullptr;
-							break;
-
-						case GridCell::State::ePath:
-							m_selectedTower = nullptr;
-							break;
-
-						default:
-							m_selectedTower = nullptr;
-							break;
-						}
-
-						m_selectedGeometry = p_geometry;
-					}
-				}
-
-				m_listener->PostEvent( MakeFunctorEvent( EventType::ePreRender, [this, l_freeCell]()
-				{
-					m_marker->SetVisible( l_freeCell );
-				} ) );
+				m_selectedGeometry = p_geometry;
+				auto l_position = p_geometry->GetParent()->GetPosition();
+				m_selectedTower = m_game.Select( p_geometry );
 			}
-		}
-
-		void RenderPanel::DoUpgradeTowerDamage()
-		{
-			//if ( m_game.IsRunning() && m_selectedTower && m_selectedTower->CanUpgradeDamage() && m_game.CanAfford( m_selectedTower->GetDamageUpgradeCost() ) )
-			//{
-			//	m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender, [this]()
-			//	{
-			//		m_game.UpgradeTowerDamage( *m_selectedTower );
-			//	} ) );
-			//}
-		}
-
-		void RenderPanel::DoUpgradeTowerSpeed()
-		{
-			//if ( m_game.IsRunning() && m_selectedTower && m_selectedTower->CanUpgradeSpeed() && m_game.CanAfford( m_selectedTower->GetSpeedUpgradeCost() ) )
-			//{
-			//	m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender, [this]()
-			//	{
-			//		m_game.UpgradeTowerSpeed( *m_selectedTower );
-			//	} ) );
-			//}
-		}
-
-		void RenderPanel::DoUpgradeTowerRange()
-		{
-			//if ( m_game.IsRunning() && m_selectedTower && m_selectedTower->CanUpgradeRange() && m_game.CanAfford( m_selectedTower->GetRangeUpgradeCost() ) )
-			//{
-			//	m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender, [this]()
-			//	{
-			//		m_game.UpgradeTowerRange( *m_selectedTower );
-			//	} ) );
-			//}
 		}
 
 		void RenderPanel::DoStartTimer( TimerID p_id )
@@ -287,11 +220,6 @@ namespace orastus
 			EVT_TIMER( int( TimerID::eLeft ), RenderPanel::OnTimerLeft )
 			EVT_TIMER( int( TimerID::eRight ), RenderPanel::OnTimerRight )
 			EVT_TIMER( int( TimerID::eMouse ), RenderPanel::OnMouseTimer )
-			EVT_MENU( int( MenuID::eNewLRTower ), RenderPanel::OnNewLongRangeTower )
-			EVT_MENU( int( MenuID::eNewSRTower ), RenderPanel::OnNewShortRangeTower )
-			EVT_MENU( int( MenuID::eUpgradeSpeed ), RenderPanel::OnUpgradeTowerSpeed )
-			EVT_MENU( int( MenuID::eUpgradeRange ), RenderPanel::OnUpgradeTowerRange )
-			EVT_MENU( int( MenuID::eUpgradeDamage ), RenderPanel::OnUpgradeTowerDamage )
 			END_EVENT_TABLE()
 
 			void RenderPanel::OnSize( wxSizeEvent & p_event )
@@ -356,27 +284,35 @@ namespace orastus
 
 		void RenderPanel::OnKeyDown( wxKeyEvent & p_event )
 		{
-			switch ( p_event.GetKeyCode() )
+			auto l_inputListener = wxGetApp().GetCastor().GetUserInputListener();
+
+			if ( !l_inputListener || !l_inputListener->FireKeyDown( ConvertKeyCode( p_event.GetKeyCode() )
+				, p_event.ControlDown()
+				, p_event.AltDown()
+				, p_event.ShiftDown() ) )
 			{
-			case WXK_LEFT:
-			case 'Q':
-				DoStartTimer( TimerID::eLeft );
-				break;
+				switch ( p_event.GetKeyCode() )
+				{
+				case WXK_LEFT:
+				case 'Q':
+					DoStartTimer( TimerID::eLeft );
+					break;
 
-			case WXK_RIGHT:
-			case 'D':
-				DoStartTimer( TimerID::eRight );
-				break;
+				case WXK_RIGHT:
+				case 'D':
+					DoStartTimer( TimerID::eRight );
+					break;
 
-			case WXK_UP:
-			case 'Z':
-				DoStartTimer( TimerID::eUp );
-				break;
+				case WXK_UP:
+				case 'Z':
+					DoStartTimer( TimerID::eUp );
+					break;
 
-			case WXK_DOWN:
-			case 'S':
-				DoStartTimer( TimerID::eDown );
-				break;
+				case WXK_DOWN:
+				case 'S':
+					DoStartTimer( TimerID::eDown );
+					break;
+				}
 			}
 
 			p_event.Skip();
@@ -384,88 +320,81 @@ namespace orastus
 
 		void RenderPanel::OnKeyUp( wxKeyEvent & p_event )
 		{
-			switch ( p_event.GetKeyCode() )
+			auto l_inputListener = wxGetApp().GetCastor().GetUserInputListener();
+
+			if ( !l_inputListener || !l_inputListener->FireKeyUp( ConvertKeyCode( p_event.GetKeyCode() )
+				, p_event.ControlDown()
+				, p_event.AltDown()
+				, p_event.ShiftDown() ) )
 			{
-			case WXK_NUMPAD1:
-			case '&':
-			case '1':
-				DoUpgradeTowerDamage();
-				break;
-
-			case WXK_NUMPAD2:
-			case 'é':
-			case '2':
-				DoUpgradeTowerRange();
-				break;
-
-			case WXK_NUMPAD3:
-			case '\"':
-			case '3':
-				DoUpgradeTowerSpeed();
-				break;
-
-			case WXK_F1:
-				m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender, [this]()
+				switch ( p_event.GetKeyCode() )
 				{
-					if ( m_game.IsRunning() )
-					{
-						m_game.Help();
-					}
-				} ) );
-				break;
-
-			case WXK_RETURN:
-			case WXK_NUMPAD_ENTER:
-				m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender, [this]()
-				{
-					if ( m_game.IsEnded() )
-					{
-						m_game.Reset();
-						m_game.Start();
-					}
-					else if ( !m_game.IsStarted() )
-					{
-						m_game.Start();
-					}
-				} ) );
-				break;
-
-			case WXK_SPACE:
-				m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender, [this]()
-				{
-					if ( m_game.IsStarted() )
-					{
-						if ( m_game.IsPaused() )
+				case WXK_F1:
+					m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender
+						, [this]()
 						{
-							m_game.Resume();
-						}
-						else
+							if ( m_game.IsRunning() )
+							{
+								m_game.Help();
+							}
+						} ) );
+					break;
+
+				case WXK_RETURN:
+				case WXK_NUMPAD_ENTER:
+					m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender
+						, [this]()
 						{
-							m_game.Pause();
-						}
-					}
-				} ) );
-				break;
+							if ( m_game.IsEnded() )
+							{
+								m_game.Reset();
+								m_game.Start();
+							}
+							else if ( !m_game.IsStarted() )
+							{
+								m_game.Start();
+							}
+						} ) );
+					break;
 
-			case WXK_LEFT:
-			case 'Q':
-				DoStopTimer( TimerID::eLeft );
-				break;
+				case WXK_SPACE:
+					m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender
+						, [this]()
+						{
+							if ( m_game.IsStarted() )
+							{
+								if ( m_game.IsPaused() )
+								{
+									m_game.Resume();
+								}
+								else
+								{
+									m_game.Pause();
+								}
+							}
+						} ) );
+					break;
 
-			case WXK_RIGHT:
-			case 'D':
-				DoStopTimer( TimerID::eRight );
-				break;
+				case WXK_LEFT:
+				case 'Q':
+					DoStopTimer( TimerID::eLeft );
+					break;
 
-			case WXK_UP:
-			case 'Z':
-				DoStopTimer( TimerID::eUp );
-				break;
+				case WXK_RIGHT:
+				case 'D':
+					DoStopTimer( TimerID::eRight );
+					break;
 
-			case WXK_DOWN:
-			case 'S':
-				DoStopTimer( TimerID::eDown );
-				break;
+				case WXK_UP:
+				case 'Z':
+					DoStopTimer( TimerID::eUp );
+					break;
+
+				case WXK_DOWN:
+				case 'S':
+					DoStopTimer( TimerID::eDown );
+					break;
+				}
 			}
 
 			p_event.Skip();
@@ -480,10 +409,15 @@ namespace orastus
 			{
 				if ( m_game.IsRunning() )
 				{
-					m_x = DoTransformX( p_event.GetX() );
-					m_y = DoTransformY( p_event.GetY() );
-					m_oldX = m_x;
-					m_oldY = m_y;
+					auto l_inputListener = wxGetApp().GetCastor().GetUserInputListener();
+
+					if ( !l_inputListener || !l_inputListener->FireMouseButtonPushed( MouseButton::eLeft ) )
+					{
+						m_x = DoTransformX( p_event.GetX() );
+						m_y = DoTransformY( p_event.GetY() );
+						m_oldX = m_x;
+						m_oldY = m_y;
+					}
 				}
 			}
 		}
@@ -497,26 +431,50 @@ namespace orastus
 			{
 				if ( m_game.IsRunning() )
 				{
-					m_x = DoTransformX( p_event.GetX() );
-					m_y = DoTransformY( p_event.GetY() );
-					m_oldX = m_x;
-					m_oldY = m_y;
-					m_listener->PostEvent( MakeFunctorEvent( EventType::ePreRender, [this, l_window]()
-					{
-						Camera & l_camera = *l_window->GetCamera();
-						l_camera.Update();
-						auto l_type = l_window->GetPickingPass().Pick( Position{ int( m_x ), int( m_y ) }, l_camera );
+					auto l_inputListener = wxGetApp().GetCastor().GetUserInputListener();
 
-						if ( l_type != PickingPass::NodeType::eNone
-							&& l_type != PickingPass::NodeType::eBillboard )
-						{
-							DoUpdateSelectedGeometry( l_window->GetPickingPass().GetPickedGeometry() );
-						}
-						else
-						{
-							DoUpdateSelectedGeometry( nullptr );
-						}
-					} ) );
+					if ( !l_inputListener || !l_inputListener->FireMouseButtonReleased( MouseButton::eLeft ) )
+					{
+						m_x = DoTransformX( p_event.GetX() );
+						m_y = DoTransformY( p_event.GetY() );
+						m_oldX = m_x;
+						m_oldY = m_y;
+						m_listener->PostEvent( MakeFunctorEvent( EventType::ePreRender
+							, [this, l_window]()
+							{
+								Camera & l_camera = *l_window->GetCamera();
+								l_camera.Update();
+								auto l_type = l_window->GetPickingPass().Pick( Position{ int( m_x ), int( m_y ) }, l_camera );
+
+								if ( l_type != PickingPass::NodeType::eNone
+									&& l_type != PickingPass::NodeType::eBillboard )
+								{
+									DoUpdateSelectedGeometry( l_window->GetPickingPass().GetPickedGeometry() );
+								}
+								else
+								{
+									m_selectedGeometry.reset();
+									m_game.Unselect();
+								}
+							} ) );
+					}
+				}
+			}
+
+			p_event.Skip();
+		}
+
+		void RenderPanel::OnMouseRDown( wxMouseEvent & p_event )
+		{
+			auto l_window = GetRenderWindow();
+
+			if ( l_window )
+			{
+				auto l_inputListener = wxGetApp().GetCastor().GetUserInputListener();
+
+				if ( l_inputListener )
+				{
+					l_inputListener->FireMouseButtonPushed( MouseButton::eRight );
 				}
 			}
 
@@ -529,53 +487,11 @@ namespace orastus
 
 			if ( l_window )
 			{
-				if ( m_game.IsRunning()/* && m_selectedTower*/ )
+				auto l_inputListener = wxGetApp().GetCastor().GetUserInputListener();
+
+				if ( l_inputListener )
 				{
-					//wxMenu l_menu;
-
-					//if ( m_selectedTower->CanUpgradeSpeed() )
-					//{
-					//	l_menu.Append( int( MenuID::eUpgradeSpeed ), wxString{ wxT( "Augmenter vitesse (" ) } << m_selectedTower->GetSpeedUpgradeCost() << wxT( ")" ) );
-					//	l_menu.Enable( int( MenuID::eUpgradeSpeed ), m_game.CanAfford( m_selectedTower->GetSpeedUpgradeCost() ) );
-					//}
-					//else
-					//{
-					//	l_menu.Append( int( MenuID::eUpgradeSpeed ), wxString{ wxT( "Augmenter vitesse (Max)" ) } );
-					//	l_menu.Enable( int( MenuID::eUpgradeSpeed ), false );
-					//}
-
-					//if ( m_selectedTower->CanUpgradeRange() )
-					//{
-					//	l_menu.Append( int( MenuID::eUpgradeRange ), wxString{ wxT( "Augmenter portee (" ) } << m_selectedTower->GetRangeUpgradeCost() << wxT( ")" ) );
-					//	l_menu.Enable( int( MenuID::eUpgradeRange ), m_game.CanAfford( m_selectedTower->GetRangeUpgradeCost() ) );
-					//}
-					//else
-					//{
-					//	l_menu.Append( int( MenuID::eUpgradeRange ), wxString{ wxT( "Augmenter portee (Max)" ) } );
-					//	l_menu.Enable( int( MenuID::eUpgradeRange ), false );
-					//}
-
-					//if ( m_selectedTower->CanUpgradeDamage() )
-					//{
-					//	l_menu.Append( int( MenuID::eUpgradeDamage ), wxString{ wxT( "Augmenter degats (" ) } << m_selectedTower->GetDamageUpgradeCost() << wxT( ")" ) );
-					//	l_menu.Enable( int( MenuID::eUpgradeDamage ), m_game.CanAfford( m_selectedTower->GetDamageUpgradeCost() ) );
-					//}
-					//else
-					//{
-					//	l_menu.Append( int( MenuID::eUpgradeDamage ), wxString{ wxT( "Augmenter degats (Max)" ) } );
-					//	l_menu.Enable( int( MenuID::eUpgradeDamage ), false );
-					//}
-
-					//PopupMenu( &l_menu, p_event.GetPosition() );
-				}
-				else if ( !m_selectedGeometry.expired() )
-				{
-					//wxMenu l_menu;
-					//l_menu.Append( int( MenuID::eNewLRTower ), wxString( "Nouvelle Tour Longue Distance (" ) << m_longRange.GetTowerCost() << wxT( ")" ) );
-					//l_menu.Append( int( MenuID::eNewSRTower ), wxString( "Nouvelle Tour Courte Distance (" ) << m_shortRange.GetTowerCost() << wxT( ")" ) );
-					//l_menu.Enable( int( MenuID::eNewLRTower ), m_game.CanAfford( m_longRange.GetTowerCost() ) );
-					//l_menu.Enable( int( MenuID::eNewSRTower ), m_game.CanAfford( m_shortRange.GetTowerCost() ) );
-					//PopupMenu( &l_menu, p_event.GetPosition() );
+					l_inputListener->FireMouseButtonReleased( MouseButton::eRight );
 				}
 			}
 
@@ -592,13 +508,18 @@ namespace orastus
 			{
 				if ( m_game.IsRunning() )
 				{
-					static real constexpr l_mult = 4.0_r;
-					real l_deltaX = 0.0_r;
-					real l_deltaY = std::min( 1.0_r / l_mult, 1.0_r ) * ( m_oldY - m_y ) / l_mult;
+					auto l_inputListener = wxGetApp().GetCastor().GetUserInputListener();
 
-					if ( m_mouseLeftDown )
+					if ( !l_inputListener || !l_inputListener->FireMouseMove( Position{ int( m_x ), int( m_y ) } ) )
 					{
-						m_cameraState->AddAngularVelocity( Point2r{ -l_deltaY, l_deltaX } );
+						static real constexpr l_mult = 4.0_r;
+						real l_deltaX = 0.0_r;
+						real l_deltaY = std::min( 1.0_r / l_mult, 1.0_r ) * ( m_oldY - m_y ) / l_mult;
+
+						if ( m_mouseLeftDown )
+						{
+							m_cameraState->AddAngularVelocity( Point2r{ -l_deltaY, l_deltaX } );
+						}
 					}
 				}
 			}
@@ -661,51 +582,6 @@ namespace orastus
 		{
 			m_cameraState->AddScalarVelocity( Point3r{ -g_camSpeed, 0.0_r, 0.0_r } );
 			p_event.Skip();
-		}
-
-		void RenderPanel::OnNewLongRangeTower( wxCommandEvent & p_event )
-		{
-			if ( m_game.IsRunning() )
-			{
-				//m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender
-				//	, [this]()
-				//	{
-				//		if ( m_game.BuildTower( m_marker->GetPosition(), std::make_unique< LongRangeTower >( m_longRange ) ) )
-				//		{
-				//			DoUpdateSelectedGeometry( nullptr );
-				//		}
-				//	} ) );
-			}
-		}
-
-		void RenderPanel::OnNewShortRangeTower( wxCommandEvent & p_event )
-		{
-			if ( m_game.IsRunning() )
-			{
-				//m_listener->PostEvent( MakeFunctorEvent( EventType::ePostRender
-				//	, [this]()
-				//	{
-				//		if ( m_game.BuildTower( m_marker->GetPosition(), std::make_unique< ShortRangeTower >( m_shortRange ) ) )
-				//		{
-				//			DoUpdateSelectedGeometry( nullptr );
-				//		}
-				//	} ) );
-			}
-		}
-
-		void RenderPanel::OnUpgradeTowerSpeed( wxCommandEvent & p_event )
-		{
-			DoUpgradeTowerSpeed();
-		}
-
-		void RenderPanel::OnUpgradeTowerRange( wxCommandEvent & p_event )
-		{
-			DoUpgradeTowerRange();
-		}
-
-		void RenderPanel::OnUpgradeTowerDamage( wxCommandEvent & p_event )
-		{
-			DoUpgradeTowerDamage();
 		}
 	}
 }

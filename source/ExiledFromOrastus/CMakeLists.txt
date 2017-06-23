@@ -57,14 +57,6 @@ if( wxWidgets_FOUND AND GTK2_FOUND )
 	)
 	set_property( TARGET ${PROJECT_NAME} PROPERTY FOLDER "Outputs" )
 	add_target_astyle( ${PROJECT_NAME} ".h;.hpp;.inl;.cpp" )
-
-	file(
-		GLOB
-			DataFiles
-			${CMAKE_CURRENT_SOURCE_DIR}/Data/*.*
-	)
-
-	copy_target_files( ${PROJECT_NAME} "" ${DataFiles} )
 else()
 	if( NOT wxWidgets_FOUND )
 		message( WARNING "wxWidgets libraries not found" )

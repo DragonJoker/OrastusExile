@@ -5,6 +5,7 @@ See licence file in root folder, MIT.txt
 #include "ComponentTest.hpp"
 #include "ComponentDataTest.hpp"
 #include "ResourceTest.hpp"
+#include "EcsTest.hpp"
 #include "TowerTest.hpp"
 #include "EnemyTest.hpp"
 #include "BulletTest.hpp"
@@ -40,6 +41,7 @@ int main( int argc, char * const * const argv )
 	Testing::Register( std::make_unique< orastus::test::ComponentTest >() );
 	Testing::Register( std::make_unique< orastus::test::ComponentDataTest >() );
 	Testing::Register( std::make_unique< orastus::test::ResourceTest >() );
+	Testing::Register( std::make_unique< orastus::test::EcsTest >() );
 	Testing::Register( std::make_unique< orastus::test::TowerTest >() );
 	Testing::Register( std::make_unique< orastus::test::EnemyTest >() );
 	Testing::Register( std::make_unique< orastus::test::BulletTest >() );

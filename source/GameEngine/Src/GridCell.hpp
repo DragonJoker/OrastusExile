@@ -5,7 +5,7 @@ See licence file in root folder, MIT.txt
 #ifndef ___EFO_GridCell_HPP___
 #define ___EFO_GridCell_HPP___
 
-#include "GameEnginePrerequisites.hpp"
+#include "Ecs/Entity.hpp"
 
 namespace orastus
 {
@@ -53,6 +53,16 @@ namespace orastus
 			, m_state{ p_state }
 		{
 		}
+		/**
+		*\brief
+		*	Explicit conversion operator to bool.
+		*\return
+		*	\p false if the cell state is orastus::GridCell::State::eInvalid.
+		*/
+		inline explicit operator bool()const
+		{
+			return m_state != State::eInvalid;
+		}
 		//! The cell X coordinate.
 		uint32_t m_x;
 		//! The cell Y coordinate.
@@ -60,7 +70,7 @@ namespace orastus
 		//! The cell state.
 		State m_state;
 		//! The entity at this cell.
-		Entity * m_entity{ nullptr };
+		Entity m_entity;
 	};
 	//! A cell array.
 	using CellArray = std::vector< GridCell >;

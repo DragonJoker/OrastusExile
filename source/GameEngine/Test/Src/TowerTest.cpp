@@ -3,8 +3,8 @@ See licence file in root folder, MIT.txt
 */
 #include "TowerTest.hpp"
 
-#include <Game.hpp>
-#include <TowerState.hpp>
+#include <ECS/Ecs.hpp>
+#include <State/TowerState.hpp>
 
 namespace
 {
@@ -41,8 +41,7 @@ namespace orastus
 			float l_range{ 0.56f };
 			float l_speed{ 2.14f };
 			uint32_t l_level{ 1u };
-			auto l_tower = l_ecs.CreateTower( l_cooldown, l_damage, l_range, l_speed, l_level );
-			CT_EQUAL( l_ecs.GetComponentData< TowerState >( l_tower, l_ecs.GetComponent( Ecs::StateComponent ) ).GetValue(), TowerState::eIdle );
+			auto l_tower = l_ecs.CreateTower( l_cooldown, l_damage, l_range, l_speed, l_level, nullptr, nullptr, nullptr );
 			CT_EQUAL( l_ecs.GetComponentData< Milliseconds >( l_tower, l_ecs.GetComponent( Ecs::CooldownComponent ) ).GetValue(), l_cooldown );
 			CT_EQUAL( l_ecs.GetComponentData< uint32_t >( l_tower, l_ecs.GetComponent( Ecs::DamageComponent ) ).GetValue(), l_damage );
 			CT_EQUAL( l_ecs.GetComponentData< float >( l_tower, l_ecs.GetComponent( Ecs::RangeComponent ) ).GetValue(), l_range );
@@ -51,8 +50,7 @@ namespace orastus
 
 			uint32_t l_splashDamage{ 500u };
 			float l_splashRange{ 0.1f };
-			auto l_splashTower = l_ecs.CreateTower( l_cooldown, l_damage, l_range, l_speed, l_splashDamage, l_splashRange, l_level );
-			CT_EQUAL( l_ecs.GetComponentData< TowerState >( l_splashTower, l_ecs.GetComponent( Ecs::StateComponent ) ).GetValue(), TowerState::eIdle );
+			auto l_splashTower = l_ecs.CreateTower( l_cooldown, l_damage, l_range, l_speed, l_splashDamage, l_splashRange, l_level, nullptr, nullptr, nullptr );
 			CT_EQUAL( l_ecs.GetComponentData< Milliseconds >( l_splashTower, l_ecs.GetComponent( Ecs::CooldownComponent ) ).GetValue(), l_cooldown );
 			CT_EQUAL( l_ecs.GetComponentData< uint32_t >( l_splashTower, l_ecs.GetComponent( Ecs::DamageComponent ) ).GetValue(), l_damage );
 			CT_EQUAL( l_ecs.GetComponentData< float >( l_splashTower, l_ecs.GetComponent( Ecs::RangeComponent ) ).GetValue(), l_range );

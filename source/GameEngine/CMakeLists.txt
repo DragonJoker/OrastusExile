@@ -34,6 +34,9 @@ file( GLOB ${PROJECT_NAME}_SOURCE_FILES
 source_group( "Header Files" FILES ${${PROJECT_NAME}_HEADER_FILES} )
 source_group( "Source Files" FILES ${${PROJECT_NAME}_SOURCE_FILES} )
 
+parse_subdir_files( ECS "ECS" )
+parse_subdir_files( State "State" )
+
 set( OrastusMinLibraries
 	${OrastusMinLibraries}
 	${PROJECT_NAME}
@@ -54,6 +57,14 @@ castor3d_copy_files(
 	${PROJECTS_BINARIES_OUTPUT_DIR_RELWITHDEBINFO}
 	${PROJECTS_BINARIES_OUTPUT_DIR_DEBUG}
 )
+
+file(
+	GLOB
+		DataFiles
+		${CMAKE_CURRENT_SOURCE_DIR}/Data/*.*
+)
+
+copy_target_files( ${PROJECT_NAME} "" ${DataFiles} )
 
 if ( ORASTUS_BUILDGRP_TEST )
 	add_subdirectory( Test )

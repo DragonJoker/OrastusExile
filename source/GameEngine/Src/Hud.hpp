@@ -22,7 +22,7 @@ namespace orastus
 		*\param[in] p_game
 		*	The game instance.
 		*/
-		EFO_API Hud( Game const & p_game
+		EFO_API Hud( Game & p_game
 			, Castor3D::Scene const & p_scene );
 		/**
 		*\brief
@@ -56,12 +56,28 @@ namespace orastus
 		EFO_API void GameOver();
 		/**
 		*\brief
+		*	Shows the build tower options.
+		*/
+		EFO_API void ShowBuild();
+		/**
+		*\brief
+		*	Shows the build tower options.
+		*/
+		EFO_API void HideBuild();
+		/**
+		*\brief
 		*	Updates the HUD.
 		*/
 		EFO_API void Update();
+		/**
+		*\brief
+		*	Updates the HUD tower info.
+		*/
+		EFO_API void UpdateTowerInfo( Ecs const & p_ecs
+			, Entity const & p_entity );
 
 	private:
-		Game const & m_game;
+		Game & m_game;
 		Castor3D::Scene const & m_scene;
 		Castor3D::TextOverlayWPtr m_lives;
 		Castor3D::TextOverlayWPtr m_ore;

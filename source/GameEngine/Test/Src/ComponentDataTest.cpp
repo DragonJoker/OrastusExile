@@ -3,7 +3,7 @@ See licence file in root folder, MIT.txt
 */
 #include "ComponentDataTest.hpp"
 
-#include <ComponentData.hpp>
+#include <ECS/ComponentData.hpp>
 
 namespace
 {
