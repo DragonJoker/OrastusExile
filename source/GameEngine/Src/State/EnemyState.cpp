@@ -90,6 +90,7 @@ namespace orastus
 				else
 				{
 					l_result = true;
+					std::cout << "\nArrived at destination" << std::endl;
 					p_node.SetPosition( Castor::Point3r{ 0, -10, 0 } );
 				}
 			}
@@ -116,40 +117,29 @@ namespace orastus
 				, p_ecs.GetComponent( Ecs::WalkComponent ) ).GetValue();
 			auto l_geometry = p_ecs.GetComponentData< Castor3D::GeometrySPtr >( p_entity
 				, p_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue();
+			auto l_node = Game::GetEnemyNode( l_geometry );
+			auto & l_speed = p_ecs.GetComponentData< float >( p_entity
+				, p_ecs.GetComponent( Ecs::SpeedComponent ) );
 
-			if ( l_walkData )
-			{
-				auto l_node = Game::GetEnemyNode( l_geometry );
-				auto & l_speed = p_ecs.GetComponentData< float >( p_entity
-					, p_ecs.GetComponent( Ecs::SpeedComponent ) );
-
-				return State{ [&p_ecs, p_entity, l_walkData, l_node, &l_speed]( Game & p_game
-					, Milliseconds const & p_elapsed
-					, Milliseconds const & p_total )
-				{
-					auto l_life = p_ecs.GetComponentData< uint32_t >( p_entity
-						, p_ecs.GetComponent( Ecs::LifeComponent ) ).GetValue();
-
-					if ( l_life )
-					{
-						auto const l_angle = Castor::Angle::from_degrees( -p_elapsed.count() * 120 / 1000.0_r );
-						l_node->Yaw( l_angle );
-						return WalkToDestination( p_game
-							, *l_walkData
-							, l_speed.GetValue()
-							, *l_node
-							, p_elapsed );
-					}
-
-					return true;
-				} };
-			}
-
-			return State{ []( Game & p_game
+			return State{ [&p_ecs, p_entity, l_walkData, l_node, &l_speed]( Game & p_game
 				, Milliseconds const & p_elapsed
 				, Milliseconds const & p_total )
 			{
-				return false;
+				auto l_life = p_ecs.GetComponentData< uint32_t >( p_entity
+					, p_ecs.GetComponent( Ecs::LifeComponent ) ).GetValue();
+
+				if ( l_life )
+				{
+					auto const l_angle = Castor::Angle::from_degrees( -p_elapsed.count() * 120 / 1000.0_r );
+					l_node->Yaw( l_angle );
+					return WalkToDestination( p_game
+						, *l_walkData
+						, l_speed.GetValue()
+						, *l_node
+						, p_elapsed );
+				}
+
+				return true;
 			} };
 		}
 	}

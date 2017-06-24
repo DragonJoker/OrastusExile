@@ -112,6 +112,13 @@ namespace orastus
 		EFO_API void KillEnemy( Entity p_entity );
 		/**
 		*\brief
+		*	Kills a bullet.
+		*\param[in] p_entity
+		*	The bullet entity.
+		*/
+		EFO_API void KillBullet( Entity p_entity );
+		/**
+		*\brief
 		*	Hits a target.
 		*\param[in] p_source
 		*	The hit source.

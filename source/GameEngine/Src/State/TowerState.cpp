@@ -101,38 +101,27 @@ namespace orastus
 		{
 			auto l_geometry = p_ecs.GetComponentData< Castor3D::GeometrySPtr >( p_entity
 				, p_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue();
+			auto l_node = Game::GetTowerNode( l_geometry );
+			auto l_range = p_ecs.GetComponentData< float >( p_entity
+				, p_ecs.GetComponent( Ecs::RangeComponent ) ).GetValue();
 
-			if ( l_geometry )
-			{
-				auto l_node = Game::GetTowerNode( l_geometry );
-				auto l_range = p_ecs.GetComponentData< float >( p_entity
-					, p_ecs.GetComponent( Ecs::RangeComponent ) ).GetValue();
-
-				return State{ [&p_ecs, p_entity, l_node, l_range]( Game & p_game
-					, Milliseconds const & p_elapsed
-					, Milliseconds const & p_total )
-				{
-					auto & l_enemies = p_ecs.GetComponentDatas( p_ecs.GetComponent( Ecs::LifeComponent ) );
-					auto l_target = DoLookForEnemy( p_ecs
-						, l_enemies
-						, *l_node
-						, l_range );
-
-					if ( l_target )
-					{
-						p_ecs.GetComponentData< AttackDataPtr >( p_entity
-							, p_ecs.GetComponent( Ecs::AttackComponent ) ).GetValue()->m_target = l_target;
-					}
-
-					return bool( l_target );
-				} };
-			}
-
-			return State{ []( Game & p_game
+			return State{ [&p_ecs, p_entity, l_node, l_range]( Game & p_game
 				, Milliseconds const & p_elapsed
 				, Milliseconds const & p_total )
 			{
-				return false;
+				auto & l_enemies = p_ecs.GetComponentDatas( p_ecs.GetComponent( Ecs::LifeComponent ) );
+				auto l_target = DoLookForEnemy( p_ecs
+					, l_enemies
+					, *l_node
+					, l_range );
+
+				if ( l_target )
+				{
+					p_ecs.GetComponentData< AttackDataPtr >( p_entity
+						, p_ecs.GetComponent( Ecs::AttackComponent ) ).GetValue()->m_target = l_target;
+				}
+
+				return bool( l_target );
 			} };
 		}
 
@@ -142,18 +131,18 @@ namespace orastus
 				, p_ecs.GetComponent( Ecs::AnimationComponent ) ).GetValue();
 			auto l_attackdata = p_ecs.GetComponentData< AttackDataPtr >( p_entity
 				, p_ecs.GetComponent( Ecs::AttackComponent ) ).GetValue();
+			auto l_geometry = p_ecs.GetComponentData< Castor3D::GeometrySPtr >( p_entity
+				, p_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue();
+			auto l_node = Game::GetTowerNode( l_geometry );
 
-			if ( l_animdata && l_attackdata )
+			return State{ [&p_ecs, p_entity, l_attackdata, l_animdata, l_node]( Game & p_game
+				, Milliseconds const & p_elapsed
+				, Milliseconds const & p_total )
 			{
-				auto l_geometry = p_ecs.GetComponentData< Castor3D::GeometrySPtr >( p_entity
-					, p_ecs.GetComponent( Ecs::GeometryComponent ) ).GetValue();
-				auto l_node = Game::GetTowerNode( l_geometry );
+				auto l_result = false;
 
-				return State{ [&p_ecs, p_entity, l_attackdata, l_animdata, l_node]( Game & p_game
-					, Milliseconds const & p_elapsed
-					, Milliseconds const & p_total )
+				if ( l_attackdata->m_target )
 				{
-					auto l_result = false;
 					auto l_life = p_ecs.GetComponentData< uint32_t >( l_attackdata->m_target
 						, p_ecs.GetComponent( Ecs::LifeComponent ) ).GetValue();
 
@@ -166,56 +155,49 @@ namespace orastus
 							, *l_node
 							, l_range );
 					}
+				}
 
-					if ( l_attackdata->m_target )
+				if ( l_attackdata->m_target )
+				{
+					DoTurnToTarget( p_ecs
+						, l_attackdata->m_target
+						, *l_node );
+
+					if ( !l_animdata->m_started )
 					{
-						DoTurnToTarget( p_ecs
-							, l_attackdata->m_target
-							, *l_node );
-
-						if ( !l_animdata->m_started )
-						{
-							l_animdata->m_animation->StartAnimation( l_animdata->m_animName );
-							l_animdata->m_started = true;
-							l_attackdata->m_shot = false;
-						}
-						else
-						{
-							if ( p_total >= l_attackdata->m_shootDelay
-								&& !l_attackdata->m_shot )
-							{
-								p_game.CreateBullet( p_entity
-									, l_attackdata->m_target );
-								l_attackdata->m_shot = true;
-							}
-							else if ( p_total >= l_animdata->m_total )
-							{
-								l_animdata->m_started = false;
-								l_animdata->m_animation->StopAnimation( l_animdata->m_animName );
-								l_animdata->m_animation->StartAnimation( l_animdata->m_animName );
-								l_animdata->m_animation->PauseAnimation( l_animdata->m_animName );
-								l_result = true;
-							}
-						}
+						l_animdata->m_animation->StartAnimation( l_animdata->m_animName );
+						l_animdata->m_started = true;
+						l_attackdata->m_shot = false;
 					}
 					else
 					{
-						l_animdata->m_started = false;
-						l_animdata->m_animation->StopAnimation( l_animdata->m_animName );
-						l_animdata->m_animation->StartAnimation( l_animdata->m_animName );
-						l_animdata->m_animation->PauseAnimation( l_animdata->m_animName );
-						l_result = true;
+						if ( p_total >= l_attackdata->m_shootDelay
+							&& !l_attackdata->m_shot )
+						{
+							p_game.CreateBullet( p_entity
+								, l_attackdata->m_target );
+							l_attackdata->m_shot = true;
+						}
+						else if ( p_total >= l_animdata->m_total )
+						{
+							l_animdata->m_started = false;
+							l_animdata->m_animation->StopAnimation( l_animdata->m_animName );
+							l_animdata->m_animation->StartAnimation( l_animdata->m_animName );
+							l_animdata->m_animation->PauseAnimation( l_animdata->m_animName );
+							l_result = true;
+						}
 					}
+				}
+				else if ( p_total >= l_animdata->m_total )
+				{
+					l_animdata->m_started = false;
+					l_animdata->m_animation->StopAnimation( l_animdata->m_animName );
+					l_animdata->m_animation->StartAnimation( l_animdata->m_animName );
+					l_animdata->m_animation->PauseAnimation( l_animdata->m_animName );
+					l_result = true;
+				}
 
-					return l_result;
-				} };
-			}
-
-			return State{ []( Game & p_game
-				, Milliseconds const & p_elapsed
-				, Milliseconds const & p_total )
-			{
-				return false;
+				return l_result;
 			} };
 		}
 	}

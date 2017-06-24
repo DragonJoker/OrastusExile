@@ -306,6 +306,11 @@ namespace orastus
 		m_enemySpawner.KillEnemy( p_entity );
 	}
 
+	void Game::KillBullet( Entity p_entity )
+	{
+		m_bulletSpawner.KillBullet( p_entity );
+	}
+
 	void Game::Hit( Entity p_source
 		, Entity p_target
 		, uint32_t p_damage )
@@ -398,7 +403,7 @@ namespace orastus
 				m_selectedCell->m_entity = m_ecs.CreateTower( 6000_ms
 					, 5u
 					, 100.0f
-					, 96.0f
+					, 200.0f
 					, 1u
 					, l_tower
 					, l_data
