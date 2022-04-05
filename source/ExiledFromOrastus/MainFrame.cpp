@@ -3,7 +3,7 @@
 #include "RenderPanel.hpp"
 #include "ExiledFromOrastus.hpp"
 
-#include <Game.hpp>
+#include <GameEngine/Game.hpp>
 
 #include <Castor3D/Event/Frame/CpuFunctorEvent.hpp>
 #include <Castor3D/Render/RenderLoop.hpp>
@@ -77,7 +77,7 @@ namespace orastus
 		{
 			auto & l_engine = wxGetApp().getCastor();
 			auto target = doLoadScene( l_engine
-				, File::getExecutableDirectory().getPath() / cuT( "share" ) / cuT( "GameEngine" ) / cuT( "ExiledFromOrastus.zip" )
+				, File::getExecutableDirectory().getPath() / cuT( "share" ) / cuT( "GameEngine" ) / cuT( "GameEngine.zip" )
 				, l_engine.getRenderLoop().getWantedFps()
 				, l_engine.isThreaded() );
 

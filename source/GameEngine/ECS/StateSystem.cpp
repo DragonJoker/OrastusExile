@@ -1,10 +1,10 @@
 /**
 See licence file in root folder, MIT.txt
 */
-#include "StateSystem.hpp"
+#include "GameEngine/ECS/StateSystem.hpp"
 
-#include "ECS/Ecs.hpp"
-#include "State/StateMachine.hpp"
+#include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/State/StateMachine.hpp"
 
 namespace orastus
 {

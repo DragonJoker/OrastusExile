@@ -6,7 +6,7 @@ See licence file in root folder, MIT.txt
 #include "ExiledFromOrastusPrerequisites.hpp"
 #include "NodeState.hpp"
 
-#include <ECS/Entity.hpp>
+#include <GameEngine/ECS/Entity.hpp>
 
 #include <Castor3D/Engine.hpp>
 

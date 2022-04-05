@@ -1,9 +1,9 @@
-#include "BulletState.hpp"
+#include "GameEngine/State/BulletState.hpp"
 
-#include "ECS/Ecs.hpp"
-#include "ECS/Entity.hpp"
-#include "ECS/TrackData.hpp"
-#include "Game.hpp"
+#include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/ECS/Entity.hpp"
+#include "GameEngine/ECS/TrackData.hpp"
+#include "GameEngine/Game.hpp"
 
 #include <Castor3D/Scene/Geometry.hpp>
 #include <Castor3D/Scene/SceneNode.hpp>

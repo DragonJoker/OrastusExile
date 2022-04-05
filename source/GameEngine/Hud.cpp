@@ -1,6 +1,6 @@
-#include "Hud.hpp"
+#include "GameEngine/Hud.hpp"
 
-#include "Game.hpp"
+#include "GameEngine/Game.hpp"
 
 #include <Castor3D/Engine.hpp>
 #include <Castor3D/Cache/OverlayCache.hpp>
@@ -16,51 +16,51 @@ namespace orastus
 {
 	namespace
 	{
-		TextOverlaySPtr getTextOverlay( OverlayCache & p_cache
-			, String const & p_name )
+		TextOverlaySPtr getTextOverlay( OverlayCache & cache
+			, String const & name )
 		{
-			TextOverlaySPtr l_return;
-			OverlaySPtr l_overlay = p_cache.find( p_name ).lock();
+			TextOverlaySPtr result;
+			OverlaySPtr overlay = cache.find( name ).lock();
 
-			if ( l_overlay )
+			if ( overlay )
 			{
-				l_return = l_overlay->getTextOverlay();
+				result = overlay->getTextOverlay();
 			}
 
-			return l_return;
+			return result;
 		}
 
 		template< typename T >
-		void doUpdateText( Ecs const & p_ecs
-			, Entity const & p_entity
-			, ComponentId const & p_component
-			, TextOverlayWPtr const & p_text )
+		void doUpdateText( Ecs const & ecs
+			, Entity const & entity
+			, ComponentId const & component
+			, TextOverlayWPtr const & ptext )
 		{
-			auto & l_data = p_ecs.getComponentData< T >( p_entity
-				, p_ecs.getComponent( p_component ) );
-			auto l_text = p_text.lock();
+			auto & data = ecs.getComponentData< T >( entity
+				, ecs.getComponent( component ) );
+			auto text = ptext.lock();
 
-			if ( l_text )
+			if ( text )
 			{
-				l_text->setVisible( true );
-				l_text->setCaption( toString( l_data.getValue() ) );
+				text->setVisible( true );
+				text->setCaption( toString( data.getValue() ) );
 			}
 		}
 	}
 
-	Hud::Hud( Game & p_game
-		, Scene const & p_scene )
-		: m_game{ p_game }
-		, m_scene{ p_scene }
-		, m_lives{ getTextOverlay( p_scene.getEngine()->getOverlayCache(), cuT( "LivesValue" ) ) }
-		, m_ore{ getTextOverlay( p_scene.getEngine()->getOverlayCache(), cuT( "OreValue" ) ) }
-		, m_level{ getTextOverlay( p_scene.getEngine()->getOverlayCache(), cuT( "LevelValue" ) ) }
-		, m_kills{ getTextOverlay( p_scene.getEngine()->getOverlayCache(), cuT( "KillsValue" ) ) }
-		, m_enemyLife{ getTextOverlay( p_scene.getEngine()->getOverlayCache(), cuT( "MonsterLifeValue" ) ) }
-		, m_enemyBounty{ getTextOverlay( p_scene.getEngine()->getOverlayCache(), cuT( "MonsterBountyValue" ) ) }
-		, m_towerSpeed{ getTextOverlay( p_scene.getEngine()->getOverlayCache(), cuT( "TowerSpeedValue" ) ) }
-		, m_towerRange{ getTextOverlay( p_scene.getEngine()->getOverlayCache(), cuT( "TowerRangeValue" ) ) }
-		, m_towerDamage{ getTextOverlay( p_scene.getEngine()->getOverlayCache(), cuT( "TowerDamageValue" ) ) }
+	Hud::Hud( Game & game
+		, Scene const & scene )
+		: m_game{ game }
+		, m_scene{ scene }
+		, m_lives{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "LivesValue" ) ) }
+		, m_ore{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "OreValue" ) ) }
+		, m_level{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "LevelValue" ) ) }
+		, m_kills{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "KillsValue" ) ) }
+		, m_enemyLife{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "MonsterLifeValue" ) ) }
+		, m_enemyBounty{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "MonsterBountyValue" ) ) }
+		, m_towerSpeed{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerSpeedValue" ) ) }
+		, m_towerRange{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerRangeValue" ) ) }
+		, m_towerDamage{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerDamageValue" ) ) }
 	{
 	}
 
@@ -69,16 +69,16 @@ namespace orastus
 		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
 			, [this]()
 			{
-				auto & l_cache = m_scene.getEngine()->getOverlayCache();
-				l_cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( true );
-				l_cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDBuild1" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDBuild2" ) ).lock()->setVisible( false );
+				auto & cache = m_scene.getEngine()->getOverlayCache();
+				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( true );
+				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
+				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDBuild1" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDBuild2" ) ).lock()->setVisible( false );
 			} ) );
 	}
 
@@ -87,14 +87,14 @@ namespace orastus
 		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
 			, [this]()
 			{
-				auto & l_cache = m_scene.getEngine()->getOverlayCache();
-				l_cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDResources" ) ).lock()->setVisible( true );
-				l_cache.find( cuT( "HUDScore" ) ).lock()->setVisible( true );
-				l_cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( true );
-				l_cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
+				auto & cache = m_scene.getEngine()->getOverlayCache();
+				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( true );
+				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( true );
+				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( true );
+				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
+				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
 				update();
 			} ) );
 	}
@@ -104,14 +104,14 @@ namespace orastus
 		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
 			, [this]()
 			{
-				auto & l_cache = m_scene.getEngine()->getOverlayCache();
-				l_cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDPause" ) ).lock()->setVisible( true );
-				l_cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
+				auto & cache = m_scene.getEngine()->getOverlayCache();
+				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( true );
+				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
 			} ) );
 	}
 
@@ -120,14 +120,14 @@ namespace orastus
 		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
 			, [this]()
 			{
-				auto & l_cache = m_scene.getEngine()->getOverlayCache();
-				l_cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDResources" ) ).lock()->setVisible( true );
-				l_cache.find( cuT( "HUDScore" ) ).lock()->setVisible( true );
-				l_cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( true );
-				l_cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
+				auto & cache = m_scene.getEngine()->getOverlayCache();
+				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( true );
+				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( true );
+				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( true );
+				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
+				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
 			} ) );
 	}
 
@@ -136,14 +136,14 @@ namespace orastus
 		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
 			, [this]()
 			{
-				auto & l_cache = m_scene.getEngine()->getOverlayCache();
-				l_cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( true );
+				auto & cache = m_scene.getEngine()->getOverlayCache();
+				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
+				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( true );
 			} ) );
 	}
 
@@ -152,14 +152,14 @@ namespace orastus
 		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
 			, [this]()
 			{
-				auto & l_cache = m_scene.getEngine()->getOverlayCache();
-				l_cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( true );
-				l_cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
+				auto & cache = m_scene.getEngine()->getOverlayCache();
+				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
+				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( true );
+				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
 
 				//getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "ResultLevelValue" ) )->setCaption( StringStream() << m_game.getWave() );
 				//getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "ResultKillsValue" ) )->setCaption( StringStream() << m_game.getKills() );
@@ -168,17 +168,17 @@ namespace orastus
 
 	void Hud::showBuild()
 	{
-		auto l_userInput = m_scene.getEngine()->getUserInputListener();
-		l_userInput->fireMaterialEvent( cuT( "Build1ThumbFront" ), cuT( "HUDThumbShortRange" ) );
-		l_userInput->fireMaterialEvent( cuT( "Build2ThumbFront" ), cuT( "HUDThumbLongRange" ) );
-		l_userInput->fireTextEvent( cuT( "Build1Title" ), cuT( "Short range" ) );
-		l_userInput->fireTextEvent( cuT( "Build2Title" ), cuT( "Long range" ) );
-		l_userInput->registerClickAction( cuT( "Build1ThumbFrontButton" )
+		auto userInput = m_scene.getEngine()->getUserInputListener();
+		userInput->fireMaterialEvent( cuT( "Build1ThumbFront" ), cuT( "HUDThumbShortRange" ) );
+		userInput->fireMaterialEvent( cuT( "Build2ThumbFront" ), cuT( "HUDThumbLongRange" ) );
+		userInput->fireTextEvent( cuT( "Build1Title" ), cuT( "Short range" ) );
+		userInput->fireTextEvent( cuT( "Build2Title" ), cuT( "Long range" ) );
+		userInput->registerClickAction( cuT( "Build1ThumbFrontButton" )
 			, [this]()
 			{
 				m_game.createShortRangeTower();
 			} );
-		l_userInput->registerClickAction( cuT( "Build2ThumbFrontButton" )
+		userInput->registerClickAction( cuT( "Build2ThumbFrontButton" )
 			, [this]()
 			{
 				m_game.createLongRangeTower();
@@ -186,9 +186,9 @@ namespace orastus
 		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
 			, [this]()
 			{
-				auto & l_cache = m_scene.getEngine()->getOverlayCache();
-				l_cache.find( cuT( "HUDBuild1" ) ).lock()->setVisible( true );
-				l_cache.find( cuT( "HUDBuild2" ) ).lock()->setVisible( true );
+				auto & cache = m_scene.getEngine()->getOverlayCache();
+				cache.find( cuT( "HUDBuild1" ) ).lock()->setVisible( true );
+				cache.find( cuT( "HUDBuild2" ) ).lock()->setVisible( true );
 			} ) );
 	}
 
@@ -197,26 +197,26 @@ namespace orastus
 		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
 			, [this]()
 			{
-				auto & l_cache = m_scene.getEngine()->getOverlayCache();
-				l_cache.find( cuT( "HUDBuild1" ) ).lock()->setVisible( false );
-				l_cache.find( cuT( "HUDBuild2" ) ).lock()->setVisible( false );
+				auto & cache = m_scene.getEngine()->getOverlayCache();
+				cache.find( cuT( "HUDBuild1" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDBuild2" ) ).lock()->setVisible( false );
 			} ) );
-		auto l_userInput = m_scene.getEngine()->getUserInputListener();
-		l_userInput->unregisterClickAction( cuT( "Build1ThumbFrontButton" ) );
-		l_userInput->unregisterClickAction( cuT( "Build2ThumbFrontButton" ) );
+		auto userInput = m_scene.getEngine()->getUserInputListener();
+		userInput->unregisterClickAction( cuT( "Build1ThumbFrontButton" ) );
+		userInput->unregisterClickAction( cuT( "Build2ThumbFrontButton" ) );
 	}
 
-	void Hud::updateTowerInfo( Ecs const & p_ecs
-		, Entity const & p_entity )
+	void Hud::updateTowerInfo( Ecs const & ecs
+		, Entity const & entity )
 	{
-		if ( p_entity )
+		if ( entity )
 		{
 			m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
-				, [this, &p_ecs, p_entity]()
+				, [this, &ecs, entity]()
 				{
-					doUpdateText< uint32_t >( p_ecs, p_entity, Ecs::DamageComponent, m_towerDamage );
-					doUpdateText< Milliseconds >( p_ecs, p_entity, Ecs::CooldownComponent, m_towerSpeed );
-					doUpdateText< float >( p_ecs, p_entity, Ecs::RangeComponent, m_towerRange );
+					doUpdateText< uint32_t >( ecs, entity, Ecs::DamageComponent, m_towerDamage );
+					doUpdateText< Milliseconds >( ecs, entity, Ecs::CooldownComponent, m_towerSpeed );
+					doUpdateText< float >( ecs, entity, Ecs::RangeComponent, m_towerRange );
 				} ) );
 		}
 		else
@@ -233,46 +233,46 @@ namespace orastus
 
 	void Hud::update()
 	{
-		//auto l_text = m_lives.lock();
+		//auto text = m_lives.lock();
 
-		//if ( l_text )
+		//if ( text )
 		//{
-		//	l_text->setCaption( StringStream() << m_game.getLives() );
+		//	text->setCaption( StringStream() << m_game.getLives() );
 		//}
 
-		//l_text = m_ore.lock();
+		//text = m_ore.lock();
 
-		//if ( l_text )
+		//if ( text )
 		//{
-		//	l_text->setCaption( StringStream() << m_game.getOre() );
+		//	text->setCaption( StringStream() << m_game.getOre() );
 		//}
 
-		//l_text = m_level.lock();
+		//text = m_level.lock();
 
-		//if ( l_text )
+		//if ( text )
 		//{
-		//	l_text->setCaption( StringStream() << m_game.getWave() );
+		//	text->setCaption( StringStream() << m_game.getWave() );
 		//}
 
-		//l_text = m_kills.lock();
+		//text = m_kills.lock();
 
-		//if ( l_text )
+		//if ( text )
 		//{
-		//	l_text->setCaption( StringStream() << m_game.getKills() );
+		//	text->setCaption( StringStream() << m_game.getKills() );
 		//}
 
-		//l_text = m_enemyLife.lock();
+		//text = m_enemyLife.lock();
 
-		//if ( l_text )
+		//if ( text )
 		//{
-		//	l_text->setCaption( StringStream() << m_game.getEnemiesLife() );
+		//	text->setCaption( StringStream() << m_game.getEnemiesLife() );
 		//}
 
-		//l_text = m_enemyBounty.lock();
+		//text = m_enemyBounty.lock();
 
-		//if ( l_text )
+		//if ( text )
 		//{
-		//	l_text->setCaption( StringStream() << m_game.getEnemiesBounty() );
+		//	text->setCaption( StringStream() << m_game.getEnemiesBounty() );
 		//}
 	}
 }

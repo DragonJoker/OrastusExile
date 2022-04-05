@@ -1,10 +1,10 @@
-#include "Ecs.hpp"
+#include "GameEngine/ECS/Ecs.hpp"
 
-#include "ECS/Bullet.hpp"
-#include "ECS/Enemy.hpp"
-#include "ECS/MapBlock.hpp"
-#include "ECS/Tower.hpp"
-#include "ECS/SplashTower.hpp"
+#include "GameEngine/ECS/Bullet.hpp"
+#include "GameEngine/ECS/Enemy.hpp"
+#include "GameEngine/ECS/MapBlock.hpp"
+#include "GameEngine/ECS/Tower.hpp"
+#include "GameEngine/ECS/SplashTower.hpp"
 
 using namespace castor;
 using namespace castor3d;

@@ -1,11 +1,11 @@
-#include "Game.hpp"
+#include "GameEngine/Game.hpp"
 
-#include "Ecs/AnimationData.hpp"
-#include "Ecs/AttackData.hpp"
-#include "ECS/WalkData.hpp"
-#include "State/EnemyState.hpp"
-#include "State/StateMachine.hpp"
-#include "State/TowerState.hpp"
+#include "GameEngine/Ecs/AnimationData.hpp"
+#include "GameEngine/Ecs/AttackData.hpp"
+#include "GameEngine/ECS/WalkData.hpp"
+#include "GameEngine/State/EnemyState.hpp"
+#include "GameEngine/State/StateMachine.hpp"
+#include "GameEngine/State/TowerState.hpp"
 
 #include <Castor3D/Engine.hpp>
 #include <Castor3D/Event/Frame/FrameListener.hpp>
@@ -30,88 +30,88 @@ namespace orastus
 
 	namespace
 	{
-		void doPrepareGridLine( GridPathNode const & p_prv
-			, GridPathNode const & p_cur
-			, Grid & p_grid )
+		void doPrepareGridLine( GridPathNode const & prv
+			, GridPathNode const & cur
+			, Grid & grid )
 		{
-			if ( p_prv.m_x != p_cur.m_x )
+			if ( prv.x != cur.x )
 			{
-				for ( auto x = std::min( p_prv.m_x, p_cur.m_x ); x < std::max( p_prv.m_x, p_cur.m_x ); ++x )
+				for ( auto x = std::min( prv.x, cur.x ); x < std::max( prv.x, cur.x ); ++x )
 				{
-					p_grid( p_prv.m_y - 1, x - 1 ).m_state = GridCell::State::ePath;
-					p_grid( p_prv.m_y - 1, x - 0 ).m_state = GridCell::State::ePath;
-					p_grid( p_prv.m_y - 0, x - 1 ).m_state = GridCell::State::ePath;
-					p_grid( p_prv.m_y - 0, x - 0 ).m_state = GridCell::State::ePath;
+					grid( prv.y - 1, x - 1 ).state = GridCell::State::ePath;
+					grid( prv.y - 1, x - 0 ).state = GridCell::State::ePath;
+					grid( prv.y - 0, x - 1 ).state = GridCell::State::ePath;
+					grid( prv.y - 0, x - 0 ).state = GridCell::State::ePath;
 				}
 			}
 			else
 			{
-				for ( auto y = std::min( p_prv.m_y, p_cur.m_y ); y <= std::max( p_prv.m_y, p_cur.m_y ); ++y )
+				for ( auto y = std::min( prv.y, cur.y ); y <= std::max( prv.y, cur.y ); ++y )
 				{
-					p_grid( y - 1, p_prv.m_x - 1 ).m_state = GridCell::State::ePath;
-					p_grid( y - 1, p_prv.m_x - 0 ).m_state = GridCell::State::ePath;
-					p_grid( y - 0, p_prv.m_x - 1 ).m_state = GridCell::State::ePath;
-					p_grid( y - 0, p_prv.m_x - 0 ).m_state = GridCell::State::ePath;
+					grid( y - 1, prv.x - 1 ).state = GridCell::State::ePath;
+					grid( y - 1, prv.x - 0 ).state = GridCell::State::ePath;
+					grid( y - 0, prv.x - 1 ).state = GridCell::State::ePath;
+					grid( y - 0, prv.x - 0 ).state = GridCell::State::ePath;
 				}
 			}
 		}
 
-		void doPrepareTarget( GridPathNode const & p_cur
-			, Scene & p_scene
-			, Grid & p_grid )
+		void doPrepareTarget( GridPathNode const & cur
+			, Scene & scene
+			, Grid & grid )
 		{
-			for ( uint32_t x = p_cur.m_x - 2; x <= p_cur.m_x + 2; ++x )
+			for ( uint32_t x = cur.x - 2; x <= cur.x + 2; ++x )
 			{
-				for ( uint32_t y = p_cur.m_y - 1; y <= p_cur.m_y + 3; ++y )
+				for ( uint32_t y = cur.y - 1; y <= cur.y + 3; ++y )
 				{
-					p_grid( y, x ).m_state = GridCell::State::ePath;
+					grid( y, x ).state = GridCell::State::ePath;
 				}
 			}
 
-			p_grid( p_cur.m_y, p_cur.m_x ).m_state = GridCell::State::eTarget;
+			grid( cur.y, cur.x ).state = GridCell::State::eTarget;
 		}
 	}
 
 	//*********************************************************************************************
 
-	void Game::SelectedEntity::select( Entity const & p_entity
-		, castor3d::GeometrySPtr p_geometry )
+	void Game::SelectedEntity::select( Entity const & pentity
+		, castor3d::GeometrySPtr pgeometry )
 	{
 		unselect();
 
-		if ( p_entity && p_geometry )
+		if ( pentity && pgeometry )
 		{
-			m_entity = p_entity;
-			m_geometry = p_geometry;
-			m_materials.clear();
-			auto & l_materials = m_geometry->getScene()->getEngine()->getMaterialCache();
+			entity = pentity;
+			geometry = pgeometry;
+			materials.clear();
+			auto & cache = geometry->getScene()->getEngine()->getMaterialCache();
 
-			for ( auto l_submesh : *m_geometry->getMesh().lock() )
+			for ( auto submesh : *geometry->getMesh().lock() )
 			{
-				auto l_old = m_geometry->getMaterial( *l_submesh );
-				auto l_new = l_materials.find( l_old->getName() + cuT( "_sel" ) ).lock();
-				CU_Require( l_new );
-				m_geometry->setMaterial( *l_submesh, l_new.get() );
-				m_materials.push_back( l_old );
+				auto oldMat = geometry->getMaterial( *submesh );
+				auto newMat = cache.find( oldMat->getName() + cuT( "_sel" ) ).lock();
+				CU_Require( newMat );
+				geometry->setMaterial( *submesh, newMat.get() );
+				materials.push_back( oldMat );
 			}
 		}
 	}
 
 	void Game::SelectedEntity::unselect()
 	{
-		if ( m_entity && m_geometry )
+		if ( entity && geometry )
 		{
-			uint32_t l_index{ 0u };
-			auto l_mesh = m_geometry->getMesh().lock();
+			uint32_t index{ 0u };
+			auto mesh = geometry->getMesh().lock();
 
-			for ( auto l_material : m_materials )
+			for ( auto material : materials )
 			{
-				m_geometry->setMaterial( *l_mesh->getSubmesh( l_index++ ), l_material );
+				geometry->setMaterial( *mesh->getSubmesh( index++ ), material );
 			}
 
-			m_materials.clear();
-			m_geometry.reset();
-			m_entity = Entity{};
+			materials.clear();
+			geometry.reset();
+			entity = Entity{};
 		}
 	}
 
@@ -119,40 +119,47 @@ namespace orastus
 
 	auto constexpr s_faceIndex = 5u;
 
-	void Game::SelectedBlock::select( Entity const & p_entity
-		, castor3d::GeometrySPtr p_geometry )
+	void Game::SelectedBlock::select( Entity const & pentity
+		, castor3d::GeometrySPtr pgeometry )
 	{
 		unselect();
 
-		if ( p_entity && p_geometry )
+		if ( pentity && pgeometry )
 		{
-			m_entity = p_entity;
-			m_geometry = p_geometry;
-			auto & l_submesh = *m_geometry->getMesh().lock()->getSubmesh( s_faceIndex );
-			m_material = p_geometry->getMaterial( l_submesh );
-			auto & l_materials = m_geometry->getScene()->getEngine()->getMaterialCache();
-			auto l_new = l_materials.find( m_material->getName() + cuT( "_sel" ) ).lock();
-			m_geometry->setMaterial( l_submesh, l_new.get() );
+			entity = pentity;
+			geometry = pgeometry;
+			auto & submeshR = *geometry->getMesh().lock()->getSubmesh( s_faceIndex );
+			material = geometry->getMaterial( submeshR );
+			auto & cache = geometry->getScene()->getEngine()->getMaterialCache();
+			auto newMaterial = cache.find( material->getName() + cuT( "_sel" ) ).lock();
+
+			for ( auto & submesh : *geometry->getMesh().lock() )
+			{
+				geometry->setMaterial( *submesh, newMaterial.get() );
+			}
 		}
 	}
 
 	void Game::SelectedBlock::unselect()
 	{
-		if ( m_entity && m_geometry )
+		if ( entity && geometry )
 		{
-			auto & l_submesh = *m_geometry->getMesh().lock()->getSubmesh( s_faceIndex );
-			m_geometry->setMaterial( l_submesh, m_material );
-			m_material = nullptr;
-			m_geometry.reset();
-			m_entity = Entity{};
+			for ( auto & submesh : *geometry->getMesh().lock() )
+			{
+				geometry->setMaterial( *submesh, material );
+			}
+
+			material = nullptr;
+			geometry.reset();
+			entity = Entity{};
 		}
 	}
 
 	//*********************************************************************************************
 
-	Game::Game( castor3d::Scene & p_scene )
-		: m_scene{ p_scene }
-		, m_hud{ *this, p_scene }
+	Game::Game( castor3d::Scene & scene )
+		: m_scene{ scene }
+		, m_hud{ *this, scene }
 		, m_path
 		{
 			{ 19,  1 },
@@ -193,8 +200,8 @@ namespace orastus
 
 	void Game::reset()
 	{
-		Grid l_grid;
-		std::swap( m_grid, l_grid );
+		Grid grid;
+		std::swap( m_grid, grid );
 		m_state = State::eStarted;
 		m_bulletSpawner.reset();
 		m_enemySpawner.reset();
@@ -204,16 +211,16 @@ namespace orastus
 	{
 		doPrepareGrid();
 
-		for ( auto & l_cell : m_grid )
+		for ( auto & cell : m_grid )
 		{
-			if ( l_cell.m_state == GridCell::State::eEmpty )
+			if ( cell.state == GridCell::State::eEmpty )
 			{
-				doAddMapCube( l_cell );
+				doAddMapCube( cell );
 			}
 		}
 
-		auto & l_node = *m_path.rbegin();
-		doAddTarget( m_grid( l_node.m_y, l_node.m_x ) );
+		auto & node = *m_path.rbegin();
+		doAddTarget( m_grid( node.y, node.x ) );
 
 		m_state = State::eStarted;
 		m_hud.start();
@@ -254,18 +261,18 @@ namespace orastus
 		}
 	}
 
-	Entity Game::select( castor3d::GeometrySPtr p_geometry )
+	Entity Game::select( castor3d::GeometrySPtr geometry )
 	{
-		Entity l_result;
-		auto l_entity = m_ecs.findEntity( m_ecs.getComponent( Ecs::GeometryComponent ), p_geometry );
-		m_selectedCell = &doFindCell( l_entity );
-		l_entity = m_selectedCell->m_entity;
+		Entity result;
+		auto entity = m_ecs.findEntity( m_ecs.getComponent( Ecs::GeometryComponent ), geometry );
+		m_selectedCell = &doFindCell( entity );
+		entity = m_selectedCell->entity;
 
-		if ( m_ecs.hasComponent( l_entity, m_ecs.getComponent( Ecs::PickableComponent ) ) )
+		if ( m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::PickableComponent ) ) )
 		{
-			if ( doSelectEntity( l_entity ) )
+			if ( doSelectEntity( entity ) )
 			{
-				l_result = l_entity;
+				result = entity;
 			}
 		}
 		else
@@ -273,7 +280,7 @@ namespace orastus
 			unselect();
 		}
 
-		return l_result;
+		return result;
 	}
 
 	void Game::unselect()
@@ -290,89 +297,89 @@ namespace orastus
 			} ) );
 	}
 
-	void Game::killEnemy( Entity p_entity )
+	void Game::killEnemy( Entity entity )
 	{
-		m_enemySpawner.killEnemy( p_entity );
+		m_enemySpawner.killEnemy( entity );
 	}
 
-	void Game::killBullet( Entity p_entity )
+	void Game::killBullet( Entity entity )
 	{
-		m_bulletSpawner.killBullet( p_entity );
+		m_bulletSpawner.killBullet( entity );
 	}
 
-	void Game::hit( Entity p_source
-		, Entity p_target
-		, uint32_t p_damage )
+	void Game::hit( Entity source
+		, Entity target
+		, uint32_t damage )
 	{
-		m_bulletSpawner.killBullet( p_source );
+		m_bulletSpawner.killBullet( source );
 
-		auto & l_life = m_ecs.getComponentData< uint32_t >( p_target
+		auto & life = m_ecs.getComponentData< uint32_t >( target
 			, m_ecs.getComponent( Ecs::LifeComponent ) );
-		l_life.setValue( l_life.getValue() - std::min( l_life.getValue(), p_damage ) );
+		life.setValue( life.getValue() - std::min( life.getValue(), damage ) );
 
-		if ( !l_life.getValue() )
+		if ( !life.getValue() )
 		{
-			m_enemySpawner.killEnemy( p_target );
+			m_enemySpawner.killEnemy( target );
 		}
 	}
 
-	castor3d::GeometrySPtr Game::createEnemy( castor::String const & p_name )
+	castor3d::GeometrySPtr Game::createEnemy( castor::String const & name )
 	{
-		auto l_baseNode = m_scene.getSceneNodeCache().add( p_name + cuT( "_Base" ) ).lock();
-		l_baseNode->attachTo( *m_mapNode );
-		auto l_node = m_scene.getSceneNodeCache().add( p_name ).lock();
-		l_node->setOrientation( Quaternion::fromAxisAngle( Point3f{ 1, 0, 1 }, 45.0_degrees ) );
-		l_node->attachTo( *l_baseNode );
-		auto l_geometry = m_scene.getGeometryCache().create( p_name, m_scene, *l_node, m_enemyCubeMesh );
+		auto baseNode = m_scene.getSceneNodeCache().add( name + cuT( "_Base" ) ).lock();
+		baseNode->attachTo( *m_mapNode );
+		auto node = m_scene.getSceneNodeCache().add( name ).lock();
+		node->setOrientation( Quaternion::fromAxisAngle( Point3f{ 1, 0, 1 }, 45.0_degrees ) );
+		node->attachTo( *baseNode );
+		auto result = m_scene.getGeometryCache().create( name, m_scene, *node, m_enemyCubeMesh );
 
-		for ( auto l_submesh : *l_geometry->getMesh().lock() )
+		for ( auto submesh : *result->getMesh().lock() )
 		{
-			l_geometry->setMaterial( *l_submesh, m_enemyCubeMaterial.get() );
+			result->setMaterial( *submesh, m_enemyCubeMaterial.get() );
 		}
 
-		m_scene.getGeometryCache().add( l_geometry );
-		auto l_light = m_scene.getLightCache().create( p_name
+		m_scene.getGeometryCache().add( result );
+		auto light = m_scene.getLightCache().create( name
 			, m_scene
-			, *l_node
+			, *node
 			, m_scene.getLightsFactory()
 			, LightType::ePoint );
-		l_light->setColour( RgbColour::fromPredefined( PredefinedRgbColour::eRed ) );
-		l_light->setIntensity( 0.8f, 1.0f );
-		l_light->getPointLight()->setAttenuation( Point3f{ 1.0f, 0.1f, 0.0f } );
-		m_scene.getLightCache().add( p_name, l_light );
-		return l_geometry;
+		light->setColour( RgbColour::fromPredefined( PredefinedRgbColour::eRed ) );
+		light->setIntensity( 0.8f, 1.0f );
+		light->getPointLight()->setAttenuation( Point3f{ 1.0f, 0.1f, 0.0f } );
+		m_scene.getLightCache().add( name, light );
+		return result;
 	}
 
 	void Game::createShortRangeTower()
 	{
 		CU_Require( m_selectedCell && *m_selectedCell );
-		if ( m_selectedCell->m_state == GridCell::State::eEmpty )
+		if ( m_selectedCell->state == GridCell::State::eEmpty )
 		{
-			String l_name = cuT( "ShortRangeTower_" ) + std::to_string( m_selectedCell->m_x ) + cuT( "x" ) + std::to_string( m_selectedCell->m_y );
-			auto l_tower = doCreateTower( l_name
+			String name = cuT( "ShortRangeTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
+			auto tower = doCreateTower( name
 				, *m_selectedCell
 				, m_shortRangeTowerMesh
 				, { cuT( "short_range_body" ), cuT( "short_range_accessories" ) } );
-			String l_animName = cuT( "armature_short_range.1|attack" );
-			auto l_anim = doCreateAnimation( l_tower
-				, l_animName );
+			String animName = cuT( "armature_short_range.1|attack" );
+			auto anim = doCreateAnimation( tower
+				, animName );
 
-			if ( l_tower )
+			if ( tower )
 			{
-				auto l_data = std::make_shared< AnimationData >( l_anim, l_animName );
-				auto l_shoot = std::make_shared< AttackData >( 500_ms );
-				m_selectedCell->m_entity = m_ecs.createTower( 1000_ms
+				auto data = std::make_shared< AnimationData >( anim, animName );
+				auto shoot = std::make_shared< AttackData >( 500_ms );
+				m_selectedCell->entity = m_ecs.createTower( 1000_ms
 					, 3u
 					, 40.0f
 					, 120.0f
 					, 1u
-					, l_tower
-					, l_data
-					, l_shoot );
-				auto l_stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->m_entity
+					, tower
+					, data
+					, shoot );
+				auto stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
 					, m_ecs.getComponent( Ecs::StateComponent ) ).getValue();
-				l_stateMachine->addState( tower::createShootingState( m_ecs, m_selectedCell->m_entity ) );
-				doSelectEntity( m_selectedCell->m_entity );
+				stateMachine->addState( tower::createShootingState( m_ecs, m_selectedCell->entity ) );
+				doSelectEntity( m_selectedCell->entity );
 			}
 		}
 	}
@@ -380,292 +387,292 @@ namespace orastus
 	void Game::createLongRangeTower()
 	{
 		CU_Require( m_selectedCell && *m_selectedCell );
-		if ( m_selectedCell->m_state == GridCell::State::eEmpty )
+		if ( m_selectedCell->state == GridCell::State::eEmpty )
 		{
-			String l_name = cuT( "LongRangeTower_" ) + std::to_string( m_selectedCell->m_x ) + cuT( "x" ) + std::to_string( m_selectedCell->m_y );
-			auto l_tower = doCreateTower( l_name
+			String name = cuT( "LongRangeTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
+			auto tower = doCreateTower( name
 				, *m_selectedCell
 				, m_longRangeTowerMesh
 				, { cuT( "splash_accessories" ), cuT( "splash_accessories" ), cuT( "splash_body" ) } );
-			String l_animName = cuT( "armature_short_range.1|attack" );
-			auto l_anim = doCreateAnimation( l_tower
-				, l_animName );
+			String animName = cuT( "armature_short_range.1|attack" );
+			auto anim = doCreateAnimation( tower
+				, animName );
 
-			if ( l_tower )
+			if ( tower )
 			{
-				auto l_data = std::make_shared< AnimationData >( l_anim, l_animName );
-				auto l_shoot = std::make_shared< AttackData >( 800_ms );
-				m_selectedCell->m_entity = m_ecs.createTower( 6000_ms
+				auto data = std::make_shared< AnimationData >( anim, animName );
+				auto shoot = std::make_shared< AttackData >( 800_ms );
+				m_selectedCell->entity = m_ecs.createTower( 6000_ms
 					, 5u
 					, 100.0f
 					, 200.0f
 					, 1u
-					, l_tower
-					, l_data
-					, l_shoot );
-				auto l_stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->m_entity
+					, tower
+					, data
+					, shoot );
+				auto stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
 					, m_ecs.getComponent( Ecs::StateComponent ) ).getValue();
-				l_stateMachine->addState( tower::createShootingState( m_ecs, m_selectedCell->m_entity ) );
-				doSelectEntity( m_selectedCell->m_entity );
+				stateMachine->addState( tower::createShootingState( m_ecs, m_selectedCell->entity ) );
+				doSelectEntity( m_selectedCell->entity );
 			}
 		}
 	}
 
-	void Game::createBullet( Entity p_source
-		, Entity p_target )
+	void Game::createBullet( Entity source
+		, Entity target )
 	{
 		if ( m_bulletSpawner.hasFreeBullet() )
 		{
-			m_bulletSpawner.fireBullet( p_source
-				, p_target );
+			m_bulletSpawner.fireBullet( source
+				, target );
 		}
 		else
 		{
-			m_bulletSpawner.fireBullet( p_source
-				, p_target
-				, doCreateBullet( p_source ) );
+			m_bulletSpawner.fireBullet( source
+				, target
+				, doCreateBullet( source ) );
 		}
 	}
 
-	Point3f Game::convert( castor::Point2i const & p_position )const
+	Point3f Game::convert( castor::Point2i const & position )const
 	{
-		return Point3f( float( p_position[0] - int( m_grid.getWidth() ) / 2 ) * m_cellDimensions[0]
+		return Point3f( float( position[0] - int( m_grid.getWidth() ) / 2 ) * m_cellDimensions[0]
 			, 0
-			, float( p_position[1] - int( m_grid.getHeight() ) / 2 ) * m_cellDimensions[2] );
+			, float( position[1] - int( m_grid.getHeight() ) / 2 ) * m_cellDimensions[2] );
 	}
 
-	castor3d::SceneNodeRPtr Game::getEnemyNode( castor3d::GeometrySPtr p_geometry )
+	castor3d::SceneNodeRPtr Game::getEnemyNode( castor3d::GeometrySPtr geometry )
 	{
-		return p_geometry->getParent()->getParent();
+		return geometry->getParent()->getParent();
 	}
 
-	castor3d::SceneNodeRPtr Game::getTowerNode( castor3d::GeometrySPtr p_geometry )
+	castor3d::SceneNodeRPtr Game::getTowerNode( castor3d::GeometrySPtr geometry )
 	{
-		return p_geometry->getParent();
+		return geometry->getParent();
 	}
 
-	castor3d::SceneNodeRPtr Game::getBulletNode( castor3d::GeometrySPtr p_geometry )
+	castor3d::SceneNodeRPtr Game::getBulletNode( castor3d::GeometrySPtr geometry )
 	{
-		return p_geometry->getParent();
+		return geometry->getParent();
 	}
 
 	void Game::doPrepareGrid()
 	{
-		auto l_prv = m_path.begin();
+		auto prv = m_path.begin();
 
-		if ( l_prv != m_path.end() )
+		if ( prv != m_path.end() )
 		{
-			auto l_cur = l_prv + 1;
+			auto cur = prv + 1;
 
-			while ( l_cur != m_path.end() )
+			while ( cur != m_path.end() )
 			{
-				doPrepareGridLine( *l_prv, *l_cur, m_grid );
+				doPrepareGridLine( *prv, *cur, m_grid );
 
-				if ( l_prv == m_path.begin() )
+				if ( prv == m_path.begin() )
 				{
-					m_grid( l_prv->m_y, l_prv->m_x ).m_state = GridCell::State::eStart;
+					m_grid( prv->y, prv->x ).state = GridCell::State::eStart;
 				}
 
-				++l_prv;
-				++l_cur;
+				++prv;
+				++cur;
 			}
 
-			doPrepareTarget( *l_prv, m_scene, m_grid );
+			doPrepareTarget( *prv, m_scene, m_grid );
 		}
 	}
 
-	void Game::doAddMapCube( GridCell & p_cell )
+	void Game::doAddMapCube( GridCell & cell )
 	{
-		String l_name = cuT( "MapCube_" ) + std::to_string( p_cell.m_x ) + cuT( "x" ) + std::to_string( p_cell.m_y );
-		auto l_node = m_scene.getSceneNodeCache().add( l_name ).lock();
-		auto l_geometry = m_scene.getGeometryCache().create( l_name, m_scene, *l_node, m_mapCubeMesh );
-		l_node->setPosition( doConvert( Point2i{ p_cell.m_x, p_cell.m_y } ) + Point3f{ 0, m_cellDimensions[1] / 2, 0 } );
-		l_node->attachTo( *m_mapNode );
+		String name = cuT( "MapCube_" ) + std::to_string( cell.x ) + cuT( "x" ) + std::to_string( cell.y );
+		auto node = m_scene.getSceneNodeCache().add( name ).lock();
+		auto geometry = m_scene.getGeometryCache().create( name, m_scene, *node, m_mapCubeMesh );
+		node->setPosition( doConvert( Point2i{ cell.x, cell.y } ) + Point3f{ 0, m_cellDimensions[1] / 2, 0 } );
+		node->attachTo( *m_mapNode );
 
-		for ( auto l_submesh : *l_geometry->getMesh().lock() )
+		for ( auto submesh : *geometry->getMesh().lock() )
 		{
-			l_geometry->setMaterial( *l_submesh, m_mapCubeMaterial.get() );
+			geometry->setMaterial( *submesh, m_mapCubeMaterial.get() );
 		}
 
-		m_scene.getGeometryCache().add( l_geometry );
-		p_cell.m_entity = m_ecs.createMapBlock( l_geometry );
-		m_lastMapCube = l_geometry;
-		p_cell.m_state = GridCell::State::eEmpty;
+		m_scene.getGeometryCache().add( geometry );
+		cell.entity = m_ecs.createMapBlock( geometry );
+		m_lastMapCube = geometry;
+		cell.state = GridCell::State::eEmpty;
 	}
 
-	void Game::doAddTarget( GridCell & p_cell )
+	void Game::doAddTarget( GridCell & cell )
 	{
-		m_targetNode->setPosition( doConvert( Point2i{ p_cell.m_x, p_cell.m_y + 1 } ) );
-		p_cell.m_state = GridCell::State::eTarget;
+		m_targetNode->setPosition( doConvert( Point2i{ cell.x, cell.y + 1 } ) );
+		cell.state = GridCell::State::eTarget;
 	}
 
-	castor3d::GeometrySPtr Game::doCreateBullet( Entity p_source )
+	castor3d::GeometrySPtr Game::doCreateBullet( Entity source )
 	{
-		auto l_origin = Game::getTowerNode( m_ecs.getComponentData< castor3d::GeometrySPtr >( p_source
+		auto origin = Game::getTowerNode( m_ecs.getComponentData< castor3d::GeometrySPtr >( source
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
-		String l_name = cuT( "Bullet_" ) + toString( m_bulletSpawner.getBulletsCount() );
-		auto l_node = m_scene.getSceneNodeCache().add( l_name ).lock();
-		auto l_geometry = m_scene.getGeometryCache().create( l_name, m_scene, *l_node, m_bulletMesh );
-		l_node->setPosition( l_origin->getDerivedPosition() );
-		l_node->attachTo( *m_mapNode );
+		String name = cuT( "Bullet_" ) + toString( m_bulletSpawner.getBulletsCount() );
+		auto node = m_scene.getSceneNodeCache().add( name ).lock();
+		auto geometry = m_scene.getGeometryCache().create( name, m_scene, *node, m_bulletMesh );
+		node->setPosition( origin->getDerivedPosition() );
+		node->attachTo( *m_mapNode );
 
-		for ( auto l_submesh : *l_geometry->getMesh().lock() )
+		for ( auto submesh : *geometry->getMesh().lock() )
 		{
-			l_geometry->setMaterial( *l_submesh, m_bulletMaterial.get() );
+			geometry->setMaterial( *submesh, m_bulletMaterial.get() );
 		}
 
-		m_scene.getGeometryCache().add( l_geometry );
-		return l_geometry;
+		m_scene.getGeometryCache().add( geometry );
+		return geometry;
 	}
 
-	GeometrySPtr Game::doCreateTower( String const & p_name
-		, GridCell & p_cell
-		, castor3d::MeshResPtr p_mesh
-		, StringArray p_matNames )
+	GeometrySPtr Game::doCreateTower( String const & name
+		, GridCell & cell
+		, castor3d::MeshResPtr mesh
+		, StringArray matNames )
 	{
-		auto l_node = m_scene.getSceneNodeCache().add( p_name ).lock();
-		l_node->setPosition( doConvert( Point2i{ p_cell.m_x, p_cell.m_y } ) + Point3f{ 0, m_cellDimensions[1], 0 } );
-		l_node->attachTo( *m_mapNode );
-		auto l_tower = m_scene.getGeometryCache().create( p_name, m_scene, *l_node, p_mesh );
-		l_node->setScale( Point3f{ 0.15, 0.15, 0.15 } );
-		uint32_t l_index = 0u;
+		auto node = m_scene.getSceneNodeCache().add( name ).lock();
+		node->setPosition( doConvert( Point2i{ cell.x, cell.y } ) + Point3f{ 0, m_cellDimensions[1], 0 } );
+		node->attachTo( *m_mapNode );
+		auto tower = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
+		node->setScale( Point3f{ 0.15, 0.15, 0.15 } );
+		uint32_t index = 0u;
 
-		for ( auto l_name : p_matNames )
+		for ( auto matName : matNames )
 		{
-			l_tower->setMaterial( *p_mesh.lock()->getSubmesh( l_index ), m_scene.getMaterialView().find( l_name ).lock().get() );
-			++l_index;
+			tower->setMaterial( *mesh.lock()->getSubmesh( index ), m_scene.getMaterialView().find( matName ).lock().get() );
+			++index;
 		}
 
-		m_scene.getGeometryCache().add( l_tower );
-		p_cell.m_state = GridCell::State::eTower;
-		return l_tower;
+		m_scene.getGeometryCache().add( tower );
+		cell.state = GridCell::State::eTower;
+		return tower;
 	}
 
-	 AnimatedObjectGroupSPtr Game::doCreateAnimation( GeometrySPtr p_geometry
-		, String const & p_animName )
+	 AnimatedObjectGroupSPtr Game::doCreateAnimation( GeometrySPtr geometry
+		, String const & animName )
 	{
-		 CU_Require( p_geometry );
-		 auto l_animGroup = m_scene.getAnimatedObjectGroupCache().add( p_geometry->getName(), m_scene ).lock();
-		 std::chrono::milliseconds l_time{ 0 };
-		 auto l_mesh = p_geometry->getMesh().lock();
-		 CU_Require( l_mesh );
+		 CU_Require( geometry );
+		 auto animGroup = m_scene.getAnimatedObjectGroupCache().add( geometry->getName(), m_scene ).lock();
+		 std::chrono::milliseconds time{ 0 };
+		 auto mesh = geometry->getMesh().lock();
+		 CU_Require( mesh );
 
-		 if ( !l_mesh->getAnimations().empty() )
+		 if ( !mesh->getAnimations().empty() )
 		 {
-			 auto l_object = l_animGroup->addObject( *l_mesh, *p_geometry, p_geometry->getName() + cuT( "_Mesh" ) );
-			 l_time = std::max( l_time
-				 , l_mesh->getAnimation( p_animName ).getLength() );
+			 auto object = animGroup->addObject( *mesh, *geometry, geometry->getName() + cuT( "_Mesh" ) );
+			 time = std::max( time
+				 , mesh->getAnimation( animName ).getLength() );
 		 }
 
-		 auto l_skeleton = l_mesh->getSkeleton();
+		 auto skeleton = mesh->getSkeleton();
 
-		 if ( l_skeleton )
+		 if ( skeleton )
 		 {
-			 if ( !l_skeleton->getAnimations().empty() )
+			 if ( !skeleton->getAnimations().empty() )
 			 {
-				 auto l_object = l_animGroup->addObject( *l_skeleton, *l_mesh, *p_geometry, p_geometry->getName() + cuT( "_Skeleton" ) );
-				 l_time = std::max( l_time
-					 , l_skeleton->getAnimation( p_animName ).getLength() );
+				 auto object = animGroup->addObject( *skeleton, *mesh, *geometry, geometry->getName() + cuT( "_Skeleton" ) );
+				 time = std::max( time
+					 , skeleton->getAnimation( animName ).getLength() );
 			 }
 		 }
 
-		 l_animGroup->addAnimation( p_animName );
-		 l_animGroup->setAnimationLooped( p_animName, false );
-		 l_animGroup->startAnimation( p_animName );
-		 l_animGroup->pauseAnimation( p_animName );
-		 return l_animGroup;
+		 animGroup->addAnimation( animName );
+		 animGroup->setAnimationLooped( animName, false );
+		 animGroup->startAnimation( animName );
+		 animGroup->pauseAnimation( animName );
+		 return animGroup;
 	 }
 
-	 void Game::doSelectMapBlock( Entity const & p_entity )
+	 void Game::doSelectMapBlock( Entity const & entity )
 	 {
-		GeometrySPtr l_geometry = doGetGeometry( p_entity );
+		GeometrySPtr geometry = doGetGeometry( entity );
 
-		if ( l_geometry )
+		if ( geometry )
 		{
 			m_hud.updateTowerInfo( m_ecs, Entity{} );
 			m_hud.showBuild();
 			m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePostRender
-				, [this, l_geometry, p_entity]()
+				, [this, geometry, entity]()
 				{
-					m_selectedBlock.select( p_entity, l_geometry );
+					m_selectedBlock.select( entity, geometry );
 					m_selectedEntity.unselect();
 				} ) );
 		}
 	}
 
-	 void Game::doSelectTower( Entity const & p_entity )
+	 void Game::doSelectTower( Entity const & entity )
 	{
-		GeometrySPtr l_geometry = doGetGeometry( p_entity );
+		GeometrySPtr geometry = doGetGeometry( entity );
 
-		if ( l_geometry )
+		if ( geometry )
 		{
-			m_hud.updateTowerInfo( m_ecs, p_entity );
+			m_hud.updateTowerInfo( m_ecs, entity );
 			m_hud.hideBuild();
 			m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePostRender
-				, [this, l_geometry, p_entity]()
+				, [this, geometry, entity]()
 				{
 					m_selectedBlock.unselect();
-					m_selectedEntity.select( p_entity, l_geometry );
+					m_selectedEntity.select( entity, geometry );
 				} ) );
 		}
 	}
 
-	GeometrySPtr Game::doGetGeometry( Entity const & p_entity )
+	GeometrySPtr Game::doGetGeometry( Entity const & entity )
 	{
-		GeometrySPtr l_result;
+		GeometrySPtr result;
 
 		try
 		{
-			l_result = m_ecs.getComponentData< GeometrySPtr >( p_entity
+			result = m_ecs.getComponentData< GeometrySPtr >( entity
 				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
 		}
-		catch ( Ecs::ComponentDataMatchException & p_exc )
+		catch ( Ecs::ComponentDataMatchException & exc )
 		{
-			castor::Logger::logWarning( p_exc.what() );
+			castor::Logger::logWarning( exc.what() );
 		}
 
-		return l_result;
+		return result;
 	}
 
-	GridCell & Game::doFindCell( Entity const & p_entity )
+	GridCell & Game::doFindCell( Entity const & entity )
 	{
-		static GridCell l_invalidCell{ 0u, 0u, GridCell::State::eInvalid };
-		auto l_it = std::find_if( std::begin( m_grid )
+		static GridCell invalidCell{ 0u, 0u, GridCell::State::eInvalid };
+		auto it = std::find_if( std::begin( m_grid )
 			, std::end( m_grid )
-			, [&p_entity]( GridCell const & p_cell )
+			, [&entity]( GridCell const & lookup )
 			{
-				return p_cell.m_entity == p_entity;
+				return lookup.entity == entity;
 			} );
 
-		if ( l_it != std::end( m_grid ) )
+		if ( it != std::end( m_grid ) )
 		{
-			return *l_it;
+			return *it;
 		}
 
-		return l_invalidCell;
+		return invalidCell;
 	}
 
-	bool Game::doSelectEntity( Entity const & p_entity )
+	bool Game::doSelectEntity( Entity const & entity )
 	{
-		bool l_result = false;
+		bool result = false;
 
-		if ( m_ecs.hasComponent( p_entity, m_ecs.getComponent( Ecs::DamageComponent ) ) )
+		if ( m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::DamageComponent ) ) )
 		{
-			l_result = true;
-			doSelectTower( p_entity );
+			result = true;
+			doSelectTower( entity );
 		}
 		else
 		{
-			doSelectMapBlock( p_entity );
+			doSelectMapBlock( entity );
 		}
 
-		return l_result;
+		return result;
 	}
 
-	castor::Point3f Game::doConvert( castor::Point2i const & p_position )const
+	castor::Point3f Game::doConvert( castor::Point2i const & position )const
 	{
-		return castor::Point3f( float( p_position[0] - int( m_grid.getWidth() ) / 2 ) * m_cellDimensions[0]
+		return castor::Point3f( float( position[0] - int( m_grid.getWidth() ) / 2 ) * m_cellDimensions[0]
 			, 0
-			, float( p_position[1] - int( m_grid.getHeight() ) / 2 ) * m_cellDimensions[2] );
+			, float( position[1] - int( m_grid.getHeight() ) / 2 ) * m_cellDimensions[2] );
 	}
 }

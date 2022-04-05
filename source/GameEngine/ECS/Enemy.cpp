@@ -1,9 +1,9 @@
-#include "Enemy.hpp"
+#include "GameEngine/ECS/Enemy.hpp"
 
-#include "ECS/Ecs.hpp"
-#include "ECS/WalkData.hpp"
-#include "State/EnemyState.hpp"
-#include "State/StateMachine.hpp"
+#include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/ECS/WalkData.hpp"
+#include "GameEngine/State/EnemyState.hpp"
+#include "GameEngine/State/StateMachine.hpp"
 
 namespace orastus
 {

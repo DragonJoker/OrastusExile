@@ -1,8 +1,8 @@
-#include "EnemySpawner.hpp"
+#include "GameEngine/EnemySpawner.hpp"
 
-#include "Game.hpp"
-#include "ECS/Ecs.hpp"
-#include "ECS/WalkData.hpp"
+#include "GameEngine/Game.hpp"
+#include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/ECS/WalkData.hpp"
 
 #include <Castor3D/Model/Mesh/Mesh.hpp>
 #include <Castor3D/Scene/Geometry.hpp>
@@ -116,13 +116,13 @@ namespace orastus
 		Entity l_result;
 		GeometrySPtr l_geometry;
 		auto & l_pathNode = *p_path.begin();
-		auto & l_cell = p_grid( l_pathNode.m_y, l_pathNode.m_x );
+		auto & l_cell = p_grid( l_pathNode.y, l_pathNode.x );
 
 		if ( m_enemiesCache.empty() )
 		{
 			String l_name = cuT( "EnemyCube_" ) + std::to_string( ++m_totalSpawned );
 			l_geometry = m_game.createEnemy( l_name );
-			Game::getEnemyNode( l_geometry )->setPosition( m_game.convert( Point2i{ l_cell.m_x, l_cell.m_y - 1 } )
+			Game::getEnemyNode( l_geometry )->setPosition( m_game.convert( Point2i{ l_cell.x, l_cell.y - 1 } )
 				+ Point3f{ 0, m_game.getCellHeight(), 0 } );
 			m_liveEnemies.push_back( m_ecs.createEnemy( 24.0f
 				, m_life.getValue()
@@ -136,7 +136,7 @@ namespace orastus
 			m_enemiesCache.erase( m_enemiesCache.begin() );
 			l_geometry = m_ecs.getComponentData< GeometrySPtr >( l_result
 				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-			Game::getEnemyNode( l_geometry )->setPosition( m_game.convert( Point2i{ l_cell.m_x, l_cell.m_y - 1 } )
+			Game::getEnemyNode( l_geometry )->setPosition( m_game.convert( Point2i{ l_cell.x, l_cell.y - 1 } )
 				+ Point3f{ 0, m_game.getCellHeight(), 0 } );
 			m_ecs.resetEnemy( l_result
 				, 24.0f

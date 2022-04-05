@@ -1,10 +1,10 @@
-#include "TowerState.hpp"
+#include "GameEngine/State/TowerState.hpp"
 
-#include "ECS/AnimationData.hpp"
-#include "ECS/AttackData.hpp"
-#include "ECS/Ecs.hpp"
-#include "ECS/Entity.hpp"
-#include "Game.hpp"
+#include "GameEngine/ECS/AnimationData.hpp"
+#include "GameEngine/ECS/AttackData.hpp"
+#include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/ECS/Entity.hpp"
+#include "GameEngine/Game.hpp"
 
 #include <Castor3D/Scene/Geometry.hpp>
 #include <Castor3D/Scene/SceneNode.hpp>

@@ -2,8 +2,8 @@
 
 #include "ExiledFromOrastus.hpp"
 
-#include <Game.hpp>
-#include <GridCell.hpp>
+#include <GameEngine/Game.hpp>
+#include <GameEngine/GridCell.hpp>
 
 #include <Castor3D/Event/Frame/FrameListener.hpp>
 #include <Castor3D/Event/UserInput/UserInputListener.hpp>

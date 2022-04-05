@@ -1,9 +1,9 @@
-#include "EnemyState.hpp"
+#include "GameEngine/State/EnemyState.hpp"
 
-#include "ECS/Ecs.hpp"
-#include "ECS/Entity.hpp"
-#include "ECS/WalkData.hpp"
-#include "Game.hpp"
+#include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/ECS/Entity.hpp"
+#include "GameEngine/ECS/WalkData.hpp"
+#include "GameEngine/Game.hpp"
 
 #include <Castor3D/Scene/Geometry.hpp>
 #include <Castor3D/Scene/SceneNode.hpp>
@@ -79,7 +79,7 @@ namespace orastus
 
 				if ( p_data.current != p_data.path.end() )
 				{
-					p_data.destination = l_game.convert( castor::Point2i{ p_data.current->m_x, p_data.current->m_y } )
+					p_data.destination = l_game.convert( castor::Point2i{ p_data.current->x, p_data.current->y } )
 						+ castor::Point3f{ 0, l_game.getCellHeight(), 0 };
 					l_result = walkToDestination( p_game
 						, p_data
@@ -98,7 +98,7 @@ namespace orastus
 			{
 				// Right on the destination node.
 				++p_data.current;
-				p_data.destination = l_game.convert( castor::Point2i{ p_data.current->m_x, p_data.current->m_y } )
+				p_data.destination = l_game.convert( castor::Point2i{ p_data.current->x, p_data.current->y } )
 					+ castor::Point3f{ 0, l_game.getCellHeight() / 2, 0 };
 			}
 

@@ -47,10 +47,10 @@ See licence file in root folder, MIT.txt
 #include <CastorUtils/Math/Quaternion.hpp>
 #include <CastorUtils/Math/RangedValue.hpp>
 
-#include <GameEnginePrerequisites.hpp>
-#include <Game.hpp>
-#include <GridCell.hpp>
-#include <ECS/Entity.hpp>
+#include <GameEngine/GameEnginePrerequisites.hpp>
+#include <GameEngine/Game.hpp>
+#include <GameEngine/GridCell.hpp>
+#include <GameEngine/ECS/Entity.hpp>
 
 #include <chrono>
 #include <cstdlib>

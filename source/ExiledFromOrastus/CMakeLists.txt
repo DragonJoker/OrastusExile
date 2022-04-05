@@ -6,62 +6,96 @@ set( ${PROJECT_NAME}_VERSION_MAJOR	1 )
 set( ${PROJECT_NAME}_VERSION_MINOR	0 )
 set( ${PROJECT_NAME}_VERSION_BUILD	0 )
 
-if( NOT WIN32 )
-	find_package( GTK2 )
+if( APPLE )
+	set( GTK_FOUND TRUE )
+	set( GTK_LIBRARIES
+		"-framework AppKit"
+		"-framework QuartzCore"
+		"-framework Metal"
+	)
+elseif ( WIN32 )
+	set( GTK_FOUND TRUE )
 else()
-	set( GTK2_FOUND TRUE )
+	find_package( GTK3 QUIET )
+	find_package( X11 QUIET )
+	if ( GTK3_FOUND )
+		set( GTK_FOUND ${GTK3_FOUND} )
+		set( GTK_INCLUDE_DIRS ${GTK3_INCLUDE_DIRS} )
+		set( GTK_LIBRARIES ${GTK3_LIBRARIES} )
+	else ()
+		set( GTK_FOUND FALSE )
+	endif ()
 endif()
-
 find_package( wxWidgets COMPONENTS core base aui adv )
 
-if( wxWidgets_FOUND AND GTK2_FOUND )
-	include_directories( ${CMAKE_SOURCE_DIR}/GameEngine )
-	include_directories( ${wxWidgets_INCLUDE_DIRS} )
-	string( COMPARE EQUAL "${wxWidgets_USE_DEBUG}" "ON" IsWxDebug )
-	set( wxWidgets_CXXFLAGS "${wxWidgets_CXX_FLAGS} -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES" )
-
-	if( NOT WIN32 )
-		set( wxWidgets_CXXFLAGS "${wxWidgets_CXXFLAGS} -D__WXGTK__" )
-	endif()
-
-	if( IsWxDebug )
-		set( wxWidgets_CXXFLAGS "${wxWidgets_CXXFLAGS} -D__WXDEBUG__" )
-	endif()
-	set( wxWidgetsLibraries "" )
-	foreach( Lib ${wxWidgets_LIBRARIES} )
-		if( wxWidgetsLibraries )
-			set( wxWidgetsLibraries "${wxWidgetsLibraries}|${Lib}" )
-		else()
-			set( wxWidgetsLibraries "${Lib}" )
-		endif()
-	endforeach()
-	foreach( Lib ${GTK2_LIBRARIES} )
-		if( wxWidgetsLibraries )
-			set( wxWidgetsLibraries "${wxWidgetsLibraries}|${Lib}" )
-		else()
-			set( wxWidgetsLibraries "${Lib}" )
-		endif()
-	endforeach()
-
-	add_target(
+if( wxWidgets_FOUND AND GTK_FOUND )
+	set( ${PROJECT_NAME}_HDR_FILES
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastus.hpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastusPch.hpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastusPrerequisites.hpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ImagesLoader.hpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/MainFrame.hpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/NodeState.hpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/RenderPanel.hpp
+	)
+	set( ${PROJECT_NAME}_SRC_FILES
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastus.cpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastusPch.cpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastusPrerequisites.cpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ImagesLoader.cpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/MainFrame.cpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/NodeState.cpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/RenderPanel.cpp
+	)
+	source_group( "Header Files"
+		FILES
+			${${PROJECT_NAME}_HDR_FILES}
+	)
+	source_group( "Source Files"
+		FILES
+			${${PROJECT_NAME}_SRC_FILES}
+	)
+	add_target_min(
 		${PROJECT_NAME}
 		bin
-		${CMAKE_CURRENT_SOURCE_DIR}
-		${CMAKE_CURRENT_SOURCE_DIR}
-		"GameEngine"
-		"${OrastusMinLibraries};${wxWidgetsLibraries}"
-		"ExiledFromOrastusPch.hpp"
-		"ExiledFromOrastusPch.cpp"
-		"${wxWidgets_CFLAGS}"
-		"${wxWidgets_CXXFLAGS}"
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/${PROJECT_NAME}Pch.hpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/${PROJECT_NAME}Pch.cpp
 	)
-	set_property( TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20 )
-	set_property( TARGET ${PROJECT_NAME} PROPERTY FOLDER "Outputs" )
-	add_target_astyle( ${PROJECT_NAME} ".h;.hpp;.inl;.cpp" )
+	target_include_directories( ${PROJECT_NAME} SYSTEM
+		PRIVATE
+			${wxWidgets_INCLUDE_DIRS}
+			${GTK_INCLUDE_DIRS}
+	)
+	target_link_libraries( ${PROJECT_NAME}
+		PRIVATE
+			orastus::GameEngine
+			${wxWidgets_LIBRARIES}
+			${GTK_LIBRARIES}
+			${X11_LIBRARIES}
+	)
+	set_target_properties( ${PROJECT_NAME}
+		PROPERTIES
+			CXX_STANDARD 20
+			CXX_EXTENSIONS OFF
+			FOLDER "Outputs"
+	)
+	install_target_ex( ${PROJECT_NAME}
+		${PROJECT_NAME}
+		bin
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}
+	)
+	set( OrastusInstall
+		${OrastusInstall}
+		${PROJECT_NAME}
+		PARENT_SCOPE
+	)
+	add_target_astyle( ${PROJECT_NAME}
+		".h;.hpp;.inl;.cpp"
+	)
 else()
 	if( NOT wxWidgets_FOUND )
 		message( WARNING "wxWidgets libraries not found" )
 	else()
-		message( WARNING "GTK2 libraries not found" )
+		message( WARNING "GTK libraries not found" )
 	endif()
 endif ()

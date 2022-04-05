@@ -1,6 +1,6 @@
-#include "MapBlock.hpp"
+#include "GameEngine/ECS/MapBlock.hpp"
 
-#include "ECS/Ecs.hpp"
+#include "GameEngine/ECS/Ecs.hpp"
 
 #include <Castor3D/Scene/Geometry.hpp>
 

@@ -1,9 +1,9 @@
-#include "BulletSpawner.hpp"
+#include "GameEngine/BulletSpawner.hpp"
 
-#include "Game.hpp"
-#include "ECS/Ecs.hpp"
-#include "ECS/WalkData.hpp"
-#include "ECS/TrackData.hpp"
+#include "GameEngine/Game.hpp"
+#include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/ECS/WalkData.hpp"
+#include "GameEngine/ECS/TrackData.hpp"
 
 #include <Castor3D/Model/Mesh/Mesh.hpp>
 #include <Castor3D/Scene/Geometry.hpp>

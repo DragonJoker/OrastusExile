@@ -1,6 +1,6 @@
-#include "WalkData.hpp"
+#include "GameEngine/ECS/WalkData.hpp"
 
-#include "Game.hpp"
+#include "GameEngine/Game.hpp"
 
 namespace orastus
 {
@@ -8,7 +8,7 @@ namespace orastus
 		, Game const & p_game )
 		: path{ p_path }
 		, current{ path.begin() }
-		, destination{ p_game.convert( castor::Point2i{ current->m_x, current->m_y } )
+		, destination{ p_game.convert( castor::Point2i{ current->x, current->y } )
 			+ castor::Point3f{ 0, p_game.getCellHeight(), 0 } }
 	{
 	}

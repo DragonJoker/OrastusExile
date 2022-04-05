@@ -1,4 +1,4 @@
-#include "AnimationData.hpp"
+#include "GameEngine/ECS/AnimationData.hpp"
 
 #include <Castor3D/Scene/Animation/AnimatedObject.hpp>
 #include <Castor3D/Scene/Animation/AnimatedObjectGroup.hpp>

@@ -1,6 +1,4 @@
-﻿#include "Entity.hpp"
-
-#include "ECS/Ecs.hpp"
+#include "GameEngine/ECS/Entity.hpp"
 
 namespace orastus
 {

@@ -1,4 +1,4 @@
-#include "StateMachine.hpp"
+#include "GameEngine/State/StateMachine.hpp"
 
 namespace orastus
 {

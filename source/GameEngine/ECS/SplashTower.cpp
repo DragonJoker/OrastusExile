@@ -1,10 +1,10 @@
-#include "SplashTower.hpp"
+#include "GameEngine/ECS/SplashTower.hpp"
 
-#include "ECS/Ecs.hpp"
-#include "ECS/AnimationData.hpp"
-#include "ECS/AttackData.hpp"
-#include "State/TowerState.hpp"
-#include "State/StateMachine.hpp"
+#include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/ECS/AnimationData.hpp"
+#include "GameEngine/ECS/AttackData.hpp"
+#include "GameEngine/State/TowerState.hpp"
+#include "GameEngine/State/StateMachine.hpp"
 
 #include <Castor3D/Scene/Geometry.hpp>
 #include <Castor3D/Scene/Animation/AnimatedObjectGroup.hpp>
