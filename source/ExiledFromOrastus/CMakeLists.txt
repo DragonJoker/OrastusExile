@@ -1,7 +1,5 @@
 project( ExiledFromOrastus )
 
-include_directories( ../GuiCommon/Src )
-
 set( ${PROJECT_NAME}_WXWIDGET 1 )
 set( ${PROJECT_NAME}_DESCRIPTION "Exiled From Orastus" )
 set( ${PROJECT_NAME}_VERSION_MAJOR	1 )
@@ -17,7 +15,7 @@ endif()
 find_package( wxWidgets COMPONENTS core base aui adv )
 
 if( wxWidgets_FOUND AND GTK2_FOUND )
-	include_directories( ${CMAKE_SOURCE_DIR}/GameEngine/Src )
+	include_directories( ${CMAKE_SOURCE_DIR}/GameEngine )
 	include_directories( ${wxWidgets_INCLUDE_DIRS} )
 	string( COMPARE EQUAL "${wxWidgets_USE_DEBUG}" "ON" IsWxDebug )
 	set( wxWidgets_CXXFLAGS "${wxWidgets_CXX_FLAGS} -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES" )
@@ -48,6 +46,8 @@ if( wxWidgets_FOUND AND GTK2_FOUND )
 	add_target(
 		${PROJECT_NAME}
 		bin
+		${CMAKE_CURRENT_SOURCE_DIR}
+		${CMAKE_CURRENT_SOURCE_DIR}
 		"GameEngine"
 		"${OrastusMinLibraries};${wxWidgetsLibraries}"
 		"ExiledFromOrastusPch.hpp"
@@ -55,6 +55,7 @@ if( wxWidgets_FOUND AND GTK2_FOUND )
 		"${wxWidgets_CFLAGS}"
 		"${wxWidgets_CXXFLAGS}"
 	)
+	set_property( TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20 )
 	set_property( TARGET ${PROJECT_NAME} PROPERTY FOLDER "Outputs" )
 	add_target_astyle( ${PROJECT_NAME} ".h;.hpp;.inl;.cpp" )
 else()

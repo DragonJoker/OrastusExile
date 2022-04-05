@@ -11,10 +11,13 @@ set( ${PROJECT_NAME}_VERSION_BUILD	0 )
 add_target(
 	${PROJECT_NAME}
 	bin_dos
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}
 	"GameEngine"
 	"${OrastusMinLibraries}"
 )
 
+set_property( TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20 )
 set_property( TARGET ${PROJECT_NAME} PROPERTY FOLDER "Outputs" )
 add_target_astyle( ${PROJECT_NAME} ".h;.hpp;.inl;.cpp" )
 

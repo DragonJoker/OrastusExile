@@ -11,25 +11,28 @@ set( BinsDependencies
 	PARENT_SCOPE
 )
 
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
-include_directories( ${CMAKE_CURRENT_BINARY_DIR}/Src )
-include_directories( ${CMAKE_BINARY_DIR}/Core/GameEngine/Src )
+include_directories( ${CMAKE_BINARY_DIR}/Core/GameEngine )
 
 add_target(
 	${PROJECT_NAME}
 	api_dll
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}
 	""
 	"${OrastusMinLibraries}"
 	"GameEnginePch.hpp"
 	"GameEnginePch.cpp"
 )
+set_property( TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20 )
 
 file( GLOB ${PROJECT_NAME}_HEADER_FILES
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/*.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/*.inl
+	${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/*.inl
 )
 file( GLOB ${PROJECT_NAME}_SOURCE_FILES
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/*.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 )
 source_group( "Header Files" FILES ${${PROJECT_NAME}_HEADER_FILES} )
 source_group( "Source Files" FILES ${${PROJECT_NAME}_SOURCE_FILES} )
@@ -41,7 +44,6 @@ set( OrastusMinLibraries
 	${OrastusMinLibraries}
 	${PROJECT_NAME}
 )
-
 set( OrastusMinLibraries
 	${OrastusMinLibraries}
 	PARENT_SCOPE
@@ -58,15 +60,11 @@ castor3d_copy_files(
 	${PROJECTS_BINARIES_OUTPUT_DIR_DEBUG}
 )
 
-file(
-	GLOB
-		DataFiles
-		${CMAKE_CURRENT_SOURCE_DIR}/Data/*.*
+file( GLOB DataFiles
+	${CMAKE_CURRENT_SOURCE_DIR}/Data/*.zip
 )
-
-copy_target_files( ${PROJECT_NAME} "" ${DataFiles} )
-
-if ( ORASTUS_BUILDGRP_TEST )
-	add_subdirectory( Test )
-endif ()
-
+copy_target_files_ex( ${PROJECT_NAME}
+	ExiledFromOrastus
+	""
+	${DataFiles}
+)
