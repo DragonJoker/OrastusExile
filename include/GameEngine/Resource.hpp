@@ -43,14 +43,14 @@ namespace orastus
 			/**
 			*\brief
 			*	Constructor, builds the message.
-			*\param[in] p_expected
+			*\param[in] expected
 			*	The expected resource kind.
-			*\param[in] p_received
+			*\param[in] received
 			*	The received resource kind.
 			*/
-			KindException( Kind p_expected, Kind p_received )
+			KindException( Kind expected, Kind received )
 				: std::exception{}
-				, m_message{ "Expected [" + Resource::getKindName( p_expected ) + "], received [" + Resource::getKindName( p_received ) + "]" }
+				, m_message{ "Expected [" + Resource::getKindName( expected ) + "], received [" + Resource::getKindName( received ) + "]" }
 			{
 			}
 			/**
@@ -74,19 +74,19 @@ namespace orastus
 		Resource( Resource const & ) = default;
 		Resource( Resource && ) = default;
 		Resource & operator=( Resource const & ) = default;
-		Resource & operator=( Resource && p_rhs ) = default;
+		Resource & operator=( Resource && rhs ) = default;
 		/**@}*/
 		/**
 		*\brief
 		*	Constructor.
-		*\param[in] p_kind
+		*\param[in] kind
 		*	The resource kind.
-		*\param[in] p_count
+		*\param[in] count
 		*	The resource count.
 		*/
-		inline Resource( Kind p_kind, uint32_t p_count )
-			: m_kind{ p_kind }
-			, m_count{ p_count }
+		inline Resource( Kind kind, uint32_t count )
+			: m_kind{ kind }
+			, m_count{ count }
 		{
 		}
 		/**
@@ -109,79 +109,64 @@ namespace orastus
 		*\name Arithmetic member operators.
 		*/
 		/**@{*/
-		inline Resource & operator+=( uint32_t p_rhs )
+		inline Resource & operator+=( uint32_t rhs )
 		{
-			m_count += p_rhs;
+			m_count += rhs;
 			return *this;
 		}
 
-		inline Resource & operator-=( uint32_t p_rhs )
+		inline Resource & operator-=( uint32_t rhs )
 		{
-			m_count -= std::min( m_count, p_rhs );
+			m_count -= std::min( m_count, rhs );
 			return *this;
 		}
 
-		inline Resource & operator+=( Resource const & p_rhs )
+		inline Resource & operator+=( Resource const & rhs )
 		{
-			if ( p_rhs.m_kind != m_kind )
+			if ( rhs.m_kind != m_kind )
 			{
-				throw KindException( m_kind, p_rhs.m_kind );
+				throw KindException( m_kind, rhs.m_kind );
 			}
 
-			return operator+=( p_rhs.m_count );
+			return operator+=( rhs.m_count );
 		}
 
-		inline Resource & operator-=( Resource const & p_rhs )
+		inline Resource & operator-=( Resource const & rhs )
 		{
-			if ( p_rhs.m_kind != m_kind )
+			if ( rhs.m_kind != m_kind )
 			{
-				throw KindException( m_kind, p_rhs.m_kind );
+				throw KindException( m_kind, rhs.m_kind );
 			}
 
-			return operator-=( p_rhs.m_count );
+			return operator-=( rhs.m_count );
 		}
 		/**@}*/
 		/**
 		*\brief
 		*	The name of given resource kind.
-		*\param[in] p_kind
+		*\param[in] kind
 		*	The resource kind.
 		*\return
 		*	The resource kind name.
 		*/
-		static inline String getKindName( Kind p_kind )
+		static inline String getKindName( Kind kind )
 		{
-			String l_result;
-
-			switch ( p_kind )
+			switch ( kind )
 			{
 			case Kind::eCloth:
-				l_result = "Cloth";
-				break;
-
+				return "Cloth";
 			case Kind::eLeather:
-				l_result = "Leather";
-				break;
-
+				return "Leather";
 			case Kind::eWood:
-				l_result = "Wood";
-				break;
-
+				return "Wood";
 			case Kind::eIron:
-				l_result = "Iron";
-				break;
-
+				return "Iron";
 			case Kind::eGold:
-				l_result = "Gold";
-				break;
-
+				return "Gold";
 			default:
 				assert( false );
-				l_result = "Undefined";
-				break;
+				return "Undefined";
 			}
-
-			return l_result;
 		}
 
 	private:
@@ -192,32 +177,32 @@ namespace orastus
 	*\name Arithmetic operators.
 	*/
 	/**@{*/
-	inline Resource operator+( Resource const & p_lhs, uint32_t p_rhs )
+	inline Resource operator+( Resource const & lhs, uint32_t rhs )
 	{
-		Resource l_result{ p_lhs };
-		l_result += p_rhs;
-		return l_result;
+		Resource result{ lhs };
+		result += rhs;
+		return result;
 	}
 
-	inline Resource operator-( Resource const & p_lhs, uint32_t p_rhs )
+	inline Resource operator-( Resource const & lhs, uint32_t rhs )
 	{
-		Resource l_result{ p_lhs };
-		l_result -= p_rhs;
-		return l_result;
+		Resource result{ lhs };
+		result -= rhs;
+		return result;
 	}
 
-	inline Resource operator+( Resource const & p_lhs, Resource const & p_rhs )
+	inline Resource operator+( Resource const & lhs, Resource const & rhs )
 	{
-		Resource l_result{ p_lhs };
-		l_result += p_rhs;
-		return l_result;
+		Resource result{ lhs };
+		result += rhs;
+		return result;
 	}
 
-	inline Resource operator-( Resource const & p_lhs, Resource const & p_rhs )
+	inline Resource operator-( Resource const & lhs, Resource const & rhs )
 	{
-		Resource l_result{ p_lhs };
-		l_result -= p_rhs;
-		return l_result;
+		Resource result{ lhs };
+		result -= rhs;
+		return result;
 	}
 	/**@}*/
 }

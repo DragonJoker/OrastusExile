@@ -18,28 +18,28 @@ namespace orastus
 	class State
 	{
 	public:
-		using Function = std::function< bool( Game & p_game
-			, Milliseconds const & p_elapsed
-			, Milliseconds const & p_total ) >;
+		using Function = std::function< bool( Game & game
+			, Milliseconds const & elapsed
+			, Milliseconds const & total ) >;
 
 	public:
 		/**
 		*\brief
 		*	Constructor.
-		*\param[in] p_function
+		*\param[in] function
 		*	The state function to execute at each update.
 		*/
-		State( Function p_function );
+		State( Function function );
 		/**
 		*\brief
 		*	Runs the action for the state.
-		*\param[in] p_elapsed
+		*\param[in] elapsed
 		*	The time elapsed since last call.
 		*\return
 		*	\p true if the state is ended.
 		*/
-		bool run( Game & p_game
-			, Milliseconds const & p_elapsed );
+		bool run( Game & game
+			, Milliseconds const & elapsed );
 
 	private:
 		Function m_function;

@@ -16,10 +16,10 @@ using namespace castor3d;
 
 namespace orastus
 {
-	BulletSpawner::BulletSpawner( Ecs & p_ecs
-		, Game & p_game )
-		: m_ecs{ p_ecs }
-		, m_game{ p_game }
+	BulletSpawner::BulletSpawner( Ecs & ecs
+		, Game & game )
+		: m_ecs{ ecs }
+		, m_game{ game }
 	{
 	}
 
@@ -34,66 +34,66 @@ namespace orastus
 			, m_liveBullets.end() );
 		m_liveBullets.clear();
 
-		for ( auto & l_bullet : m_bulletsCache )
+		for ( auto & bullet : m_bulletsCache )
 		{
-			auto l_geometry = m_ecs.getComponentData< GeometrySPtr >( l_bullet
+			auto geometry = m_ecs.getComponentData< GeometrySPtr >( bullet
 				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-			Game::getBulletNode( l_geometry )->setPosition( Point3f{ 0, -1000, 0 } );
+			Game::getBulletNode( geometry )->setPosition( Point3f{ 0, -1000, 0 } );
 		}
 	}
 	
-	void BulletSpawner::fireBullet( Entity p_source
-		, Entity p_target )
+	void BulletSpawner::fireBullet( Entity source
+		, Entity target )
 	{
-		auto l_bullet = *m_bulletsCache.begin();
+		auto bullet = *m_bulletsCache.begin();
 		m_bulletsCache.erase( m_bulletsCache.begin() );
-		m_liveBullets.insert( m_liveBullets.end(), l_bullet );
+		m_liveBullets.insert( m_liveBullets.end(), bullet );
 
-		auto l_speed = m_ecs.getComponentData< float >( p_source
+		auto speed = m_ecs.getComponentData< float >( source
 			, m_ecs.getComponent( Ecs::SpeedComponent ) ).getValue();
-		auto l_damage = m_ecs.getComponentData< uint32_t >( p_source
+		auto damage = m_ecs.getComponentData< uint32_t >( source
 			, m_ecs.getComponent( Ecs::DamageComponent ) ).getValue();
-		auto l_geometry = m_ecs.getComponentData< GeometrySPtr >( l_bullet
+		auto geometry = m_ecs.getComponentData< GeometrySPtr >( bullet
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		auto l_sourceNode = Game::getTowerNode( m_ecs.getComponentData< GeometrySPtr >( p_source
+		auto sourceNode = Game::getTowerNode( m_ecs.getComponentData< GeometrySPtr >( source
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
-		Game::getBulletNode( l_geometry )->setPosition( l_sourceNode->getPosition() );
-		m_ecs.resetBullet( l_bullet
-			, l_geometry
-			, std::make_shared< TrackData >( p_target, l_speed, l_damage ) );
+		Game::getBulletNode( geometry )->setPosition( sourceNode->getPosition() );
+		m_ecs.resetBullet( bullet
+			, geometry
+			, std::make_shared< TrackData >( target, speed, damage ) );
 	}
 
-	void BulletSpawner::fireBullet( Entity p_source
-		, Entity p_target
-		, castor3d::GeometrySPtr p_geometry )
+	void BulletSpawner::fireBullet( Entity source
+		, Entity target
+		, castor3d::GeometrySPtr geometry )
 	{
-		auto l_speed = m_ecs.getComponentData< float >( p_source
+		auto speed = m_ecs.getComponentData< float >( source
 			, m_ecs.getComponent( Ecs::SpeedComponent ) ).getValue();
-		auto l_damage = m_ecs.getComponentData< uint32_t >( p_source
+		auto damage = m_ecs.getComponentData< uint32_t >( source
 			, m_ecs.getComponent( Ecs::DamageComponent ) ).getValue();
-		auto l_sourceNode = Game::getTowerNode( m_ecs.getComponentData< GeometrySPtr >( p_source
+		auto sourceNode = Game::getTowerNode( m_ecs.getComponentData< GeometrySPtr >( source
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
-		Game::getBulletNode( p_geometry )->setPosition( l_sourceNode->getPosition() );
-		auto l_bullet = m_ecs.createBullet( p_geometry
-			, std::make_shared< TrackData >( p_target, l_speed, l_damage ) );
-		m_liveBullets.insert( m_liveBullets.end(), l_bullet );
+		Game::getBulletNode( geometry )->setPosition( sourceNode->getPosition() );
+		auto bullet = m_ecs.createBullet( geometry
+			, std::make_shared< TrackData >( target, speed, damage ) );
+		m_liveBullets.insert( m_liveBullets.end(), bullet );
 		++m_totalSpawned;
 	}
 
-	void BulletSpawner::killBullet( Entity p_bullet )
+	void BulletSpawner::killBullet( Entity bullet )
 	{
-		auto l_it = std::find( std::begin( m_liveBullets )
+		auto it = std::find( std::begin( m_liveBullets )
 			, std::end( m_liveBullets )
-			, p_bullet );
+			, bullet );
 
-		if ( l_it != std::end( m_liveBullets ) )
+		if ( it != std::end( m_liveBullets ) )
 		{
-			m_liveBullets.erase( l_it );
+			m_liveBullets.erase( it );
 		}
 
-		m_bulletsCache.push_back( p_bullet );
-		auto l_geometry = m_ecs.getComponentData< GeometrySPtr >( p_bullet
+		m_bulletsCache.push_back( bullet );
+		auto geometry = m_ecs.getComponentData< GeometrySPtr >( bullet
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		Game::getBulletNode( l_geometry )->setPosition( Point3f{ 0, -1000, 0 } );
+		Game::getBulletNode( geometry )->setPosition( Point3f{ 0, -1000, 0 } );
 	}
 }

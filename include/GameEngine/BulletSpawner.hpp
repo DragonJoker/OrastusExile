@@ -1,4 +1,4 @@
-﻿/**
+/**
 See licence file in root folder, MIT.txt
 */
 #pragma once
@@ -12,17 +12,17 @@ namespace orastus
 	class BulletSpawner
 	{
 	public:
-		EFO_API BulletSpawner( Ecs & p_ecs
-			, Game & p_game );
+		EFO_API BulletSpawner( Ecs & ecs
+			, Game & game );
 		EFO_API ~BulletSpawner();
 
 		EFO_API void reset();
-		EFO_API void fireBullet( Entity p_source
-			, Entity p_target );
-		EFO_API void fireBullet( Entity p_source
-			, Entity p_target
-			, castor3d::GeometrySPtr p_geometry );
-		EFO_API void killBullet( Entity p_bullet );
+		EFO_API void fireBullet( Entity source
+			, Entity target );
+		EFO_API void fireBullet( Entity source
+			, Entity target
+			, castor3d::GeometrySPtr geometry );
+		EFO_API void killBullet( Entity bullet );
 
 		inline bool hasFreeBullet()const
 		{

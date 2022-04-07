@@ -78,18 +78,18 @@ namespace orastus
 
 	// Helpers
 	template< typename T >
-	inline String toString( T const & p_value )
+	inline String toString( T const & value )
 	{
-		StringStream l_stream;
-		l_stream << p_value;
-		return l_stream.str();
+		StringStream stream;
+		stream << value;
+		return stream.str();
 	}
 
-	inline String toString( Milliseconds const & p_value )
+	inline String toString( Milliseconds const & value )
 	{
-		StringStream l_stream;
-		l_stream << p_value.count() << " ms";
-		return l_stream.str();
+		StringStream stream;
+		stream << value.count() << " ms";
+		return stream.str();
 	}
 }
 

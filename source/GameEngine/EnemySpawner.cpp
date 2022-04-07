@@ -105,9 +105,9 @@ namespace orastus
 		Game::getEnemyNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
 	}
 
-	void EnemySpawner::doStartWave( uint32_t p_count )
+	void EnemySpawner::doStartWave( uint32_t count )
 	{
-		m_count = p_count;
+		m_count = count;
 		++m_totalsWaves;
 		m_timeBetweenTwoSpawns = std::chrono::milliseconds( 1000 );
 		m_timeSinceLastSpawn = m_timeBetweenTwoSpawns;
@@ -119,9 +119,9 @@ namespace orastus
 		std::cout << "\nStarting wave " << m_totalsWaves << std::endl;
 	}
 
-	bool EnemySpawner::doCanSpawn( std::chrono::milliseconds const & p_elapsed )
+	bool EnemySpawner::doCanSpawn( std::chrono::milliseconds const & elapsed )
 	{
-		m_timeSinceLastSpawn += p_elapsed;
+		m_timeSinceLastSpawn += elapsed;
 		return m_count && m_timeSinceLastSpawn >= m_timeBetweenTwoSpawns;
 	}
 

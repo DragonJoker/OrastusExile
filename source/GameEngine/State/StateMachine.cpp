@@ -2,37 +2,37 @@
 
 namespace orastus
 {
-	StateMachine::StateMachine( State const & p_initial
-		, bool p_looped )
-		: m_looped{ p_looped }
+	StateMachine::StateMachine( State const & initial
+		, bool looped )
+		: m_looped{ looped }
 	{
-		m_states.push_back( p_initial );
+		m_states.push_back( initial );
 		m_current = std::begin( m_states );
 	}
 
-	void StateMachine::addState( State const & p_state )
+	void StateMachine::addState( State const & state )
 	{
 		if ( m_current != std::end( m_states ) )
 		{
-			auto l_offset = std::distance( std::begin( m_states ), m_current );
-			m_states.push_back( p_state );
-			m_current = std::begin( m_states ) + l_offset;
+			auto offset = std::distance( std::begin( m_states ), m_current );
+			m_states.push_back( state );
+			m_current = std::begin( m_states ) + offset;
 		}
 		else
 		{
-			m_states.push_back( p_state );
+			m_states.push_back( state );
 			m_current = std::rbegin( m_states ).base();
 		}
 	}
 
-	void StateMachine::update( Game & p_game
-		, Milliseconds const & p_elapsed )
+	void StateMachine::update( Game & game
+		, Milliseconds const & elapsed )
 	{
 		if ( m_current != std::end( m_states ) )
 		{
-			auto & l_current = *m_current;
+			auto & current = *m_current;
 
-			if ( l_current.run( p_game, p_elapsed ) )
+			if ( current.run( game, elapsed ) )
 			{
 				++m_current;
 			}

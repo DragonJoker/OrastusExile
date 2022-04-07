@@ -19,30 +19,30 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor.
-		*\param[in] p_initial
+		*\param[in] initial
 		*	The initial state.
-		*\param[in] p_looped
+		*\param[in] looped
 		*	Tells if the state machine should start again to the inital state
 		*	after reaching the end (\p true) or not.
 		*/
-		StateMachine( State const & p_initial
-			, bool p_looped );
+		StateMachine( State const & initial
+			, bool looped );
 		/**
 		*\brief
 		*	Adds a state to the list.
-		*\param[in] p_state
+		*\param[in] state
 		*	The state.
 		*/
-		void addState( State const & p_state );
+		void addState( State const & state );
 		/**
 		*\brief
 		*	Updates the machine.
 		*	Runs the current state, and swithes to the next one if needed.
-		*\param[in] p_elapsed
+		*\param[in] elapsed
 		*	The time elapsed since last call.
 		*/
-		void update( Game & p_game
-			, Milliseconds const & p_elapsed );
+		void update( Game & game
+			, Milliseconds const & elapsed );
 		/**
 		*\brief
 		*	Restarts the machine.

@@ -16,12 +16,12 @@ namespace orastus
 	{
 		using ValueIncrementFunction = std::function< T( T const &, uint32_t ) >;
 
-		inline void initialise( T const & p_value
-			, ValueIncrementFunction const & p_valueIncrement )
+		inline void initialise( T const & value
+			, ValueIncrementFunction const & valueIncrement )
 		{
 			m_level = 0;
-			m_value = p_value;
-			m_valueIncrement = p_valueIncrement;
+			m_value = value;
+			m_valueIncrement = valueIncrement;
 		}
 
 		inline void upgrade()

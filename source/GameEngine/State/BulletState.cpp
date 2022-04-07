@@ -12,64 +12,64 @@ namespace orastus
 {
 	namespace bullet
 	{
-		State createTrackingState( Ecs & p_ecs, Entity const & p_entity )
+		State createTrackingState( Ecs & ecs, Entity const & entity )
 		{
-			auto l_trackData = p_ecs.getComponentData< TrackDataPtr >( p_entity
-				, p_ecs.getComponent( Ecs::TrackComponent ) ).getValue();
-			auto l_geometry = p_ecs.getComponentData< castor3d::GeometrySPtr >( p_entity
-				, p_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-			auto l_node = Game::getBulletNode( l_geometry );
+			auto trackData = ecs.getComponentData< TrackDataPtr >( entity
+				, ecs.getComponent( Ecs::TrackComponent ) ).getValue();
+			auto geometry = ecs.getComponentData< castor3d::GeometrySPtr >( entity
+				, ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
+			auto node = Game::getBulletNode( geometry );
 
-			return State{ [&p_ecs, p_entity, l_trackData, l_node]( Game & p_game
-				, Milliseconds const & p_elapsed
-				, Milliseconds const & p_total )
+			return State{ [&ecs, entity, trackData, node]( Game & game
+				, Milliseconds const & elapsed
+				, Milliseconds const & total )
 			{
-				auto l_target = Game::getEnemyNode( p_ecs.getComponentData< castor3d::GeometrySPtr >( l_trackData->target
-					, p_ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
-				auto l_distance = float( p_elapsed.count() ) * l_trackData->speed / 1000.0f;
-				castor::Point3f l_nextPosition = l_target->getPosition();
-				castor::Point3f l_position{ l_node->getPosition() };
-				castor::Point3f l_direction{ l_nextPosition - l_position };
-				auto l_distanceToDst = float( castor::point::length( l_direction ) );
-				l_direction[0] *= l_distance / l_distanceToDst;
-				l_direction[2] *= l_distance / l_distanceToDst;
-				bool l_reachDst{ l_distanceToDst <= l_distance };
-				bool l_result = false;
+				auto target = Game::getEnemyNode( ecs.getComponentData< castor3d::GeometrySPtr >( trackData->target
+					, ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
+				auto distance = float( elapsed.count() ) * trackData->speed / 1000.0f;
+				castor::Point3f nextPosition = target->getPosition();
+				castor::Point3f position{ node->getPosition() };
+				castor::Point3f direction{ nextPosition - position };
+				auto distanceToDst = float( castor::point::length( direction ) );
+				direction[0] *= distance / distanceToDst;
+				direction[2] *= distance / distanceToDst;
+				bool reachDst{ distanceToDst <= distance };
+				bool result = false;
 
-				if ( l_trackData->target )
+				if ( trackData->target )
 				{
-					auto l_life = p_ecs.getComponentData< uint32_t >( l_trackData->target
-						, p_ecs.getComponent( Ecs::LifeComponent ) ).getValue();
+					auto life = ecs.getComponentData< uint32_t >( trackData->target
+						, ecs.getComponent( Ecs::LifeComponent ) ).getValue();
 
-					if ( l_life )
+					if ( life )
 					{
-						if ( !l_reachDst )
+						if ( !reachDst )
 						{
 							// not at destination
-							l_nextPosition = l_position + l_direction;
-							l_node->setPosition( l_nextPosition );
+							nextPosition = position + direction;
+							node->setPosition( nextPosition );
 						}
-						else if ( l_distanceToDst < l_distance )
+						else if ( distanceToDst < distance )
 						{
-							p_game.hit( p_entity
-								, l_trackData->target
-								, l_trackData->damage );
-							l_result = true;
+							game.hit( entity
+								, trackData->target
+								, trackData->damage );
+							result = true;
 						}
 					}
 					else
 					{
-						p_game.killBullet( p_entity );
-						l_result = true;
+						game.killBullet( entity );
+						result = true;
 					}
 				}
 				else
 				{
-					p_game.killBullet( p_entity );
-					l_result = true;
+					game.killBullet( entity );
+					result = true;
 				}
 
-				return l_result;
+				return result;
 			} };
 		}
 	}

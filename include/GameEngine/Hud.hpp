@@ -19,11 +19,13 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor.
-		*\param[in] p_game
+		*\param[in] game
 		*	The game instance.
+		*\param[in] scene
+		*	The scene.
 		*/
-		EFO_API Hud( Game & p_game
-			, castor3d::Scene const & p_scene );
+		EFO_API Hud( Game & game
+			, castor3d::Scene const & scene );
 		/**
 		*\brief
 		*	Sets the HUD to initial state.
@@ -73,8 +75,8 @@ namespace orastus
 		*\brief
 		*	Updates the HUD tower info.
 		*/
-		EFO_API void updateTowerInfo( Ecs const & p_ecs
-			, Entity const & p_entity );
+		EFO_API void updateTowerInfo( Ecs const & ecs
+			, Entity const & entity );
 
 	private:
 		Game & m_game;

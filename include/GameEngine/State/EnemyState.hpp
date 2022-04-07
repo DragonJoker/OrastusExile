@@ -14,12 +14,12 @@ namespace orastus
 		/**
 		*\brief
 		*	Creates the idle state for given tower.
-		*\param[in] p_ecs
+		*\param[in] ecs
 		*	The ECS instance.
-		*\param[in] p_tower
+		*\param[in] tower
 		*	The tower's entity.
 		*/
-		EFO_API State createWalkingState( Ecs & p_ecs, Entity const & p_entity );
+		EFO_API State createWalkingState( Ecs & ecs, Entity const & entity );
 	}
 	/**
 	*\brief
@@ -43,12 +43,12 @@ namespace orastus
 	/**
 	*\brief
 	*	Retrieves the name of the given enemy state.
-	*\param[in] p_state
+	*\param[in] state
 	*	The tower state.
 	*\return
 	*	The name.
 	*/
-	EFO_API String getName( EnemyState p_state );
+	EFO_API String getName( EnemyState state );
 }
 
 #endif
