@@ -77,8 +77,7 @@ namespace orastus
 				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
 				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
 				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDBuild1" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDBuild2" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDBuild" ) ).lock()->setVisible( false );
 			} ) );
 	}
 
@@ -169,16 +168,12 @@ namespace orastus
 	void Hud::showBuild()
 	{
 		auto userInput = m_scene.getEngine()->getUserInputListener();
-		userInput->fireMaterialEvent( cuT( "Build1ThumbFront" ), cuT( "HUDThumbShortRange" ) );
-		userInput->fireMaterialEvent( cuT( "Build2ThumbFront" ), cuT( "HUDThumbLongRange" ) );
-		userInput->fireTextEvent( cuT( "Build1Title" ), cuT( "Short range" ) );
-		userInput->fireTextEvent( cuT( "Build2Title" ), cuT( "Long range" ) );
-		userInput->registerClickAction( cuT( "Build1ThumbFrontButton" )
+		userInput->registerClickAction( cuT( "Build/ShortRange/Button" )
 			, [this]()
 			{
 				m_game.createShortRangeTower();
 			} );
-		userInput->registerClickAction( cuT( "Build2ThumbFrontButton" )
+		userInput->registerClickAction( cuT( "Build/Splash/Button" )
 			, [this]()
 			{
 				m_game.createLongRangeTower();
@@ -187,8 +182,7 @@ namespace orastus
 			, [this]()
 			{
 				auto & cache = m_scene.getEngine()->getOverlayCache();
-				cache.find( cuT( "HUDBuild1" ) ).lock()->setVisible( true );
-				cache.find( cuT( "HUDBuild2" ) ).lock()->setVisible( true );
+				cache.find( cuT( "HUDBuild" ) ).lock()->setVisible( true );
 			} ) );
 	}
 
@@ -198,12 +192,11 @@ namespace orastus
 			, [this]()
 			{
 				auto & cache = m_scene.getEngine()->getOverlayCache();
-				cache.find( cuT( "HUDBuild1" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDBuild2" ) ).lock()->setVisible( false );
+				cache.find( cuT( "HUDBuild" ) ).lock()->setVisible( false );
 			} ) );
 		auto userInput = m_scene.getEngine()->getUserInputListener();
-		userInput->unregisterClickAction( cuT( "Build1ThumbFrontButton" ) );
-		userInput->unregisterClickAction( cuT( "Build2ThumbFrontButton" ) );
+		userInput->unregisterClickAction( cuT( "Build/ShortRange/Button" ) );
+		userInput->unregisterClickAction( cuT( "Build/Splash/Button" ) );
 	}
 
 	void Hud::updateTowerInfo( Ecs const & ecs

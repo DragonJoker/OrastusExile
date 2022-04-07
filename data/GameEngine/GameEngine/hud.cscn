@@ -33,7 +33,7 @@ material "HUDBackground"
 {
 	pass
 	{
-		alpha 0
+		alpha 0.0
 	}
 }
 
@@ -49,25 +49,7 @@ material "HUDButtonBorder"
 {
 	pass
 	{
-		diffuse 0.055 0.035 0.196 1.0
-	}
-}
-
-material "HUDButtonHighlight"
-{
-	pass
-	{
-		diffuse 1 1 1 1
-		alpha 0.5
-	}
-}
-
-material "HUDButtonPush"
-{
-	pass
-	{
-		diffuse 0 0 0 1
-		alpha 0.5
+		diffuse 0.055 0.035 0.196
 	}
 }
 
@@ -75,7 +57,7 @@ material "PauseBackground"
 {
 	pass
 	{
-		diffuse 0 0 0 1
+		diffuse 0.0 0.0 0.0
 		alpha 0.8
 	}
 }
@@ -86,16 +68,10 @@ material "HUDDetails"
 	{
 		texture_unit
 		{
-			image "Textures/HUDDetails.png" rgb
-			channel diffuse
+			image "Textures/HUDDetails.png"
 			sampler	"Linear"
-		}
-
-		texture_unit
-		{
-			image "Textures/HUDDetails.png" a
-			channel opacity
-			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
 		}
 	}
 }
@@ -106,16 +82,10 @@ material "HUDBuild"
 	{
 		texture_unit
 		{
-			image "Textures/HUDBuild.png" rgb
-			channel diffuse
+			image "Textures/HUDBuild.png"
 			sampler	"Linear"
-		}
-
-		texture_unit
-		{
-			image "Textures/HUDBuild.png" a
-			channel opacity
-			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
 		}
 	}
 }
@@ -124,38 +94,106 @@ material "HUDThumbShortRange"
 {
 	pass
 	{
-		texture_unit
-		{
-			image "Textures/ThumbShortRange.png" rgb
-			channel diffuse
-			sampler	"Linear"
-		}
-
-		texture_unit
-		{
-			image "Textures/ThumbShortRange.png" a
-			channel opacity
-			sampler	"Linear"
-		}
+		diffuse 0.031 0.329 0.431 1.0
 	}
-}
-
-material "HUDThumbLongRange"
-{
 	pass
 	{
 		texture_unit
 		{
-			image "Textures/ThumbLongRange.png" rgb
-			channel diffuse
+			image "Textures/ThumbShortRange.png"
 			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
 		}
+	}
+}
 
+material "HUDThumbShortRangeHighlight"
+{
+	pass
+	{
+		diffuse 0.0 1.0 1.0
+	}
+	pass
+	{
 		texture_unit
 		{
-			image "Textures/ThumbLongRange.png" a
-			channel opacity
+			image "Textures/ThumbShortRange.png"
 			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDThumbShortRangePush"
+{
+	pass
+	{
+		diffuse 0.031 0.329 0.431
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbShortRange.png"
+			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDThumbSplash"
+{
+	pass
+	{
+		diffuse 0.031 0.329 0.431
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbSplash.png"
+			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDThumbSplashHighlight"
+{
+	pass
+	{
+		diffuse 0.0 1.0 1.0
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbSplash.png"
+			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDThumbSplashPush"
+{
+	pass
+	{
+		diffuse 0.031 0.329 0.431 1.0
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbSplash.png"
+			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
 		}
 	}
 }
@@ -166,16 +204,10 @@ material "HUDBackgroundTop"
 	{
 		texture_unit
 		{
-			image "Textures/HUDBackgroundTop.png" rgb
-			channel diffuse
+			image "Textures/HUDBackgroundTop.png"
 			sampler	"Linear"
-		}
-
-		texture_unit
-		{
-			image "Textures/HUDBackgroundTop.png" a
-			channel opacity
-			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
 		}
 	}
 }
@@ -186,16 +218,10 @@ material "HUDBackgroundBottom"
 	{
 		texture_unit
 		{
-			image "Textures/HUDBackgroundBottom.png" rgb
-			channel diffuse
+			image "Textures/HUDBackgroundBottom.png"
 			sampler	"Linear"
-		}
-
-		texture_unit
-		{
-			image "Textures/HUDBackgroundBottom.png" a
-			channel opacity
-			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
 		}
 	}
 }
@@ -204,20 +230,14 @@ material "ResourcePanel"
 {
 	pass
 	{
-		diffuse 0 0 0 1
+		diffuse 0.0 0.0 0.0
 
 		texture_unit
 		{
-			image "Textures/HUDPanel.png" rgb
-			channel diffuse
+			image "Textures/HUDPanel.png"
 			sampler	"Linear"
-		}
-
-		texture_unit
-		{
-			image "Textures/HUDPanel.png" a
-			channel opacity
-			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
 		}
 	}
 }
@@ -324,7 +344,7 @@ panel_overlay "TitlePanel"
 		font "TitleFont"
 		horizontal_align center
 		text_wrapping break_words
-		text "Castor Tower Defense"
+		text "Orastus' Exile"
 	}
 
 	text_overlay "Start"
@@ -679,7 +699,7 @@ gui
 		}
 	}
 
-	theme "Build/BackBorder"
+	theme "Build/Text"
 	{
 		default_font "ResourcesValueFont"
 		static_style
@@ -689,122 +709,86 @@ gui
 		}
 	}
 
-	theme "Build/Thumb"
+	theme "Build/ShortRange"
 	{
 		default_font "ResourcesValueFont"
-		static_style
-		{
-			background_material "HUDButtonBackground"
-		}
 		button_style
 		{
-			background_material "HUDBackground"
+			background_material "HUDThumbShortRange"
 			border_material "HUDButtonBorder"
-			highlighted_background_material "HUDButtonHighlight"
-			pushed_background_material "HUDButtonPush"
+			highlighted_background_material "HUDThumbShortRangeHighlight"
+			pushed_background_material "HUDThumbShortRangePush"
 		}
 	}
 
-	static "HUDBuild1"
+	theme "Build/Splash"
+	{
+		default_font "ResourcesValueFont"
+		button_style
+		{
+			background_material "HUDThumbSplash"
+			border_material "HUDButtonBorder"
+			highlighted_background_material "HUDThumbSplashHighlight"
+			pushed_background_material "HUDThumbSplashPush"
+		}
+	}
+
+	static "HUDBuild"
 	{
 		theme "Build/Base"
 		pixel_size 200 200
 		pixel_position 814 240
 
-		static "Build1Title"
+		static "Build/Title"
 		{
-			theme "Build/BackBorder"
-			pixel_size 125 30
-			pixel_position 40 40
+			theme "Build/Text"
+			pixel_size 125 15
+			pixel_position 40 45
 			horizontal_align center
 			caption "Construction"
 		}
 
-		static "Build1"
+		static "Build/ShortRange"
 		{
 			theme "Build/Back"
 			pixel_size 125 30
 			pixel_position 40 70
 
-			static "Build1Thumb"
+			button "Build/ShortRange/Button"
 			{
-				theme "Build/Thumb"
+				theme "Build/ShortRange"
 				pixel_size 30 30
 				pixel_position 0 0
-
-				static "Build1ThumbFront"
-				{
-					theme "Build/Back"
-					pixel_size 30 30
-					pixel_position 0 0
-
-					button "Build1ThumbFrontButton"
-					{
-						theme "Build/Thumb"
-						pixel_size 30 30
-						pixel_position 0 0
-					}
-				}
 			}
 
-			static "Build1Desc"
+			static "Build/ShortRange/Desc"
 			{
-				theme "Build/BackBorder"
+				theme "Build/Text"
 				pixel_size 90 30
-				pixel_position 30 0
-				caption "Construction 1"
+				pixel_position 35 10
+				caption "Short Range"
 			}
 		}
-	}
 
-	static "HUDBuild2"
-	{
-		theme "Build/Base"
-		pixel_size 200 200
-		pixel_position 814 450
-
-		static "Build2Title"
-		{
-			theme "Build/BackBorder"
-			pixel_size 125 30
-			pixel_position 40 40
-			horizontal_align center
-			caption "Construction"
-		}
-
-		static "Build2"
+		static "Build/Splash"
 		{
 			theme "Build/Back"
 			pixel_size 125 30
-			pixel_position 40 70
+			pixel_position 40 105
 
-			static "Build2Thumb"
+			button "Build/Splash/Button"
 			{
-				theme "Build/Thumb"
+				theme "Build/Splash"
 				pixel_size 30 30
 				pixel_position 0 0
-
-				static "Build2ThumbFront"
-				{
-					theme "Build/Back"
-					pixel_size 30 30
-					pixel_position 0 0
-
-					button "Build2ThumbFrontButton"
-					{
-						theme "Build/Thumb"
-						pixel_size 30 30
-						pixel_position 0 0
-					}
-				}
 			}
 
-			static "Build2Desc"
+			static "Build/Splash/Desc"
 			{
-				theme "Build/BackBorder"
+				theme "Build/Text"
 				pixel_size 90 30
-				pixel_position 30 0
-				caption "Construction 2"
+				pixel_position 35 10
+				caption "Splash"
 			}
 		}
 	}
@@ -859,7 +843,7 @@ panel_overlay "HelpPanel"
 		position 0.1 0.2
 		material "White"
 		font "ResourcesFont"
-		text "Bouton gauche de la souris sur une case pour la sélectionner.\n\nBouton droit de la souris pour afficher les options de la case\nprécédemment sélectionnée.\n\nBarre d espace: Met le jeu en pause, reprend la partie (depuis la pause\net depuis l aide).\n\nTouche 1: Améliorer les dégâts de la tour actuellement sélectionnée.\n\nTouche 2: Améliorer la portée de la tour actuellement sélectionnée.\n\nTouche 3: Améliorer la vitesse de la tour actuellement sélectionnée.\n\nTouche F1: Affiche l'aide."
+		text "Bouton gauche de la souris sur une case pour la sélectionner.\n\nBarre d'espace: Met le jeu en pause, reprend la partie (depuis la pause\net depuis l'aide).\n\nTouche 1: Améliorer les dégâts de la tour actuellement sélectionnée.\n\nTouche 2: Améliorer la portée de la tour actuellement sélectionnée.\n\nTouche 3: Améliorer la vitesse de la tour actuellement sélectionnée.\n\nTouche F1: Affiche l'aide."
 		text_wrapping break_words
 		line_spacing_mode max_font_height
 	}
