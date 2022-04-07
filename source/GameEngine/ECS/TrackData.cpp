@@ -2,12 +2,12 @@
 
 namespace orastus
 {
-	TrackData::TrackData( Entity p_target
-		, float p_speed
-		, uint32_t p_damage )
-		: speed{ p_speed }
-		, target{ p_target }
-		, damage{ p_damage }
+	TrackData::TrackData( Entity ptarget
+		, float pspeed
+		, uint32_t pdamage )
+		: speed{ pspeed }
+		, target{ ptarget }
+		, damage{ pdamage }
 	{
 	}
 }

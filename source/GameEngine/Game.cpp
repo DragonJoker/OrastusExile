@@ -117,46 +117,6 @@ namespace orastus
 
 	//*********************************************************************************************
 
-	auto constexpr s_faceIndex = 5u;
-
-	void Game::SelectedBlock::select( Entity const & pentity
-		, castor3d::GeometrySPtr pgeometry )
-	{
-		unselect();
-
-		if ( pentity && pgeometry )
-		{
-			entity = pentity;
-			geometry = pgeometry;
-			auto & submeshR = *geometry->getMesh().lock()->getSubmesh( s_faceIndex );
-			material = geometry->getMaterial( submeshR );
-			auto & cache = geometry->getScene()->getEngine()->getMaterialCache();
-			auto newMaterial = cache.find( material->getName() + cuT( "_sel" ) ).lock();
-
-			for ( auto & submesh : *geometry->getMesh().lock() )
-			{
-				geometry->setMaterial( *submesh, newMaterial.get() );
-			}
-		}
-	}
-
-	void Game::SelectedBlock::unselect()
-	{
-		if ( entity && geometry )
-		{
-			for ( auto & submesh : *geometry->getMesh().lock() )
-			{
-				geometry->setMaterial( *submesh, material );
-			}
-
-			material = nullptr;
-			geometry.reset();
-			entity = Entity{};
-		}
-	}
-
-	//*********************************************************************************************
-
 	Game::Game( castor3d::Scene & scene )
 		: m_scene{ scene }
 		, m_hud{ *this, scene }
@@ -181,16 +141,14 @@ namespace orastus
 		, m_bulletSpawner{ m_ecs, *this }
 	{
 		m_mapNode = m_scene.getSceneNodeCache().find( cuT( "MapBase" ) ).lock();
-		m_mapCubeMesh = m_scene.getMeshCache().find( cuT( "MapCube" ) );
-		m_mapCubeMaterial = m_scene.getMaterialView().find( cuT( "MapCube" ) ).lock();
+		m_emptyTileMesh = m_scene.getMeshCache().find( cuT( "EmptyTile" ) );
+		m_pathTileMesh = m_scene.getMeshCache().find( cuT( "PathTile" ) );
 		m_shortRangeTowerMesh = m_scene.getMeshCache().find( cuT( "ShortRange" ) ).lock();
 		m_longRangeTowerMesh = m_scene.getMeshCache().find( cuT( "HeavySplash" ) ).lock();
-		m_enemyCubeMesh = m_scene.getMeshCache().find( cuT( "EnemyCube" ) ).lock();
-		m_enemyCubeMaterial = m_scene.getMaterialView().find( cuT( "EnemyCube" ) ).lock();
 		m_bulletMesh = m_scene.getMeshCache().find( cuT( "Bullet" ) ).lock();
 		m_bulletMaterial = m_scene.getMaterialView().find( cuT( "Bullet" ) ).lock();
 		m_targetNode = m_scene.getSceneNodeCache().find( cuT( "Target" ) ).lock();
-		auto mesh = m_mapCubeMesh.lock();
+		auto mesh = m_emptyTileMesh.lock();
 		m_cellDimensions[0] = mesh->getBoundingBox().getMax()[0] - mesh->getBoundingBox().getMin()[0];
 		m_cellDimensions[1] = mesh->getBoundingBox().getMax()[1] - mesh->getBoundingBox().getMin()[1];
 		m_cellDimensions[2] = mesh->getBoundingBox().getMax()[2] - mesh->getBoundingBox().getMin()[2];
@@ -213,9 +171,17 @@ namespace orastus
 
 		for ( auto & cell : m_grid )
 		{
-			if ( cell.state == GridCell::State::eEmpty )
+			switch ( cell.state )
 			{
-				doAddMapCube( cell );
+			case GridCell::State::eEmpty:
+				doAddEmptyTile( cell );
+				break;
+			case GridCell::State::eStart:
+			case GridCell::State::ePath:
+				doAddPathTile( cell );
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -268,7 +234,8 @@ namespace orastus
 		m_selectedCell = &doFindCell( entity );
 		entity = m_selectedCell->entity;
 
-		if ( m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::PickableComponent ) ) )
+		if ( m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::PickableComponent ) )
+			&& m_ecs.getComponentData< bool >( entity, m_ecs.getComponent( Ecs::PickableComponent ) ).getValue() )
 		{
 			if ( doSelectEntity( entity ) )
 			{
@@ -323,27 +290,40 @@ namespace orastus
 		}
 	}
 
-	castor3d::GeometrySPtr Game::createEnemy( castor::String const & name )
+	castor3d::GeometrySPtr Game::createEnemy( castor::String const & name
+		, castor3d::MeshResPtr mesh )
 	{
 		auto baseNode = m_scene.getSceneNodeCache().add( name + cuT( "_Base" ) ).lock();
 		baseNode->attachTo( *m_mapNode );
 		auto node = m_scene.getSceneNodeCache().add( name ).lock();
-		node->setOrientation( Quaternion::fromAxisAngle( Point3f{ 1, 0, 1 }, 45.0_degrees ) );
+		node->setOrientation( Quaternion::fromAxisAngle( Point3f{ 1, 0, 1 }, 10.0_degrees ) );
 		node->attachTo( *baseNode );
-		auto result = m_scene.getGeometryCache().create( name, m_scene, *node, m_enemyCubeMesh );
-
-		for ( auto submesh : *result->getMesh().lock() )
-		{
-			result->setMaterial( *submesh, m_enemyCubeMaterial.get() );
-		}
-
+		auto result = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
 		m_scene.getGeometryCache().add( result );
 		auto light = m_scene.getLightCache().create( name
 			, m_scene
 			, *node
 			, m_scene.getLightsFactory()
 			, LightType::ePoint );
-		light->setColour( RgbColour::fromPredefined( PredefinedRgbColour::eRed ) );
+		auto meshName = mesh.lock()->getName();
+
+		if ( meshName.find( "Red" ) != castor::String::npos )
+		{
+			light->setColour( RgbColour::fromPredefined( PredefinedRgbColour::eRed ) );
+		}
+		else if ( meshName.find( "Green" ) != castor::String::npos )
+		{
+			light->setColour( RgbColour::fromPredefined( PredefinedRgbColour::eGreen ) );
+		}
+		else if ( meshName.find( "Purple" ) != castor::String::npos )
+		{
+			light->setColour( RgbColour::fromComponents( 0.569f, 0.514f, 0.875f ) );
+		}
+		else
+		{
+			light->setColour( RgbColour::fromComponents( 0.733, 0.537, 0.337 ) );
+		}
+
 		light->setIntensity( 0.8f, 1.0f );
 		light->getPointLight()->setAttenuation( Point3f{ 1.0f, 0.1f, 0.0f } );
 		m_scene.getLightCache().add( name, light );
@@ -481,23 +461,29 @@ namespace orastus
 		}
 	}
 
-	void Game::doAddMapCube( GridCell & cell )
+	void Game::doAddTile( GridCell & cell
+		, castor3d::MeshResPtr mesh
+		, bool pickable )
 	{
-		String name = cuT( "MapCube_" ) + std::to_string( cell.x ) + cuT( "x" ) + std::to_string( cell.y );
+		String name = cuT( "Tile_" ) + std::to_string( cell.x ) + cuT( "x" ) + std::to_string( cell.y );
 		auto node = m_scene.getSceneNodeCache().add( name ).lock();
-		auto geometry = m_scene.getGeometryCache().create( name, m_scene, *node, m_mapCubeMesh );
+		auto geometry = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
 		node->setPosition( doConvert( Point2i{ cell.x, cell.y } ) + Point3f{ 0, m_cellDimensions[1] / 2, 0 } );
 		node->attachTo( *m_mapNode );
-
-		for ( auto submesh : *geometry->getMesh().lock() )
-		{
-			geometry->setMaterial( *submesh, m_mapCubeMaterial.get() );
-		}
-
 		m_scene.getGeometryCache().add( geometry );
-		cell.entity = m_ecs.createMapBlock( geometry );
-		m_lastMapCube = geometry;
+		cell.entity = m_ecs.createMapBlock( geometry, pickable );
+	}
+
+	void Game::doAddEmptyTile( GridCell & cell )
+	{
+		doAddTile( cell, m_emptyTileMesh, true );
 		cell.state = GridCell::State::eEmpty;
+	}
+
+	void Game::doAddPathTile( GridCell & cell )
+	{
+		doAddTile( cell, m_pathTileMesh, false );
+		cell.state = GridCell::State::ePath;
 	}
 
 	void Game::doAddTarget( GridCell & cell )

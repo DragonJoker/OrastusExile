@@ -12,14 +12,14 @@ namespace orastus
 	class EnemySpawner
 	{
 	public:
-		EFO_API EnemySpawner( Ecs & p_ecs
-			, Game & p_game );
+		EFO_API EnemySpawner( Ecs & ecs
+			, Game & game );
 		EFO_API ~EnemySpawner();
 
 		EFO_API void reset();
-		EFO_API void update( Milliseconds const & p_elapsed );
+		EFO_API void update( Milliseconds const & elapsed );
 
-		EFO_API void killEnemy( Entity p_enemy );
+		EFO_API void killEnemy( Entity enemy );
 
 		inline uint32_t getWave()const
 		{
@@ -37,10 +37,10 @@ namespace orastus
 		}
 
 	private:
-		void doStartWave( uint32_t m_count );
-		bool doCanSpawn( std::chrono::milliseconds const & p_elapsed );
-		void doSpawn( Grid const & p_grid
-			, GridPath const & p_path );
+		void doStartWave( uint32_t count );
+		bool doCanSpawn( std::chrono::milliseconds const & elapsed );
+		void doSpawn( Grid const & grid
+			, GridPath const & path );
 
 		inline bool doIsWaveEnded()const
 		{
@@ -56,8 +56,11 @@ namespace orastus
 		uint32_t m_totalsWaves{ 0u };
 		uint32_t m_totalSpawned{ 0u };
 		uint32_t m_totalEnemies{ 0u };
-		EntityList m_enemiesCache;
+		std::vector< castor3d::MeshResPtr > m_enemyMeshes;
+		std::map< castor3d::MeshRPtr, EntityList > m_allEnemiesCache;
+		EntityList * m_enemiesCache{};
 		EntityList m_liveEnemies;
+		castor3d::MeshResPtr m_currentEnemies;
 		Ability< uint32_t > m_life;
 		Ability< uint32_t > m_bounty;
 	};

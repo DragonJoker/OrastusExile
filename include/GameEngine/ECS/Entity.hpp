@@ -20,12 +20,12 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor.
-		*\param[in] p_name
+		*\param[in] name
 		*	The optional entity name, used in debug only.
 		*/
-		inline explicit Entity( xchar const * const p_name ) 
+		inline explicit Entity( xchar const * const name ) 
 #if !defined( NDEBUG )
-			: m_name{ p_name }
+			: m_name{ name }
 #endif
 		{
 		}
@@ -54,14 +54,14 @@ namespace orastus
 	/**
 	*\brief
 	*	Equality operator.
-	*\param[in] p_lhs, p_rhs
+	*\param[in] lhs, rhs
 	*	The operands.
 	*\return
-	*	\p false if \p p_lhs and \p rhs are different.
+	*	\p false if \p lhs and \p rhs are different.
 	*/
-	bool inline operator==( Entity const & p_lhs, Entity const & p_rhs )
+	bool inline operator==( Entity const & lhs, Entity const & rhs )
 	{
-		return static_cast< Ided >( p_lhs ) == static_cast< Ided >( p_rhs );
+		return static_cast< Ided >( lhs ) == static_cast< Ided >( rhs );
 	}
 }
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
 See licence file in root folder, MIT.txt
 */
 #pragma once
@@ -19,44 +19,44 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor, retrieves the components.
-		*\param[in] p_ecs
+		*\param[in] ecs
 		*	The ECS instance, from which the components are retrieved.
 		*/
-		EFO_API explicit Bullet( Ecs & p_ecs );
+		EFO_API explicit Bullet( Ecs & ecs );
 		/**
 		*\brief
 		*	Creates the component data for a bullet.
-		*\param[in] p_entity
+		*\param[in] entity
 		*	The entity for the bullet.
-		*\param[in] p_geometry
+		*\param[in] geometry
 		*	The geometry value.
-		*\param[in] p_track
+		*\param[in] track
 		*	The track value.
 		*/
-		EFO_API void createData( Entity const & p_entity
-			, castor3d::GeometrySPtr p_geometry
-			, TrackDataPtr p_track );
+		EFO_API void createData( Entity const & entity
+			, castor3d::GeometrySPtr geometry
+			, TrackDataPtr track );
 		/**
 		*\brief
 		*	Resets a bullet's component data to initial state.
-		*\param[in] p_entity
+		*\param[in] entity
 		*	The entity for the bullet.
 		*	The damage value.
-		*\param[in] p_geometry
+		*\param[in] geometry
 		*	The geometry value.
-		*\param[in] p_track
+		*\param[in] track
 		*	The track value.
 		*/
-		EFO_API void resetData( Entity const & p_entity
-			, castor3d::GeometrySPtr p_geometry
-			, TrackDataPtr p_track );
+		EFO_API void resetData( Entity const & entity
+			, castor3d::GeometrySPtr geometry
+			, TrackDataPtr track );
 		/**
 		*\brief
 		*	Returns a bullet as a string.
-		*\param[in] p_entity
+		*\param[in] entity
 		*	The entity to print.
 		*/
-		EFO_API String toString( Entity const & p_entity );
+		EFO_API String toString( Entity const & entity );
 
 	private:
 		Ecs & m_ecs;

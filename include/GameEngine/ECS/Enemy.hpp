@@ -1,4 +1,4 @@
-﻿/**
+/**
 See licence file in root folder, MIT.txt
 */
 #pragma once
@@ -19,55 +19,55 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor, retrieves the components.
-		*\param[in] p_ecs
+		*\param[in] ecs
 		*	The ECS instance, from which the components are retrieved.
 		*/
-		EFO_API explicit Enemy( Ecs & p_ecs );
+		EFO_API explicit Enemy( Ecs & ecs );
 		/**
 		*\brief
 		*	Creates the component data for an enemy.
-		*\param[in] p_entity
+		*\param[in] entity
 		*	The entity for the enemy.
-		*\param[in] p_speed
+		*\param[in] speed
 		*	The speed value.
-		*\param[in] p_life
+		*\param[in] life
 		*	The life points.
-		*\param[in] p_geometry
+		*\param[in] geometry
 		*	The geometry value.
-		*\param[in] p_walkData
+		*\param[in] walkData
 		*	The wallk data.
 		*/
-		EFO_API void createData( Entity const & p_entity
-			, float p_speed
-			, uint32_t p_life
-			, castor3d::GeometrySPtr p_geometry
-			, WalkDataPtr p_walkData );
+		EFO_API void createData( Entity const & entity
+			, float speed
+			, uint32_t life
+			, castor3d::GeometrySPtr geometry
+			, WalkDataPtr walkData );
 		/**
 		*\brief
 		*	Resets an enemy to initial state.
-		*\param[in] p_entity
+		*\param[in] entity
 		*	The enemy entity.
-		*\param[in] p_speed
+		*\param[in] speed
 		*	The speed value.
-		*\param[in] p_life
+		*\param[in] life
 		*	The life points.
-		*\param[in] p_geometry
+		*\param[in] geometry
 		*	The geometry value.
-		*\param[in] p_walkData
+		*\param[in] walkData
 		*	The wallk data.
 		*/
-		EFO_API void resetData( Entity const & p_entity
-			, float p_speed
-			, uint32_t p_life
-			, castor3d::GeometrySPtr p_geometry
-			, WalkDataPtr p_walkData );
+		EFO_API void resetData( Entity const & entity
+			, float speed
+			, uint32_t life
+			, castor3d::GeometrySPtr geometry
+			, WalkDataPtr walkData );
 		/**
 		*\brief
 		*	Returns an enemy as a string.
-		*\param[in] p_entity
+		*\param[in] entity
 		*	The entity to print.
 		*/
-		EFO_API String toString( Entity const & p_entity );
+		EFO_API String toString( Entity const & entity );
 
 	private:
 		Ecs & m_ecs;

@@ -5,10 +5,10 @@
 
 namespace orastus
 {
-	AnimationData::AnimationData( castor3d::AnimatedObjectGroupSPtr p_animation
-		, String const & p_name )
-		: animation{ p_animation }
-		, animName{ p_name }
+	AnimationData::AnimationData( castor3d::AnimatedObjectGroupSPtr panimation
+		, String const & name )
+		: animation{ panimation }
+		, animName{ name }
 	{
 		auto & objects = animation->getObjects();
 		auto & anim = objects.begin()->second->getAnimation( animName );

@@ -11,8 +11,8 @@ namespace orastus
 {
 	struct AttackData
 	{
-		inline AttackData( Milliseconds const & p_shootDelay )
-			: shootDelay{ p_shootDelay }
+		inline AttackData( Milliseconds const & pshootDelay )
+			: shootDelay{ pshootDelay }
 		{
 		}
 

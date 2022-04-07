@@ -15,7 +15,7 @@ material "inventor_accessories"
 		{
 			levels_count 9
 			image "Textures/inventor_tower_tower1_inventor_Diffuse.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -24,7 +24,7 @@ material "inventor_accessories"
 			levels_count 9
 			image "Textures/inventor_tower_tower1_inventor_SpecularGloss.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -35,7 +35,7 @@ material "inventor_accessories_sel"
 {
 	pass
 	{
-		albedo 0.0 1.0 0.0
+		diffuse 0.0 1.0 0.0
 		specular 0.0 1.0 0.0
 
 		texture_unit
@@ -49,7 +49,7 @@ material "inventor_accessories_sel"
 		{
 			levels_count 9
 			image "Textures/inventor_tower_tower1_inventor_Diffuse.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -58,7 +58,7 @@ material "inventor_accessories_sel"
 			levels_count 9
 			image "Textures/inventor_tower_tower1_inventor_SpecularGloss.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -79,7 +79,7 @@ material "inventor_body"
 		{
 			levels_count 9
 			image "Textures/inventor_tower_tower1_inventor_Diffuse_0.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -88,7 +88,7 @@ material "inventor_body"
 			levels_count 9
 			image "Textures/inventor_tower_tower1_inventor_SpecularGloss_0.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -98,7 +98,7 @@ material "inventor_body_sel"
 {
 	pass
 	{
-		albedo 0.0 1.0 0.0
+		diffuse 0.0 1.0 0.0
 		specular 0.0 1.0 0.0
 
 		texture_unit
@@ -112,7 +112,7 @@ material "inventor_body_sel"
 		{
 			levels_count 9
 			image "Textures/inventor_tower_tower1_inventor_Diffuse_0.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -121,7 +121,7 @@ material "inventor_body_sel"
 			levels_count 9
 			image "Textures/inventor_tower_tower1_inventor_SpecularGloss_0.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -142,7 +142,7 @@ material "short_range_accessories"
 		{
 			levels_count 9
 			image "Textures/short_range_tower_tower1_quick_short_Diffuse.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -151,7 +151,7 @@ material "short_range_accessories"
 			levels_count 9
 			image "Textures/short_range_tower_tower1_quick_short_SpecularGloss_0.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -161,7 +161,7 @@ material "short_range_accessories_sel"
 {
 	pass
 	{
-		albedo 0.0 1.0 0.0
+		diffuse 0.0 1.0 0.0
 		specular 0.0 1.0 0.0
 
 		texture_unit
@@ -175,7 +175,7 @@ material "short_range_accessories_sel"
 		{
 			levels_count 9
 			image "Textures/short_range_tower_tower1_quick_short_Diffuse.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -184,7 +184,7 @@ material "short_range_accessories_sel"
 			levels_count 9
 			image "Textures/short_range_tower_tower1_quick_short_SpecularGloss_0.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -205,7 +205,7 @@ material "short_range_body"
 		{
 			levels_count 9
 			image "Textures/short_range_tower_tower1_quick_short_Diffuse_0.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -214,7 +214,7 @@ material "short_range_body"
 			levels_count 9
 			image "Textures/short_range_tower_tower1_quick_short_SpecularGloss.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -224,7 +224,7 @@ material "short_range_body_sel"
 {
 	pass
 	{
-		albedo 0.0 1.0 0.0
+		diffuse 0.0 1.0 0.0
 		specular 0.0 1.0 0.0
 
 		texture_unit
@@ -238,7 +238,7 @@ material "short_range_body_sel"
 		{
 			levels_count 9
 			image "Textures/short_range_tower_tower1_quick_short_Diffuse_0.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -247,7 +247,7 @@ material "short_range_body_sel"
 			levels_count 9
 			image "Textures/short_range_tower_tower1_quick_short_SpecularGloss.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -268,7 +268,7 @@ material "splash_accessories"
 		{
 			levels_count 9
 			image "Textures/splash_tower_tower1_heavy_splash_Diffuse.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -277,7 +277,7 @@ material "splash_accessories"
 			levels_count 9
 			image "Textures/splash_tower_tower1_heavy_splash_SpecularGloss.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -287,7 +287,7 @@ material "splash_accessories_sel"
 {
 	pass
 	{
-		albedo 0.0 1.0 0.0
+		diffuse 0.0 1.0 0.0
 		specular 0.0 1.0 0.0
 
 		texture_unit
@@ -301,7 +301,7 @@ material "splash_accessories_sel"
 		{
 			levels_count 9
 			image "Textures/splash_tower_tower1_heavy_splash_Diffuse.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -310,7 +310,7 @@ material "splash_accessories_sel"
 			levels_count 9
 			image "Textures/splash_tower_tower1_heavy_splash_SpecularGloss.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -331,7 +331,7 @@ material "splash_body"
 		{
 			levels_count 9
 			image "Textures/splash_tower_tower1_heavy_splash_Diffuse_0.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -340,7 +340,7 @@ material "splash_body"
 			levels_count 9
 			image "Textures/splash_tower_tower1_heavy_splash_SpecularGloss_0.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -350,7 +350,7 @@ material "splash_body_sel"
 {
 	pass
 	{
-		albedo 0.0 1.0 0.0
+		diffuse 0.0 1.0 0.0
 		specular 0.0 1.0 0.0
 
 		texture_unit
@@ -364,7 +364,7 @@ material "splash_body_sel"
 		{
 			levels_count 9
 			image "Textures/splash_tower_tower1_heavy_splash_Diffuse_0.dds"
-			albedo_mask 0x00ffffff
+			diffuse_mask 0x00ffffff
 			invert_y true
 		}
 
@@ -373,7 +373,7 @@ material "splash_body_sel"
 			levels_count 9
 			image "Textures/splash_tower_tower1_heavy_splash_SpecularGloss_0.dds"
 			specular_mask 0x00ffffff
-			glossiness_mask 0xff000000
+			shininess_mask 0xff000000
 			invert_y true
 		}
 	}
@@ -383,7 +383,7 @@ material "Bullet"
 {
 	pass
 	{
-		albedo 0.5 0.0 0.5
+		diffuse 0.5 0.0 0.5
 		specular 0.5 0.0 0.5
 	}
 }
@@ -392,7 +392,7 @@ material "Boulder"
 {
 	pass
 	{
-		albedo 0.5 0.5 0.0
+		diffuse 0.5 0.5 0.0
 		specular 0.5 0.5 0.0
 	}
 }

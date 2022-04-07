@@ -30,12 +30,12 @@ namespace orastus
 			/**
 			*\brief
 			*	Constructor, builds the message.
-			*\param[in] p_name
+			*\param[in] name
 			*	The name which is not found.
 			*/
-			explicit NameException( ComponentId const & p_name )
+			explicit NameException( ComponentId const & name )
 				: std::exception{}
-				, m_message{ "Unknown component name [" + toString( p_name ) + "]" }
+				, m_message{ "Unknown component name [" + toString( name ) + "]" }
 			{
 			}
 			/**
@@ -55,15 +55,15 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor.
-		*\param[in] p_name
+		*\param[in] name
 		*	The internal component name.
-		*\param[in] p_desc
+		*\param[in] desc
 		*	The human readable description.
 		*/
-		inline explicit Component( ComponentId const & p_name
-			, String const & p_desc )
-			: m_name{ p_name }
-			, m_desc{ p_desc }
+		inline explicit Component( ComponentId const & name
+			, String const & desc )
+			: m_name{ name }
+			, m_desc{ desc }
 		{
 		}
 		/**

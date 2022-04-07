@@ -56,7 +56,6 @@ namespace orastus
 			float doTransformY( int y );
 			int doTransformX( float x );
 			int doTransformY( float y );
-			void doUpdateSelectedGeometry( castor3d::GeometrySPtr p_geometry );
 			void doStartTimer( TimerID p_id );
 			void doStopTimer( TimerID p_id );
 
@@ -85,6 +84,7 @@ namespace orastus
 			float m_y{ 0.0 };
 			float m_oldX{ 0.0 };
 			float m_oldY{ 0.0 };
+			float m_camSpeed{ 10.0f };
 			bool m_mouseLeftDown{ false };
 			bool m_resizeWindow{ true };
 			std::array< wxTimer *, size_t( TimerID::eCount ) > m_timers;

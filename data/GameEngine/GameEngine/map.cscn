@@ -4,7 +4,7 @@ material "MapBase"
 {
 	pass
 	{
-		albedo 0.2 1.0 0.5
+		diffuse 0.2 1.0 0.5
 		specular 0.2 1.0 0.5
 	}
 }
@@ -13,7 +13,7 @@ material "MapMouseOk"
 {
 	pass
 	{
-		albedo 0.0 1.0 0.0
+		diffuse 0.0 1.0 0.0
 		specular 0.0 1.0 0.0
 		alpha 0.75
 	}
@@ -23,25 +23,9 @@ material "MapMouseNOk"
 {
 	pass
 	{
-		albedo 1.0 0.0 0.0
+		diffuse 1.0 0.0 0.0
 		specular 1.0 0.0 0.0
 		alpha 0.75
-	}
-}
-
-material "MapCube"
-{
-	pass
-	{
-		albedo 0.5 0.5 0.5
-		specular 0.5 0.5 0.5
-
-		texture_unit
-		{
-			image "Textures/Cube.png"
-			sampler "Nearest"
-			albedo_mask 0x00FFFFFF
-		}
 	}
 }
 
@@ -49,14 +33,14 @@ material "MapCube_sel"
 {
 	pass
 	{
-		albedo 0.0 0.64 0.0
+		diffuse 0.0 0.64 0.0
 		specular 0.0 0.64 0.0
 
 		texture_unit
 		{
 			image "Textures/Cube.png"
 			sampler "Nearest"
-			albedo_mask 0x00FFFFFF
+			diffuse_mask 0x00FFFFFF
 		}
 	}
 }
@@ -65,23 +49,47 @@ material "Target"
 {
 	pass
 	{
-		albedo 1 1 0 1
+		diffuse 1 1 0 1
 		specular 1 1 0 1
+	}
+}
+
+material "Imp-dirt_sel"
+{
+
+	pass
+	{
+		diffuse 0.976471 0.713726 0.450980
+		specular 1.00000 1.00000 1.00000
+		ambient 1.00000
+		shininess 50.0000
+		two_sided true
+	}
+}
+
+material "Imp-foliage_sel"
+{
+
+	pass
+	{
+		diffuse 0.0 1.0 0.0
+		specular 0.00000 1.00000 0.00000
+		ambient 1.00000
+		shininess 50.0000
+		two_sided true
 	}
 }
 
 // Meshes
 
-mesh "MapBase"
+mesh "EmptyTile"
 {
-	type "plane" -width_subdiv=0 -depth_subdiv=0 -width=577 -depth=577
-	default_material "MapBase"
+	import "Meshes/tile.glb" --rescale=16.0
 }
 
-mesh "MapCube"
+mesh "PathTile"
 {
-	type "cube" -width=16 -height=16 -depth=16
-	default_material "MapCube"
+	import "Meshes/tile_dirt.glb" --rescale=16.0
 }
 
 mesh "Target"
@@ -133,7 +141,7 @@ light "Light01"
 	parent "Light01"
 	type directional
 	colour 1 1 1
-	intensity 8.0 10.0
+	intensity 0.8 1.0
 	shadows
 	{
 		producer true

@@ -37,17 +37,7 @@ namespace orastus
 			Entity entity;
 			castor3d::GeometrySPtr geometry;
 			std::vector< castor3d::MaterialRPtr > materials;
-		};
-
-		struct SelectedBlock
-		{
-			void select( Entity const & entity
-				, castor3d::GeometrySPtr geometry );
-			void unselect();
-
-			Entity entity;
-			castor3d::GeometrySPtr geometry;
-			castor3d::MaterialRPtr material;
+			std::vector< castor3d::MaterialRPtr > selMaterials;
 		};
 
 	public:
@@ -138,7 +128,8 @@ namespace orastus
 		*\return
 		*	The created geometry.
 		*/
-		EFO_API castor3d::GeometrySPtr createEnemy( castor::String const & name );
+		EFO_API castor3d::GeometrySPtr createEnemy( castor::String const & name
+			, castor3d::MeshResPtr mesh );
 		/**
 		*\brief
 		*	Creates a short range tower.
@@ -250,10 +241,22 @@ namespace orastus
 		{
 			return m_grid;
 		}
+		/**
+		*\return
+		*	The scene.
+		*/
+		castor3d::Scene const & getScene()const
+		{
+			return m_scene;
+		}
 
 	private:
 		void doPrepareGrid();
-		void doAddMapCube( GridCell & cell );
+		void doAddTile( GridCell & cell
+			, castor3d::MeshResPtr mesh
+			, bool pickable );
+		void doAddEmptyTile( GridCell & cell );
+		void doAddPathTile( GridCell & cell );
 		void doAddTarget( GridCell & cell );
 		castor3d::GeometrySPtr doCreateBullet( Entity source );
 		castor3d::GeometrySPtr doCreateTower( castor::String const & name
@@ -279,12 +282,10 @@ namespace orastus
 		castor::Point3f m_cellDimensions;
 		castor3d::SceneNodeSPtr m_mapNode;
 		castor3d::SceneNodeSPtr m_targetNode;
-		castor3d::MeshResPtr m_mapCubeMesh;
-		castor3d::MaterialSPtr m_mapCubeMaterial;
+		castor3d::MeshResPtr m_emptyTileMesh;
+		castor3d::MeshResPtr m_pathTileMesh;
 		castor3d::MeshResPtr m_shortRangeTowerMesh;
 		castor3d::MeshResPtr m_longRangeTowerMesh;
-		castor3d::MeshResPtr m_enemyCubeMesh;
-		castor3d::MaterialSPtr m_enemyCubeMaterial;
 		castor3d::MeshResPtr m_bulletMesh;
 		castor3d::MaterialSPtr m_bulletMaterial;
 		// Varying data.
@@ -292,9 +293,8 @@ namespace orastus
 		Clock::time_point m_saved;
 		std::chrono::milliseconds m_elapsed;
 		State m_state;
-		castor3d::GeometrySPtr m_lastMapCube;
 		SelectedEntity m_selectedEntity;
-		SelectedBlock m_selectedBlock;
+		SelectedEntity m_selectedBlock;
 		EnemySpawner m_enemySpawner;
 		BulletSpawner m_bulletSpawner;
 	};

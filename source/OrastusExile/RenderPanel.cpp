@@ -26,44 +26,42 @@ namespace orastus
 	{
 		namespace
 		{
-			KeyboardKey convertKeyCode( int p_code )
+			KeyboardKey convertKeyCode( int code )
 			{
-				KeyboardKey l_return = KeyboardKey::eNone;
+				KeyboardKey result = KeyboardKey::eNone;
 
-				if ( p_code < 0x20 )
+				if ( code < 0x20 )
 				{
-					switch ( p_code )
+					switch ( code )
 					{
 					case WXK_BACK:
 					case WXK_TAB:
 					case WXK_RETURN:
 					case WXK_ESCAPE:
-						l_return = KeyboardKey( p_code );
+						result = KeyboardKey( code );
 						break;
 					}
 				}
-				else if ( p_code == 0x7F )
+				else if ( code == 0x7F )
 				{
-					l_return = KeyboardKey::eDelete;
+					result = KeyboardKey::eDelete;
 				}
-				else if ( p_code > 0xFF )
+				else if ( code > 0xFF )
 				{
-					l_return = KeyboardKey( p_code + int( KeyboardKey::eStart ) - WXK_START );
+					result = KeyboardKey( code + int( KeyboardKey::eStart ) - WXK_START );
 				}
 				else
 				{
 					// ASCII or extended ASCII character
-					l_return = KeyboardKey( p_code );
+					result = KeyboardKey( code );
 				}
 
-				return l_return;
+				return result;
 			}
-
-			static float const g_camSpeed = 10.0f;
 		}
 
-		RenderPanel::RenderPanel( wxWindow * p_parent, wxSize const & p_size, Game & p_game )
-			: wxPanel{ p_parent, wxID_ANY, wxDefaultPosition, p_size }
+		RenderPanel::RenderPanel( wxWindow * parent, wxSize const & size, Game & game )
+			: wxPanel{ parent, wxID_ANY, wxDefaultPosition, size }
 			, m_timers
 			{
 				new wxTimer( this, int( TimerID::eUp ) ),
@@ -72,7 +70,7 @@ namespace orastus
 				new wxTimer( this, int( TimerID::eRight ) ),
 				new wxTimer( this, int( TimerID::eMouse ) ),
 			}
-			, m_game{ p_game }
+			, m_game{ game }
 		{
 			m_renderWindow = castor::makeUnique< castor3d::RenderWindow >( cuT( "RenderPanel" )
 				, wxGetApp().getCastor()
@@ -171,27 +169,16 @@ namespace orastus
 			return result;
 		}
 
-		void RenderPanel::doUpdateSelectedGeometry( castor3d::GeometrySPtr p_geometry )
+		void RenderPanel::doStartTimer( TimerID id )
 		{
-			auto geometry = m_selectedGeometry.lock();
-
-			if ( p_geometry != geometry )
-			{
-				m_selectedGeometry = p_geometry;
-				m_selectedTower = m_game.select( p_geometry );
-			}
+			m_timers[size_t( id )]->Start( 10 );
 		}
 
-		void RenderPanel::doStartTimer( TimerID p_id )
+		void RenderPanel::doStopTimer( TimerID id )
 		{
-			m_timers[size_t( p_id )]->Start( 10 );
-		}
-
-		void RenderPanel::doStopTimer( TimerID p_id )
-		{
-			if ( p_id != TimerID::eCount )
+			if ( id != TimerID::eCount )
 			{
-				m_timers[size_t( p_id )]->Stop();
+				m_timers[size_t( id )]->Stop();
 			}
 			else
 			{
@@ -220,55 +207,55 @@ namespace orastus
 			EVT_TIMER( int( TimerID::eMouse ), RenderPanel::onMouseTimer )
 		END_EVENT_TABLE()
 
-		void RenderPanel::onSize( wxSizeEvent & p_event )
+		void RenderPanel::onSize( wxSizeEvent & event )
 		{
 			if ( m_resizeWindow && m_renderWindow )
 			{
-				m_renderWindow->resize( uint32_t( p_event.GetSize().x )
-					, uint32_t( p_event.GetSize().y ) );
+				m_renderWindow->resize( uint32_t( event.GetSize().x )
+					, uint32_t( event.GetSize().y ) );
 			}
 			else
 			{
 				wxClientDC dc( this );
 				dc.SetBrush( wxBrush( INACTIVE_TAB_COLOUR ) );
 				dc.SetPen( wxPen( INACTIVE_TAB_COLOUR ) );
-				dc.DrawRectangle( 0, 0, p_event.GetSize().x, p_event.GetSize().y );
+				dc.DrawRectangle( 0, 0, event.GetSize().x, event.GetSize().y );
 			}
 
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onMove( wxMoveEvent & p_event )
+		void RenderPanel::onMove( wxMoveEvent & event )
 		{
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onPaint( wxPaintEvent & p_event )
+		void RenderPanel::onPaint( wxPaintEvent & event )
 		{
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onSetFocus( wxFocusEvent & p_event )
+		void RenderPanel::onSetFocus( wxFocusEvent & event )
 		{
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onKillFocus( wxFocusEvent & p_event )
+		void RenderPanel::onKillFocus( wxFocusEvent & event )
 		{
 			doStopTimer( TimerID::eCount );
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onKeyDown( wxKeyEvent & p_event )
+		void RenderPanel::onKeyDown( wxKeyEvent & event )
 		{
 			auto inputListener = wxGetApp().getCastor().getUserInputListener();
 
-			if ( !inputListener || !inputListener->fireKeydown( convertKeyCode( p_event.GetKeyCode() )
-				, p_event.ControlDown()
-				, p_event.AltDown()
-				, p_event.ShiftDown() ) )
+			if ( !inputListener || !inputListener->fireKeydown( convertKeyCode( event.GetKeyCode() )
+				, event.ControlDown()
+				, event.AltDown()
+				, event.ShiftDown() ) )
 			{
-				switch ( p_event.GetKeyCode() )
+				switch ( event.GetKeyCode() )
 				{
 				case WXK_LEFT:
 				case 'Q':
@@ -289,19 +276,19 @@ namespace orastus
 				}
 			}
 
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onKeyUp( wxKeyEvent & p_event )
+		void RenderPanel::onKeyUp( wxKeyEvent & event )
 		{
 			auto inputListener = wxGetApp().getCastor().getUserInputListener();
 
-			if ( !inputListener || !inputListener->fireKeyUp( convertKeyCode( p_event.GetKeyCode() )
-				, p_event.ControlDown()
-				, p_event.AltDown()
-				, p_event.ShiftDown() ) )
+			if ( !inputListener || !inputListener->fireKeyUp( convertKeyCode( event.GetKeyCode() )
+				, event.ControlDown()
+				, event.AltDown()
+				, event.ShiftDown() ) )
 			{
-				switch ( p_event.GetKeyCode() )
+				switch ( event.GetKeyCode() )
 				{
 				case WXK_F1:
 					m_listener->postEvent( makeCpuFunctorEvent( EventType::ePostRender
@@ -365,14 +352,14 @@ namespace orastus
 				}
 			}
 
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onMouseLDown( wxMouseEvent & p_event )
+		void RenderPanel::onMouseLDown( wxMouseEvent & event )
 		{
 			m_mouseLeftDown = true;
-			m_x = doTransformX( p_event.GetX() );
-			m_y = doTransformY( p_event.GetY() );
+			m_x = doTransformX( event.GetX() );
+			m_y = doTransformY( event.GetY() );
 			m_oldX = m_x;
 			m_oldY = m_y;
 
@@ -385,11 +372,11 @@ namespace orastus
 			}
 		}
 
-		void RenderPanel::onMouseLUp( wxMouseEvent & p_event )
+		void RenderPanel::onMouseLUp( wxMouseEvent & event )
 		{
 			m_mouseLeftDown = false;
-			m_x = doTransformX( p_event.GetX() );
-			m_y = doTransformY( p_event.GetY() );
+			m_x = doTransformX( event.GetX() );
+			m_y = doTransformY( event.GetY() );
 			m_oldX = m_x;
 			m_oldY = m_y;
 
@@ -411,7 +398,14 @@ namespace orastus
 							if ( type != PickNodeType::eNone
 								&& type != PickNodeType::eBillboard )
 							{
-								doUpdateSelectedGeometry( m_renderWindow->getPickedGeometry() );
+								auto picked = m_renderWindow->getPickedGeometry();
+								auto geometry = m_selectedGeometry.lock();
+
+								if ( picked != geometry )
+								{
+									m_selectedGeometry = picked;
+									m_selectedTower = m_game.select( picked );
+								}
 							}
 							else
 							{
@@ -422,33 +416,33 @@ namespace orastus
 				}
 			}
 
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onMouseRDown( wxMouseEvent & p_event )
+		void RenderPanel::onMouseRDown( wxMouseEvent & event )
 		{
 			if ( auto inputListener = wxGetApp().getCastor().getUserInputListener() )
 			{
 				inputListener->fireMouseButtonPushed( MouseButton::eRight );
 			}
 
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onMouseRUp( wxMouseEvent & p_event )
+		void RenderPanel::onMouseRUp( wxMouseEvent & event )
 		{
 			if ( auto inputListener = wxGetApp().getCastor().getUserInputListener() )
 			{
 				inputListener->fireMouseButtonReleased( MouseButton::eRight );
 			}
 
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onMouseMove( wxMouseEvent & p_event )
+		void RenderPanel::onMouseMove( wxMouseEvent & event )
 		{
-			m_x = doTransformX( p_event.GetX() );
-			m_y = doTransformY( p_event.GetY() );
+			m_x = doTransformX( event.GetX() );
+			m_y = doTransformY( event.GetY() );
 
 			if ( m_game.isRunning() )
 			{
@@ -469,61 +463,61 @@ namespace orastus
 
 			m_oldX = m_x;
 			m_oldY = m_y;
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onMouseWheel( wxMouseEvent & p_event )
+		void RenderPanel::onMouseWheel( wxMouseEvent & event )
 		{
-			int wheelRotation = p_event.GetWheelRotation();
+			int wheelRotation = event.GetWheelRotation();
 			auto inputListener = wxGetApp().getCastor().getUserInputListener();
 
 			if ( !inputListener || !inputListener->fireMouseWheel( Position( 0, wheelRotation ) ) )
 			{
 				if ( wheelRotation < 0 )
 				{
-					m_cameraState->addScalarVelocity( Point3f{ 0.0f, 0.0f, -g_camSpeed } );
+					m_cameraState->addScalarVelocity( Point3f{ 0.0f, 0.0f, -m_camSpeed } );
 				}
 				else
 				{
-					m_cameraState->addScalarVelocity( Point3f{ 0.0f, 0.0f, g_camSpeed } );
+					m_cameraState->addScalarVelocity( Point3f{ 0.0f, 0.0f, m_camSpeed } );
 				}
 			}
 
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onMouseTimer( wxTimerEvent & p_event )
+		void RenderPanel::onMouseTimer( wxTimerEvent & event )
 		{
 			if ( m_game.isRunning() && m_cameraState )
 			{
 				m_cameraState->update();
 			}
 
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void RenderPanel::onTimerUp( wxTimerEvent & p_event )
+		void RenderPanel::onTimerUp( wxTimerEvent & event )
 		{
-			m_cameraState->addScalarVelocity( Point3f{ 0.0f, g_camSpeed, 0.0f } );
-			p_event.Skip();
+			m_cameraState->addScalarVelocity( Point3f{ 0.0f, m_camSpeed, 0.0f } );
+			event.Skip();
 		}
 
-		void RenderPanel::onTimerDown( wxTimerEvent & p_event )
+		void RenderPanel::onTimerDown( wxTimerEvent & event )
 		{
-			m_cameraState->addScalarVelocity( Point3f{ 0.0f, -g_camSpeed, 0.0f } );
-			p_event.Skip();
+			m_cameraState->addScalarVelocity( Point3f{ 0.0f, -m_camSpeed, 0.0f } );
+			event.Skip();
 		}
 
-		void RenderPanel::onTimerLeft( wxTimerEvent & p_event )
+		void RenderPanel::onTimerLeft( wxTimerEvent & event )
 		{
-			m_cameraState->addScalarVelocity( Point3f{ g_camSpeed, 0.0f, 0.0f } );
-			p_event.Skip();
+			m_cameraState->addScalarVelocity( Point3f{ m_camSpeed, 0.0f, 0.0f } );
+			event.Skip();
 		}
 
-		void RenderPanel::onTimerRight( wxTimerEvent & p_event )
+		void RenderPanel::onTimerRight( wxTimerEvent & event )
 		{
-			m_cameraState->addScalarVelocity( Point3f{ -g_camSpeed, 0.0f, 0.0f } );
-			p_event.Skip();
+			m_cameraState->addScalarVelocity( Point3f{ -m_camSpeed, 0.0f, 0.0f } );
+			event.Skip();
 		}
 	}
 }

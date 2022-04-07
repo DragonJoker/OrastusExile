@@ -1,4 +1,4 @@
-﻿/**
+/**
 See licence file in root folder, MIT.txt
 */
 #pragma once
@@ -20,22 +20,22 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor.
-		*\param[in] p_kind
+		*\param[in] kind
 		*	The resource kind.
-		*\param[in] p_count
+		*\param[in] count
 		*	The resource count.
 		*/
-		EFO_API StateSystem( Ecs & p_ecs );
+		EFO_API StateSystem( Ecs & ecs );
 		/**
 		*\brief
 		*	Updates the states.
-		*\param[in] p_game
+		*\param[in] game
 		*	The game instance.
-		*\param[in] p_elapsed
+		*\param[in] elapsed
 		*	The time elapsed since last call.
 		*/
-		EFO_API void update( Game & p_game
-			, Milliseconds const & p_elapsed );
+		EFO_API void update( Game & game
+			, Milliseconds const & elapsed );
 
 	private:
 		Ecs & m_ecs;

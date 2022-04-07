@@ -9,51 +9,51 @@
 
 namespace orastus
 {
-	Bullet::Bullet( Ecs & p_ecs )
-		: m_ecs{ p_ecs }
+	Bullet::Bullet( Ecs & ecs )
+		: m_ecs{ ecs }
 		, m_geometry{ m_ecs.getComponent( Ecs::GeometryComponent ) }
 		, m_state{ m_ecs.getComponent( Ecs::StateComponent ) }
 		, m_track{ m_ecs.getComponent( Ecs::TrackComponent ) }
 	{
 	}
 
-	void Bullet::createData( Entity const & p_entity
-		, castor3d::GeometrySPtr p_geometry
-		, TrackDataPtr p_track )
+	void Bullet::createData( Entity const & entity
+		, castor3d::GeometrySPtr geometry
+		, TrackDataPtr track )
 	{
-		m_ecs.createComponentData( p_entity
+		m_ecs.createComponentData( entity
 			, m_track
-			, p_track );
+			, track );
 
-		if ( p_geometry )
+		if ( geometry )
 		{
-			m_ecs.createComponentData( p_entity
+			m_ecs.createComponentData( entity
 				, m_geometry
-				, p_geometry );
-			m_ecs.createComponentData( p_entity
+				, geometry );
+			m_ecs.createComponentData( entity
 				, m_state
-				, std::make_shared< StateMachine >( bullet::createTrackingState( m_ecs, p_entity ), false ) );
+				, std::make_shared< StateMachine >( bullet::createTrackingState( m_ecs, entity ), false ) );
 		}
 	}
 
-	void Bullet::resetData( Entity const & p_entity
-		, castor3d::GeometrySPtr p_geometry
-		, TrackDataPtr p_track )
+	void Bullet::resetData( Entity const & entity
+		, castor3d::GeometrySPtr geometry
+		, TrackDataPtr track )
 	{
-		m_ecs.getComponentData< castor3d::GeometrySPtr >( p_entity
-			, m_geometry ).setValue( p_geometry );
-		*m_ecs.getComponentData< TrackDataPtr >( p_entity
-			, m_track ).getValue() = *p_track;
-		m_ecs.getComponentData< StateMachinePtr >( p_entity
+		m_ecs.getComponentData< castor3d::GeometrySPtr >( entity
+			, m_geometry ).setValue( geometry );
+		*m_ecs.getComponentData< TrackDataPtr >( entity
+			, m_track ).getValue() = *track;
+		m_ecs.getComponentData< StateMachinePtr >( entity
 			, m_state ).getValue()->restart();
 	}
 
-	String Bullet::toString( Entity const & p_entity )
+	String Bullet::toString( Entity const & entity )
 	{
-		StringStream l_stream;
-		l_stream << cuT( "Bullet(" ) << p_entity.getId() << cuT( ")" );
-		l_stream << cuT( "\n Geometry: " ) << m_ecs.getComponentData< castor3d::GeometrySPtr >( p_entity, m_geometry ).getValue()->getName();
-		l_stream << cuT( "\n Track: " ) << m_ecs.getComponentData< TrackDataPtr >( p_entity, m_track ).getValue()->target.getId();
-		return l_stream.str();
+		auto stream = castor::makeStringStream();
+		stream << cuT( "Bullet(" ) << entity.getId() << cuT( ")" );
+		stream << cuT( "\n Geometry: " ) << m_ecs.getComponentData< castor3d::GeometrySPtr >( entity, m_geometry ).getValue()->getName();
+		stream << cuT( "\n Track: " ) << m_ecs.getComponentData< TrackDataPtr >( entity, m_track ).getValue()->target.getId();
+		return stream.str();
 	}
 }

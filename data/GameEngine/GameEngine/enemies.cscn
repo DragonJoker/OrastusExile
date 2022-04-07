@@ -1,25 +1,21 @@
-// Materials
-
-material "EnemyCube"
-{
-	pass
-	{
-		albedo 1.0 0.5 0.5
-		specular 1.0 0.5 0.5
-
-		texture_unit
-		{
-			image "Textures/Cube.png"
-			sampler "Nearest"
-			albedo_mask 0x00FFFFFF
-		}
-	}
-}
-
 // Meshes
 
-mesh "EnemyCube"
+mesh "UfoGreen"
 {
-	type "cube" -width=8 -height=8 -depth=8
-	default_material "EnemyCube"
+	import "Meshes/enemy_ufoGreen.glb" --rescale=16.0
+}
+
+mesh "UfoPurple"
+{
+	import "Meshes/enemy_ufoPurple.glb" --rescale=16.0
+}
+
+mesh "UfoRed"
+{
+	import "Meshes/enemy_ufoRed.glb" --rescale=16.0
+}
+
+mesh "UfoYellow"
+{
+	import "Meshes/enemy_ufoYellow.glb" --rescale=16.0
 }

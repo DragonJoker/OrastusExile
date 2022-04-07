@@ -6,9 +6,6 @@
 #include "GameEngine/ECS/Tower.hpp"
 #include "GameEngine/ECS/SplashTower.hpp"
 
-using namespace castor;
-using namespace castor3d;
-
 namespace orastus
 {
 	namespace
@@ -61,192 +58,194 @@ namespace orastus
 		m_entitiesComponents.clear();
 	}
 
-	void Ecs::update( Game & p_game
-		, Milliseconds const & p_elapsed )
+	void Ecs::update( Game & game
+		, Milliseconds const & elapsed )
 	{
-		m_stateSystem.update( p_game, p_elapsed );
+		m_stateSystem.update( game, elapsed );
 	}
 
-	Component const & Ecs::getComponent( ComponentId const & p_name )const
+	Component const & Ecs::getComponent( ComponentId const & name )const
 	{
-		auto const l_it = std::find_if( std::begin( m_components )
+		auto const it = std::find_if( std::begin( m_components )
 			, std::end( m_components )
-			, [&p_name]( Component const & p_component )
+			, [&name]( Component const & lookup )
 		{
-			return p_component.getName() == p_name;
+			return lookup.getName() == name;
 		} );
 
-		if ( l_it == std::end( m_components ) )
+		if ( it == std::end( m_components ) )
 		{
-			throw Component::NameException{ p_name };
+			throw Component::NameException{ name };
 		}
 
-		return *l_it;
+		return *it;
 	}
 
-	Entity Ecs::createMapBlock( castor3d::GeometrySPtr p_geometry )
+	Entity Ecs::createMapBlock( castor3d::GeometrySPtr geometry
+		, bool pickable )
 	{
-		auto l_entity = doCreateEntity( "MapBlock" );
-		m_mapBlockSet->createData( l_entity
-			, p_geometry );
-		return l_entity;
+		auto entity = doCreateEntity( "MapBlock" );
+		m_mapBlockSet->createData( entity
+			, geometry
+			, pickable );
+		return entity;
 	}
 
-	Entity Ecs::createTower( Milliseconds const & p_cooldown
-		, uint32_t p_damage
-		, float p_range
-		, float p_bulletSpeed
-		, uint32_t p_requiredLevel
-		, GeometrySPtr p_geometry
-		, AnimationDataPtr p_animation
-		, AttackDataPtr p_attack )
+	Entity Ecs::createTower( Milliseconds const & cooldown
+		, uint32_t damage
+		, float range
+		, float bulletSpeed
+		, uint32_t requiredLevel
+		, castor3d::GeometrySPtr geometry
+		, AnimationDataPtr animation
+		, AttackDataPtr attack )
 	{
-		auto l_entity = doCreateEntity( "Tower" );
-		m_towerSet->createData( l_entity
-			, p_cooldown
-			, p_damage
-			, p_range
-			, p_bulletSpeed
-			, p_requiredLevel
-			, p_geometry
-			, p_animation
-			, p_attack );
-		return l_entity;
+		auto entity = doCreateEntity( "Tower" );
+		m_towerSet->createData( entity
+			, cooldown
+			, damage
+			, range
+			, bulletSpeed
+			, requiredLevel
+			, geometry
+			, animation
+			, attack );
+		return entity;
 	}
 
-	Entity Ecs::createTower( Milliseconds const & p_cooldown
-		, uint32_t p_damage
-		, float p_range
-		, float p_bulletSpeed
-		, uint32_t p_splashDamage
-		, float p_splashRange
-		, uint32_t p_requiredLevel
-		, GeometrySPtr p_geometry
-		, AnimationDataPtr p_animation
-		, AttackDataPtr p_attack )
+	Entity Ecs::createTower( Milliseconds const & cooldown
+		, uint32_t damage
+		, float range
+		, float bulletSpeed
+		, uint32_t splashDamage
+		, float splashRange
+		, uint32_t requiredLevel
+		, castor3d::GeometrySPtr geometry
+		, AnimationDataPtr animation
+		, AttackDataPtr attack )
 	{
-		auto l_entity = doCreateEntity( "SplashTower" );
-		m_splashTowerSet->createData( l_entity
-			, p_cooldown
-			, p_damage
-			, p_range
-			, p_bulletSpeed
-			, p_splashDamage
-			, p_splashRange
-			, p_requiredLevel
-			, p_geometry
-			, p_animation
-			, p_attack );
-		return l_entity;
+		auto entity = doCreateEntity( "SplashTower" );
+		m_splashTowerSet->createData( entity
+			, cooldown
+			, damage
+			, range
+			, bulletSpeed
+			, splashDamage
+			, splashRange
+			, requiredLevel
+			, geometry
+			, animation
+			, attack );
+		return entity;
 	}
 
-	Entity Ecs::createEnemy( float p_speed
-		, uint32_t p_life
-		, castor3d::GeometrySPtr p_geometry
-		, WalkDataPtr p_walkData )
+	Entity Ecs::createEnemy( float speed
+		, uint32_t life
+		, castor3d::GeometrySPtr geometry
+		, WalkDataPtr walkData )
 	{
-		auto l_entity = doCreateEntity( "Enemy" );
-		m_enemySet->createData( l_entity
-			, p_speed
-			, p_life
-			, p_geometry
-			, p_walkData );
-		return l_entity;
+		auto entity = doCreateEntity( "Enemy" );
+		m_enemySet->createData( entity
+			, speed
+			, life
+			, geometry
+			, walkData );
+		return entity;
 	}
 
-	void Ecs::resetEnemy( Entity p_entity
-		, float p_speed
-		, uint32_t p_life
-		, castor3d::GeometrySPtr p_geometry
-		, WalkDataPtr p_walkData )
+	void Ecs::resetEnemy( Entity entity
+		, float speed
+		, uint32_t life
+		, castor3d::GeometrySPtr geometry
+		, WalkDataPtr walkData )
 	{
-		m_enemySet->resetData( p_entity
-			, p_speed
-			, p_life
-			, p_geometry
-			, p_walkData );
+		m_enemySet->resetData( entity
+			, speed
+			, life
+			, geometry
+			, walkData );
 	}
 
-	Entity Ecs::createBullet( castor3d::GeometrySPtr p_geometry
-		, TrackDataPtr p_track )
+	Entity Ecs::createBullet( castor3d::GeometrySPtr geometry
+		, TrackDataPtr track )
 	{
-		auto l_entity = doCreateEntity( "Bullet" );
-		m_bulletSet->createData( l_entity
-			, p_geometry
-			, p_track );
-		return l_entity;
+		auto entity = doCreateEntity( "Bullet" );
+		m_bulletSet->createData( entity
+			, geometry
+			, track );
+		return entity;
 	}
 
-	void Ecs::resetBullet( Entity p_entity
-		, castor3d::GeometrySPtr p_geometry
-		, TrackDataPtr p_track )
+	void Ecs::resetBullet( Entity entity
+		, castor3d::GeometrySPtr geometry
+		, TrackDataPtr track )
 	{
-		m_bulletSet->resetData( p_entity
-			, p_geometry
-			, p_track );
+		m_bulletSet->resetData( entity
+			, geometry
+			, track );
 	}
 
-	void Ecs::printMapBlock( Entity const & p_entity )const
+	void Ecs::printMapBlock( Entity const & entity )const
 	{
-		auto l_text = m_mapBlockSet->toString( p_entity );
-		std::cout << l_text << std::endl;
+		auto text = m_mapBlockSet->toString( entity );
+		std::cout << text << std::endl;
 	}
 
-	void Ecs::printTower( Entity const & p_entity )const
+	void Ecs::printTower( Entity const & entity )const
 	{
-		auto l_text = m_towerSet->toString( p_entity );
-		std::cout << l_text << std::endl;
+		auto text = m_towerSet->toString( entity );
+		std::cout << text << std::endl;
 	}
 
-	void Ecs::printSplashTower( Entity const & p_entity )const
+	void Ecs::printSplashTower( Entity const & entity )const
 	{
-		auto l_text = m_splashTowerSet->toString( p_entity );
-		std::cout << l_text << std::endl;
+		auto text = m_splashTowerSet->toString( entity );
+		std::cout << text << std::endl;
 	}
 
-	void Ecs::printEnemy( Entity const & p_entity )const
+	void Ecs::printEnemy( Entity const & entity )const
 	{
-		auto l_text = m_enemySet->toString( p_entity );
-		std::cout << l_text << std::endl;
+		auto text = m_enemySet->toString( entity );
+		std::cout << text << std::endl;
 	}
 
-	void Ecs::printBullet( Entity const & p_entity )const
+	void Ecs::printBullet( Entity const & entity )const
 	{
-		auto l_text = m_bulletSet->toString( p_entity );
-		std::cout << l_text << std::endl;
+		auto text = m_bulletSet->toString( entity );
+		std::cout << text << std::endl;
 	}
 
-	bool Ecs::hasComponent( Entity const & p_entity
-		, Component const & p_component )const
+	bool Ecs::hasComponent( Entity const & entity
+		, Component const & component )const
 	{
-		auto & l_datas = m_entitiesComponents.find( p_component.getName() )->second;
-		auto l_it = std::find_if( std::begin( l_datas )
-			, std::end( l_datas )
-			, [&p_entity]( EntityComponentData const & p_data )
+		auto & datas = m_entitiesComponents.find( component.getName() )->second;
+		auto it = std::find_if( std::begin( datas )
+			, std::end( datas )
+			, [&entity]( EntityComponentData const & lookup )
 		{
-			return p_data.entity == p_entity;
+			return lookup.entity == entity;
 		} );
 
-		return l_it != std::end( l_datas );
+		return it != std::end( datas );
 	}
 
-	Entity Ecs::doCreateEntity( xchar const * const p_name )
+	Entity Ecs::doCreateEntity( xchar const * const name )
 	{
-		m_entities.emplace_back( p_name );
+		m_entities.emplace_back( name );
 		return m_entities.back();
 	}
 
-	void Ecs::doCreateComponent( ComponentId const & p_name, String const & p_desc )
+	void Ecs::doCreateComponent( ComponentId const & name, String const & desc )
 	{
-		m_components.emplace_back( p_name, p_desc );
-		auto l_id = m_components.back().getName();
+		m_components.emplace_back( name, desc );
+		auto id = m_components.back().getName();
 
-		if ( m_entitiesComponents.find( l_id ) != m_entitiesComponents.end() )
+		if ( m_entitiesComponents.find( id ) != m_entitiesComponents.end() )
 		{
-			throw DuplicateComponentNameException{ unhash( p_name ) };
+			throw DuplicateComponentNameException{ unhash( name ) };
 		}
 
-		m_entitiesComponents.emplace( l_id, EntityComponentsList{} );
+		m_entitiesComponents.emplace( id, EntityComponentsList{} );
 	}
 
 	void Ecs::doRegisterComponents()

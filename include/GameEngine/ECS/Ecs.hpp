@@ -120,10 +120,13 @@ namespace orastus
 		*	Creates a map block.
 		*\param[in] geometry
 		*	The geometry value.
+		*\param[in] pickable
+		*	\p true to make the entity pickable.
 		*\return
 		*	The entity for the created block.
 		*/
-		EFO_API Entity createMapBlock( castor3d::GeometrySPtr geometry );
+		EFO_API Entity createMapBlock( castor3d::GeometrySPtr geometry
+			, bool pickable );
 		/**
 		*\brief
 		*	Creates a tower.

@@ -4,25 +4,26 @@ namespace orastus
 {
 	Id Id::generate()
 	{
-		static uint64_t s_lastId = 0;
-		Id l_result;
-		l_result.m_id = ++s_lastId;
-		return l_result;
+		static uint64_t lastId = 0;
+
+		Id result;
+		result.m_id = ++lastId;
+		return result;
 	}
 
-	bool operator==( Id const & p_lhs, Id const & p_rhs )
+	bool operator==( Id const & lhs, Id const & rhs )
 	{
-		return p_lhs.m_id == p_rhs.m_id;
+		return lhs.m_id == rhs.m_id;
 	}
 
-	bool operator<( Id const & p_lhs, Id const & p_rhs )
+	bool operator<( Id const & lhs, Id const & rhs )
 	{
-		return p_lhs.m_id < p_rhs.m_id;
+		return lhs.m_id < rhs.m_id;
 	}
 
-	std::ostream & operator<<( std::ostream & p_stream, Id const & p_value )
+	std::ostream & operator<<( std::ostream & stream, Id const & value )
 	{
-		p_stream << p_value.m_id;
-		return p_stream;
+		stream << value.m_id;
+		return stream;
 	}
 }

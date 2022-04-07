@@ -52,45 +52,45 @@ namespace orastus
 	/**
 	*\brief
 	*	Equality operator.
-	*\param[in] p_lhs, p_rhs
+	*\param[in] lhs, rhs
 	*	The operands.
 	*\return
-	*	\p false if \p p_lhs and \p rhs are different.
+	*	\p false if \p lhs and \p rhs are different.
 	*/
-	EFO_API bool operator==( Id const & p_lhs, Id const & p_rhs );
+	EFO_API bool operator==( Id const & lhs, Id const & rhs );
 	/**
 	*\brief
 	*	Equality operator.
-	*\param[in] p_lhs, p_rhs
+	*\param[in] lhs, rhs
 	*	The operands.
 	*\return
-	*	\p false if \p p_lhs and \p rhs are different.
+	*	\p false if \p lhs and \p rhs are different.
 	*/
-	EFO_API bool operator<( Id const & p_lhs, Id const & p_rhs );
+	EFO_API bool operator<( Id const & lhs, Id const & rhs );
 	/**
 	*\brief
 	*	Stream operator.
-	*\param[in] p_stream
+	*\param[in] stream
 	*	The stream.
-	*\param[in] p_value
+	*\param[in] value
 	*	The ID.
 	*\return
 	*	The stream.
 	*/
-	EFO_API std::ostream & operator<<( std::ostream & p_stream, Id const & p_value );
+	EFO_API std::ostream & operator<<( std::ostream & stream, Id const & value );
 	/**
 	*\brief
 	*	Gets an ID as text.
-	*\param[in] p_id
+	*\param[in] id
 	*	The ID.
 	*\return
 	*	The ID as text.
 	*/
-	inline String toString( Id const & p_id )
+	inline String toString( Id const & id )
 	{
-		std::stringstream l_stream;
-		l_stream << p_id;
-		return l_stream.str();
+		std::stringstream stream;
+		stream << id;
+		return stream.str();
 	}
 	/**
 	*\brief
@@ -140,14 +140,14 @@ namespace orastus
 	/**
 	*\brief
 	*	Equality operator.
-	*\param[in] p_lhs, p_rhs
+	*\param[in] lhs, rhs
 	*	The operands.
 	*\return
-	*	\p false if \p p_lhs and \p rhs are different.
+	*	\p false if \p lhs and \p rhs are different.
 	*/
-	bool inline operator==( Ided const & p_lhs, Ided const & p_rhs )
+	bool inline operator==( Ided const & lhs, Ided const & rhs )
 	{
-		return p_lhs.m_id == p_rhs.m_id;
+		return lhs.m_id == rhs.m_id;
 	}
 }
 

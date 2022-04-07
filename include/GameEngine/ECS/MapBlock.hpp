@@ -1,4 +1,4 @@
-﻿/**
+/**
 See licence file in root folder, MIT.txt
 */
 #pragma once
@@ -19,27 +19,30 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor, retrieves the components.
-		*\param[in] p_ecs
+		*\param[in] ecs
 		*	The ECS instance, from which the components are retrieved.
 		*/
-		EFO_API explicit MapBlock( Ecs & p_ecs );
+		EFO_API explicit MapBlock( Ecs & ecs );
 		/**
 		*\brief
 		*	Creates the component data for a map block.
-		*\param[in] p_entity
+		*\param[in] entity
 		*	The entity for the map block.
-		*\param[in] p_geometry
+		*\param[in] geometry
 		*	The geometry value.
+		*\param[in] pickable
+		*	\p true to make the entity pickable.
 		*/
-		EFO_API void createData( Entity const & p_entity
-			, castor3d::GeometrySPtr p_geometry );
+		EFO_API void createData( Entity const & entity
+			, castor3d::GeometrySPtr geometry
+			, bool pickable );
 		/**
 		*\brief
 		*	Returns a map block as a string.
-		*\param[in] p_entity
+		*\param[in] entity
 		*	The entity to print.
 		*/
-		EFO_API String toString( Entity const & p_entity );
+		EFO_API String toString( Entity const & entity );
 
 	private:
 		Ecs & m_ecs;

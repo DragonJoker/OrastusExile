@@ -10,16 +10,18 @@
 #include <Castor3D/Scene/SceneNode.hpp>
 #include <Castor3D/Scene/Light/PointLight.hpp>
 
-using namespace castor;
-using namespace castor3d;
-
 namespace orastus
 {
-	EnemySpawner::EnemySpawner( Ecs & p_ecs
-		, Game & p_game )
-		: m_ecs{ p_ecs }
-		, m_game{ p_game }
+	EnemySpawner::EnemySpawner( Ecs & ecs
+		, Game & game )
+		: m_ecs{ ecs }
+		, m_game{ game }
 	{
+		auto & scene = m_game.getScene();
+		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoGreen" ) ).lock() );
+		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoPurple" ) ).lock() );
+		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoRed" ) ).lock() );
+		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoYellow" ) ).lock() );
 		reset();
 	}
 
@@ -29,40 +31,50 @@ namespace orastus
 
 	void EnemySpawner::reset()
 	{
-		m_enemiesCache.insert( m_enemiesCache.end()
-			, m_liveEnemies.begin()
-			, m_liveEnemies.end() );
-		m_liveEnemies.clear();
-
-		for ( auto & l_enemy : m_enemiesCache )
+		if ( m_enemiesCache )
 		{
-			auto l_geometry = m_ecs.getComponentData< GeometrySPtr >( l_enemy
-				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-			Game::getEnemyNode( l_geometry )->setPosition( Point3f{ 0, -1000, 0 } );
+			m_enemiesCache->insert( m_enemiesCache->end()
+				, m_liveEnemies.begin()
+				, m_liveEnemies.end() );
 		}
 
-		m_life.initialise( 1u, []( uint32_t p_value, uint32_t p_level )
-		{
-			return p_value + std::max( p_level, uint32_t( p_value * 5.0 / 100.0 ) );
-		} );
+		m_liveEnemies.clear();
 
-		m_bounty.initialise( 9u, []( uint32_t p_value, uint32_t p_level )
+		for ( auto & enemies : m_allEnemiesCache )
 		{
-			return p_value + std::max( 2u, ( p_value * 4 ) / 100 );
-		} );
+			for ( auto & enemy : enemies.second )
+			{
+				auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( enemy
+					, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
+				Game::getEnemyNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
+			}
+		}
+
+		m_life.initialise( 1u
+			, []( uint32_t value, uint32_t level )
+			{
+				return value + std::max( level, uint32_t( value * 5.0 / 100.0 ) );
+			} );
+
+		m_bounty.initialise( 9u
+			, []( uint32_t value, uint32_t level )
+			{
+				return value + std::max( 2u, ( value * 4 ) / 100 );
+			} );
 
 		m_totalsWaves = 0u;
 		m_totalEnemies = 0u;
 		m_timeSinceLastSpawn = std::chrono::milliseconds{};
 		m_count = 0u;
+		m_enemiesCache = nullptr;
 	}
 
-	void EnemySpawner::update( Milliseconds const & p_elapsed )
+	void EnemySpawner::update( Milliseconds const & elapsed )
 	{
 		if ( m_liveEnemies.empty()
 			&& !m_count )
 		{
-			//m_game.Gain( m_spawner.getWave() * 2 );
+			//m_game.gain( m_spawner.getWave() * 2 );
 #if !defined( NDEBUG )
 			doStartWave( 2u );
 #else
@@ -70,27 +82,27 @@ namespace orastus
 #endif
 		}
 
-		if ( doCanSpawn( p_elapsed ) )
+		if ( doCanSpawn( elapsed ) )
 		{
 			doSpawn( m_game.getGrid(), m_game.getPath() );
 		}
 	}
 
-	void EnemySpawner::killEnemy( Entity p_enemy )
+	void EnemySpawner::killEnemy( Entity enemy )
 	{
-		auto l_it = std::find( std::begin( m_liveEnemies )
+		auto it = std::find( std::begin( m_liveEnemies )
 			, std::end( m_liveEnemies )
-			, p_enemy );
+			, enemy );
 
-		if ( l_it != std::end( m_liveEnemies ) )
+		if ( it != std::end( m_liveEnemies ) )
 		{
-			m_liveEnemies.erase( l_it );
+			m_liveEnemies.erase( it );
 		}
 
-		m_enemiesCache.push_back( p_enemy );
-		auto l_geometry = m_ecs.getComponentData< GeometrySPtr >( p_enemy
+		m_enemiesCache->push_back( enemy );
+		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( enemy
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		Game::getEnemyNode( l_geometry )->setPosition( Point3f{ 0, -1000, 0 } );
+		Game::getEnemyNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
 	}
 
 	void EnemySpawner::doStartWave( uint32_t p_count )
@@ -101,6 +113,9 @@ namespace orastus
 		m_timeSinceLastSpawn = m_timeBetweenTwoSpawns;
 		m_life.upgrade();
 		m_bounty.upgrade();
+		auto index = getWave() % uint32_t( m_enemyMeshes.size() );
+		m_currentEnemies = m_enemyMeshes[index];
+		m_enemiesCache = &m_allEnemiesCache.emplace( m_currentEnemies.lock().get(), EntityList{} ).first->second;
 		std::cout << "\nStarting wave " << m_totalsWaves << std::endl;
 	}
 
@@ -110,39 +125,37 @@ namespace orastus
 		return m_count && m_timeSinceLastSpawn >= m_timeBetweenTwoSpawns;
 	}
 
-	void EnemySpawner::doSpawn( Grid const & p_grid
-		, GridPath const & p_path )
+	void EnemySpawner::doSpawn( Grid const & grid
+		, GridPath const & path )
 	{
-		Entity l_result;
-		GeometrySPtr l_geometry;
-		auto & l_pathNode = *p_path.begin();
-		auto & l_cell = p_grid( l_pathNode.y, l_pathNode.x );
+		auto & pathNode = *path.begin();
+		auto & cell = grid( pathNode.y, pathNode.x );
 
-		if ( m_enemiesCache.empty() )
+		if ( m_enemiesCache->empty() )
 		{
-			String l_name = cuT( "EnemyCube_" ) + std::to_string( ++m_totalSpawned );
-			l_geometry = m_game.createEnemy( l_name );
-			Game::getEnemyNode( l_geometry )->setPosition( m_game.convert( Point2i{ l_cell.x, l_cell.y - 1 } )
-				+ Point3f{ 0, m_game.getCellHeight(), 0 } );
+			String name = cuT( "Enemy_" ) + std::to_string( ++m_totalSpawned );
+			auto geometry = m_game.createEnemy( name, m_currentEnemies );
+			Game::getEnemyNode( geometry )->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y - 1 } )
+				+ castor::Point3f{ 0, m_game.getCellHeight(), 0 } );
 			m_liveEnemies.push_back( m_ecs.createEnemy( 24.0f
 				, m_life.getValue()
-				, l_geometry
-				, std::make_shared< WalkData >( p_path, m_game ) ) );
+				, geometry
+				, std::make_shared< WalkData >( path, m_game ) ) );
 		}
 		else
 		{
-			l_result = m_enemiesCache.front();
-			m_liveEnemies.push_back( l_result );
-			m_enemiesCache.erase( m_enemiesCache.begin() );
-			l_geometry = m_ecs.getComponentData< GeometrySPtr >( l_result
+			auto entity = m_enemiesCache->front();
+			m_liveEnemies.push_back( entity );
+			m_enemiesCache->erase( m_enemiesCache->begin() );
+			auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( entity
 				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-			Game::getEnemyNode( l_geometry )->setPosition( m_game.convert( Point2i{ l_cell.x, l_cell.y - 1 } )
-				+ Point3f{ 0, m_game.getCellHeight(), 0 } );
-			m_ecs.resetEnemy( l_result
+			Game::getEnemyNode( geometry )->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y - 1 } )
+				+ castor::Point3f{ 0, m_game.getCellHeight(), 0 } );
+			m_ecs.resetEnemy( entity
 				, 24.0f
 				, m_life.getValue()
-				, l_geometry
-				, std::make_shared< WalkData >( p_path, m_game ) );
+				, geometry
+				, std::make_shared< WalkData >( path, m_game ) );
 		}
 
 		--m_count;

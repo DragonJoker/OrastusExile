@@ -11,8 +11,8 @@ namespace orastus
 {
 	struct AnimationData
 	{
-		EFO_API AnimationData( castor3d::AnimatedObjectGroupSPtr p_animation
-			, String const & p_name );
+		EFO_API AnimationData( castor3d::AnimatedObjectGroupSPtr animation
+			, String const & name );
 
 		castor3d::AnimatedObjectGroupSPtr animation;
 		String animName;
