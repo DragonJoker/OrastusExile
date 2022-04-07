@@ -5,7 +5,7 @@ See licence file in root folder, MIT.txt
 #ifndef ___EFO_ImagesLoader_HPP___
 #define ___EFO_ImagesLoader_HPP___
 
-#include "ExiledFromOrastusPrerequisites.hpp"
+#include "OrastusExilePrerequisites.hpp"
 
 #include <thread>
 

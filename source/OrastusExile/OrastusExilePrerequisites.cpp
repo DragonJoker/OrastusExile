@@ -1,10 +1,10 @@
-#include "ExiledFromOrastusPrerequisites.hpp"
+#include "OrastusExilePrerequisites.hpp"
 
 #include <ashespp/Core/PlatformWindowHandle.hpp>
 
 #include <Castor3D/Engine.hpp>
 
-#if defined( CASTOR_PLATFORM_LINUX )
+#if defined( CU_PlatformLinux )
 #	include <gdk/gdkx.h>
 #	include <gtk/gtk.h>
 #endif

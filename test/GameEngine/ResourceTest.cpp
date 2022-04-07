@@ -3,7 +3,7 @@ See licence file in root folder, MIT.txt
 */
 #include "ResourceTest.hpp"
 
-#include <Resource.hpp>
+#include <GameEngine/Resource.hpp>
 
 namespace orastus
 {

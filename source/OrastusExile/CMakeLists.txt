@@ -1,7 +1,7 @@
-project( ExiledFromOrastus )
+project( OrastusExile )
 
 set( ${PROJECT_NAME}_WXWIDGET 1 )
-set( ${PROJECT_NAME}_DESCRIPTION "Exiled From Orastus" )
+set( ${PROJECT_NAME}_DESCRIPTION "Orastus' Exile" )
 set( ${PROJECT_NAME}_VERSION_MAJOR	1 )
 set( ${PROJECT_NAME}_VERSION_MINOR	0 )
 set( ${PROJECT_NAME}_VERSION_BUILD	0 )
@@ -30,21 +30,21 @@ find_package( wxWidgets COMPONENTS core base aui adv )
 
 if( wxWidgets_FOUND AND GTK_FOUND )
 	set( ${PROJECT_NAME}_HDR_FILES
-		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastus.hpp
-		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastusPch.hpp
-		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastusPrerequisites.hpp
 		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ImagesLoader.hpp
 		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/MainFrame.hpp
 		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/NodeState.hpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/OrastusExile.hpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/OrastusExilePch.hpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/OrastusExilePrerequisites.hpp
 		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/RenderPanel.hpp
 	)
 	set( ${PROJECT_NAME}_SRC_FILES
-		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastus.cpp
-		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastusPch.cpp
-		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ExiledFromOrastusPrerequisites.cpp
 		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ImagesLoader.cpp
 		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/MainFrame.cpp
 		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/NodeState.cpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/OrastusExile.cpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/OrastusExilePch.cpp
+		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/OrastusExilePrerequisites.cpp
 		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/RenderPanel.cpp
 	)
 	source_group( "Header Files"

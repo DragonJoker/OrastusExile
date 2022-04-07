@@ -3,7 +3,7 @@ See licence file in root folder, MIT.txt
 */
 #pragma once
 
-#include "ExiledFromOrastusPrerequisites.hpp"
+#include "OrastusExilePrerequisites.hpp"
 
 #include <wx/frame.h>
 #include <wx/windowptr.h>

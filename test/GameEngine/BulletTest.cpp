@@ -3,8 +3,8 @@ See licence file in root folder, MIT.txt
 */
 #include "BulletTest.hpp"
 
-#include <ECS/Ecs.hpp>
-#include <ECS/TrackData.hpp>
+#include <GameEngine/ECS/Ecs.hpp>
+#include <GameEngine/ECS/TrackData.hpp>
 
 namespace orastus
 {

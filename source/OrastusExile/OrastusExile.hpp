@@ -5,7 +5,7 @@ See licence file in root folder, MIT.txt
 #ifndef ___EFO_ExiledFromOrastus_HPP___
 #define ___EFO_ExiledFromOrastus_HPP___
 
-#include "ExiledFromOrastusPrerequisites.hpp"
+#include "OrastusExilePrerequisites.hpp"
 
 #pragma warning( push )
 #pragma warning( disable: 4365 )
@@ -20,11 +20,11 @@ namespace orastus
 	{
 		class MainFrame;
 
-		class ExiledFromOrastus
+		class OrastusExile
 			: public wxApp
 		{
 		public:
-			ExiledFromOrastus();
+			OrastusExile();
 
 			inline MainFrame * getMainFrame()const
 			{
@@ -78,6 +78,6 @@ namespace orastus
 	}
 }
 
-wxDECLARE_APP( orastus::main::ExiledFromOrastus );
+wxDECLARE_APP( orastus::main::OrastusExile );
 
 #endif

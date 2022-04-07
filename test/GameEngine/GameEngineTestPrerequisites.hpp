@@ -7,10 +7,10 @@ See licence file in root folder, MIT.txt
 
 #include <CastorTest/UnitTest.hpp>
 
-#include <ECS/Ecs.hpp>
-#include <Resource.hpp>
-#include <State/EnemyState.hpp>
-#include <State/TowerState.hpp>
+#include <GameEngine/ECS/Ecs.hpp>
+#include <GameEngine/Resource.hpp>
+#include <GameEngine/State/EnemyState.hpp>
+#include <GameEngine/State/TowerState.hpp>
 
 namespace Testing
 {

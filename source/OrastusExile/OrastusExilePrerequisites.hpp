@@ -16,7 +16,7 @@ namespace orastus
 {
 	namespace main
 	{
-		class ExiledFromOrastus;
+		class OrastusExile;
 		class MainFrame;
 		class RenderPanel;
 
@@ -28,7 +28,7 @@ namespace orastus
 			uint32_t gpuIndex{ 0u };
 		};
 
-		wxString const ApplicationName = wxT( "ExiledFromOrastus" );
+		wxString const ApplicationName = wxT( "OrastusExile" );
 
 		template< typename T, typename ... Params >
 		inline wxWindowPtr< T > wxMakeWindowPtr( Params && ... params )

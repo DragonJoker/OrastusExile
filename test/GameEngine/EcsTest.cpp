@@ -3,7 +3,7 @@ See licence file in root folder, MIT.txt
 */
 #include "EcsTest.hpp"
 
-#include <ECS/Ecs.hpp>
+#include <GameEngine/ECS/Ecs.hpp>
 
 namespace orastus
 {

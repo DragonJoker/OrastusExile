@@ -1,7 +1,7 @@
 #include "MainFrame.hpp"
 
 #include "RenderPanel.hpp"
-#include "ExiledFromOrastus.hpp"
+#include "OrastusExile.hpp"
 
 #include <GameEngine/Game.hpp>
 

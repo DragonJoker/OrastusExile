@@ -1,4 +1,4 @@
-#include "ExiledFromOrastus.hpp"
+#include "OrastusExile.hpp"
 
 #include "ImagesLoader.hpp"
 #include "MainFrame.hpp"
@@ -15,7 +15,7 @@
 #include <wx/fileconf.h>
 #pragma warning( pop )
 
-wxIMPLEMENT_APP( orastus::main::ExiledFromOrastus );
+wxIMPLEMENT_APP( orastus::main::OrastusExile );
 
 using namespace castor;
 using namespace castor3d;
@@ -176,22 +176,16 @@ namespace orastus
 			wxFileConfig * configFile{ nullptr };
 		};
 
-		static wxString const ShortName = wxT( "ExiledFromOrastus" );
-		static wxString const LongName = wxT( "Exiled From Orastus" );
+		static wxString const ShortName = wxT( "OrastusExile" );
+		static wxString const LongName = wxT( "Orastus' Exile" );
 
-		ExiledFromOrastus::ExiledFromOrastus()
+		OrastusExile::OrastusExile()
 			: wxApp{}
 		{
 		}
 
-		bool ExiledFromOrastus::OnInit()
+		bool OrastusExile::OnInit()
 		{
-#if defined( CASTOR_PLATFORM_WINDOWS ) && !defined( NDEBUG ) && !defined( VLD_AVAILABLE )
-
-			_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-
-#endif
-
 			bool l_return = doParseCommandLine();
 			wxDisplay l_display;
 			wxRect l_rect = l_display.GetClientArea();
@@ -237,14 +231,14 @@ namespace orastus
 			return l_return;
 		}
 
-		int ExiledFromOrastus::OnExit()
+		int OrastusExile::OnExit()
 		{
 			Logger::logInfo( ShortName.ToStdString() + cuT( " - Exit" ) );
 			doCleanup();
 			return wxApp::OnExit();
 		}
 
-		bool ExiledFromOrastus::doParseCommandLine()
+		bool OrastusExile::doParseCommandLine()
 		{
 			wxCmdLineParser l_parser( wxApp::argc, wxApp::argv );
 			l_parser.AddSwitch( wxT( "h" ), wxT( "help" ), _( "Displays this help" ) );
@@ -312,7 +306,7 @@ namespace orastus
 			return l_return;
 		}
 
-		bool ExiledFromOrastus::doInitialiseLocale()
+		bool OrastusExile::doInitialiseLocale()
 		{
 			long l_lLanguage = wxLANGUAGE_DEFAULT;
 			Path l_pathCurrent = File::getExecutableDirectory().getPath();
@@ -343,7 +337,7 @@ namespace orastus
 			return true;
 		}
 
-		bool ExiledFromOrastus::doInitialiseCastor()
+		bool OrastusExile::doInitialiseCastor()
 		{
 			bool l_return = true;
 
@@ -356,7 +350,7 @@ namespace orastus
 			Logger::logInfo( ShortName.ToStdString() + cuT( " - start" ) );
 
 			m_castor = std::make_unique< Engine >( ShortName.ToStdString()
-				, castor3d::Version{ ExiledFromOrastus_VERSION_MAJOR, ExiledFromOrastus_VERSION_MINOR, ExiledFromOrastus_VERSION_BUILD }
+				, castor3d::Version{ OrastusExile_VERSION_MAJOR, OrastusExile_VERSION_MINOR, OrastusExile_VERSION_BUILD }
 				, m_config.validate );
 			doLoadPlugins();
 			auto & renderers = m_castor->getRenderersList();
@@ -401,7 +395,7 @@ namespace orastus
 			return l_return;
 		}
 
-		void ExiledFromOrastus::doLoadPlugins()
+		void OrastusExile::doLoadPlugins()
 		{
 			static castor::String castor3DLibPrefix{ CU_LibPrefix + castor::String{ cuT( "castor3d" ) } };
 			castor::PathArray files;
@@ -448,11 +442,11 @@ namespace orastus
 			castor::Logger::logInfo( cuT( "Plugins loaded" ) );
 		}
 
-		void ExiledFromOrastus::doLoadImages()
+		void OrastusExile::doLoadImages()
 		{
 		}
 
-		wxWindow * ExiledFromOrastus::doInitialiseMainFrame()
+		wxWindow * OrastusExile::doInitialiseMainFrame()
 		{
 			wxAppConsole::SetAppName( ShortName );
 			wxAppConsole::SetVendorName( wxT( "dragonjoker" ) );
@@ -470,7 +464,7 @@ namespace orastus
 			return m_mainFrame;
 		}
 
-		void ExiledFromOrastus::doCleanup()
+		void OrastusExile::doCleanup()
 		{
 			doCleanupCastor();
 			m_locale.reset();
@@ -479,7 +473,7 @@ namespace orastus
 			wxImage::CleanUpHandlers();
 		}
 
-		void ExiledFromOrastus::doCleanupCastor()
+		void OrastusExile::doCleanupCastor()
 		{
 			m_castor.reset();
 		}

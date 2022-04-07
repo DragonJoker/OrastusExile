@@ -1,6 +1,6 @@
 #include "RenderPanel.hpp"
 
-#include "ExiledFromOrastus.hpp"
+#include "OrastusExile.hpp"
 
 #include <GameEngine/Game.hpp>
 #include <GameEngine/GridCell.hpp>

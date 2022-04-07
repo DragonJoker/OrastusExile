@@ -3,8 +3,8 @@ See licence file in root folder, MIT.txt
 */
 #include "EnemyTest.hpp"
 
-#include <ECS/Ecs.hpp>
-#include <State/EnemyState.hpp>
+#include <GameEngine/ECS/Ecs.hpp>
+#include <GameEngine/State/EnemyState.hpp>
 
 namespace orastus
 {
