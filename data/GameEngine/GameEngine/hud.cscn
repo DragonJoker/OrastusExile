@@ -458,9 +458,14 @@ gui
 	theme "Build/Base"
 	{
 		default_font "ResourcesValueFont"
-		static_style
+		button_style
 		{
 			background_material "HUDBuild"
+			highlighted_background_material "HUDBuild"
+			pushed_background_material "HUDBuild"
+			foreground_material "HUDBackground"
+			highlighted_foreground_material "HUDBackground"
+			pushed_foreground_material "HUDBackground"
 		}
 	}
 
@@ -507,7 +512,7 @@ gui
 		}
 	}
 
-	static "HUDBuild"
+	button "HUDBuild"
 	{
 		theme "Build/Base"
 		pixel_size 200 200

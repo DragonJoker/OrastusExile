@@ -175,6 +175,11 @@ namespace orastus
 			{
 				m_game.createLongRangeTower();
 			} );
+		userInput->registerClickAction( cuT( "HUDBuild" )
+			, []()
+			{
+				// This is to prevent click behind the build overlay.
+			} );
 		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
@@ -194,6 +199,7 @@ namespace orastus
 		auto userInput = m_scene.getEngine()->getUserInputListener();
 		userInput->unregisterClickAction( cuT( "Build/ShortRange/Button" ) );
 		userInput->unregisterClickAction( cuT( "Build/Splash/Button" ) );
+		userInput->unregisterClickAction( cuT( "HUDBuild" ) );
 	}
 
 	void Hud::updateTowerInfo( Ecs const & ecs
