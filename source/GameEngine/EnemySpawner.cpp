@@ -138,7 +138,7 @@ namespace orastus
 			String name = cuT( "Enemy_" ) + std::to_string( ++m_totalSpawned );
 			auto geometry = m_game.createEnemy( name, m_currentEnemies );
 			Game::getEnemyNode( geometry )->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y - 1 } )
-				+ castor::Point3f{ 0, m_game.getCellHeight(), 0 } );
+				+ castor::Point3f{ 0, m_game.getCellHeight() / 2.0f, 0 } );
 			m_liveEnemies.push_back( m_ecs.createEnemy( 24.0f
 				, m_life.getValue()
 				, geometry
@@ -152,7 +152,7 @@ namespace orastus
 			auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( entity
 				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
 			Game::getEnemyNode( geometry )->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y - 1 } )
-				+ castor::Point3f{ 0, m_game.getCellHeight(), 0 } );
+				+ castor::Point3f{ 0, m_game.getCellHeight() / 2.0f, 0 } );
 			m_ecs.resetEnemy( entity
 				, 24.0f
 				, m_life.getValue()

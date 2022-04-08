@@ -1,44 +1,5 @@
 // Materials
 
-material "Imp-stone_sel"
-{
-
-	pass
-	{
-		diffuse 0.0 1.0 0.0
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
-		two_sided true
-	}
-}
-
-material "Imp-stoneDark_sel"
-{
-
-	pass
-	{
-		diffuse 0.0 1.0 0.0
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
-		two_sided true
-	}
-}
-
-material "Imp-wood_sel"
-{
-
-	pass
-	{
-		diffuse 0.0 1.0 0.0
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
-		two_sided true
-	}
-}
-
 material "Bullet"
 {
 	pass
@@ -61,17 +22,37 @@ material "Boulder"
 
 mesh "TowerBase"
 {
-	import "Meshes/towerRound_base.glb" --rescale=16.0
+	import "Meshes/TowerBase.cmsh"
+
+	default_materials
+	{
+		material 0 "red"
+		material 1 "stone"
+		material 2 "stoneDark"
+	}
 }
 
 mesh "Cannon"
 {
-	import "Meshes/weapon_cannon.glb" --rescale=16.0 --pitch=270.0
+	import "Meshes/Cannon.cmsh"
+
+	default_materials
+	{
+		material 0 "stoneDark"
+		material 1 "stone"
+		material 2 "wood"
+	}
 }
 
 mesh "Ballista"
 {
-	import "Meshes/weapon_ballista.glb" --rescale=16.0
+	import "Meshes/Ballista.cmsh"
+
+	default_materials
+	{
+		material 0 "wood"
+		material 1 "stone"
+	}
 }
 
 mesh "Bullet"

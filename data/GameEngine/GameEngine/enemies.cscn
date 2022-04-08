@@ -1,21 +1,52 @@
 // Meshes
 
+mesh "UfoRed"
+{
+	import "Meshes/UfoRed.cmsh"
+
+	default_materials
+	{
+		material 0 "glass"
+		material 1 "snowRoadDark"
+		material 2 "stoneDark"
+		material 3 "red"
+	}
+}
+
 mesh "UfoGreen"
 {
-	import "Meshes/enemy_ufoGreen.glb" --rescale=16.0
+	import "Meshes/UfoGreen.cmsh"
+
+	default_materials
+	{
+		material 0 "snowRoad"
+		material 1 "glass"
+		material 2 "foliage"
+	}
 }
 
 mesh "UfoPurple"
 {
-	import "Meshes/enemy_ufoPurple.glb" --rescale=16.0
-}
+	import "Meshes/UfoPurple.cmsh"
 
-mesh "UfoRed"
-{
-	import "Meshes/enemy_ufoRed.glb" --rescale=16.0
+	default_materials
+	{
+		material 0 "snowRoad"
+		material 1 "purple"
+		material 2 "stoneDark"
+		material 3 "glass"
+	}
 }
 
 mesh "UfoYellow"
 {
-	import "Meshes/enemy_ufoYellow.glb" --rescale=16.0
+	import "Meshes/UfoYellow.cmsh"
+
+	default_materials
+	{
+		material 0 "glass"
+		material 1 "snowRoad"
+		material 2 "stoneDark"
+		material 3 "dirt"
+	}
 }

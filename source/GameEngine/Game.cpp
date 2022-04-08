@@ -27,30 +27,121 @@ namespace orastus
 
 	namespace
 	{
+		enum class Direction
+		{
+			North,
+			South,
+			East,
+			West,
+		};
+
+		Direction doGetDirection( GridPathNode const & from
+			, GridPathNode const & to )
+		{
+			if ( from.y < to.y )
+			{
+				return Direction::South;
+			}
+
+			if ( from.y > to.y )
+			{
+				return Direction::North;
+			}
+
+			if ( from.x < to.x )
+			{
+				return Direction::West;
+			}
+
+			return Direction::East;
+		}
+
+		GridCell::State doGetPathType( GridPathNode const & prv
+			, GridPathNode const & cur
+			, GridPathNode const * from )
+		{
+			if ( from )
+			{
+				auto fromDir = doGetDirection( *from, prv );
+				auto toDir = doGetDirection( cur, prv );
+
+				switch ( fromDir )
+				{
+				case Direction::North:
+					switch ( toDir )
+					{
+					case Direction::East:
+						return GridCell::State::ePathTurnNE;
+					case Direction::West:
+						return GridCell::State::ePathTurnWN;
+					default:
+						return GridCell::State::ePathStraightSN;
+					}
+				case Direction::South:
+					switch ( toDir )
+					{
+					case Direction::East:
+						return GridCell::State::ePathTurnES;
+					case Direction::West:
+						return GridCell::State::ePathTurnSW;
+					default:
+						return GridCell::State::ePathStraightSN;
+					}
+				case Direction::East:
+					switch ( toDir )
+					{
+					case Direction::North:
+						return GridCell::State::ePathTurnNE;
+					case Direction::South:
+						return GridCell::State::ePathTurnES;
+					default:
+						return GridCell::State::ePathStraightEW;
+					}
+				case Direction::West:
+					switch ( toDir )
+					{
+					case Direction::North:
+						return GridCell::State::ePathTurnWN;
+					case Direction::South:
+						return GridCell::State::ePathTurnSW;
+					default:
+						return GridCell::State::ePathStraightEW;
+					}
+				}
+			}
+
+			return GridCell::State::eStart;
+		}
+
 		void doPrepareGridLine( GridPathNode const & prv
 			, GridPathNode const & cur
+			, GridPathNode const *& from
 			, Grid & grid )
 		{
+			grid( prv.y, prv.x ).state = doGetPathType( prv, cur, from );
+
 			if ( prv.x != cur.x )
 			{
-				for ( auto x = std::min( prv.x, cur.x ); x < std::max( prv.x, cur.x ); ++x )
+				auto begin = std::min( prv.x, cur.x );
+				auto end = std::max( prv.x, cur.x );
+
+				for ( auto x = begin + 1u; x < end; ++x )
 				{
-					grid( prv.y - 1, x - 1 ).state = GridCell::State::ePath;
-					grid( prv.y - 1, x - 0 ).state = GridCell::State::ePath;
-					grid( prv.y - 0, x - 1 ).state = GridCell::State::ePath;
-					grid( prv.y - 0, x - 0 ).state = GridCell::State::ePath;
+					grid( cur.y, x ).state = GridCell::State::ePathStraightEW;
 				}
 			}
 			else
 			{
-				for ( auto y = std::min( prv.y, cur.y ); y <= std::max( prv.y, cur.y ); ++y )
+				auto begin = std::min( prv.y, cur.y );
+				auto end = std::max( prv.y, cur.y );
+
+				for ( auto y = begin + 1u; y < end; ++y )
 				{
-					grid( y - 1, prv.x - 1 ).state = GridCell::State::ePath;
-					grid( y - 1, prv.x - 0 ).state = GridCell::State::ePath;
-					grid( y - 0, prv.x - 1 ).state = GridCell::State::ePath;
-					grid( y - 0, prv.x - 0 ).state = GridCell::State::ePath;
+					grid( y, cur.x ).state = GridCell::State::ePathStraightSN;
 				}
 			}
+
+			from = &prv;
 		}
 
 		void doPrepareTarget( GridPathNode const & cur
@@ -61,7 +152,7 @@ namespace orastus
 			{
 				for ( uint32_t y = cur.y - 1; y <= cur.y + 3; ++y )
 				{
-					grid( y, x ).state = GridCell::State::ePath;
+					grid( y, x ).state = GridCell::State::ePathArea;
 				}
 			}
 
@@ -117,28 +208,28 @@ namespace orastus
 	Game::Game( castor3d::Scene & scene )
 		: m_scene{ scene }
 		, m_hud{ *this, scene }
-		, m_path
-		{
-			{ 19,  1 },
-			{ 19,  3 },
-			{ 11,  3 },
-			{ 11,  7 },
-			{ 23,  7 },
-			{ 23, 11 },
-			{ 13, 11 },
-			{ 13, 15 },
-			{ 25, 15 },
-			{ 25, 19 },
-			{ 15, 19 },
-			{ 15, 23 },
-			{ 17, 23 },
-			{ 17, 27 },
-		}
+		, m_path{ { 19, 0 }
+			, { 19, 3 }
+			, { 11, 3 }
+			, { 11, 7 }
+			, { 23, 7 }
+			, { 23, 11 }
+			, { 13, 11 }
+			, { 13, 15 }
+			, { 25, 15 }
+			, { 25, 19 }
+			, { 15, 19 }
+			, { 15, 23 }
+			, { 17, 23 }
+			, { 17, 27 } }
 		, m_mapNode{ m_scene.getSceneNodeCache().find( cuT( "MapBase" ) ).lock() }
 		, m_targetNode{ m_scene.getSceneNodeCache().find( cuT( "Target" ) ).lock() }
 		, m_emptyTileMesh{ m_scene.getMeshCache().find( cuT( "EmptyTile" ) ) }
 		, m_cellDimensions{ m_emptyTileMesh.lock()->getBoundingBox().getDimensions() }
-		, m_pathTileMesh{ m_scene.getMeshCache().find( cuT( "PathTile" ) ) }
+		, m_pathStartTileMesh{ m_scene.getMeshCache().find( cuT( "PathStartTile" ) ) }
+		, m_pathStraightTileMesh{ m_scene.getMeshCache().find( cuT( "PathStraightTile" ) ) }
+		, m_pathTurnTileMesh{ m_scene.getMeshCache().find( cuT( "PathTurnTile" ) ) }
+		, m_pathAreaTileMesh{ m_scene.getMeshCache().find( cuT( "PathAreaTile" ) ) }
 		, m_towerBaseMesh{ m_scene.getMeshCache().find( cuT( "TowerBase" ) ).lock() }
 		, m_shortRangeTowerMesh{ m_scene.getMeshCache().find( cuT( "Ballista" ) ).lock() }
 		, m_longRangeTowerMesh{ m_scene.getMeshCache().find( cuT( "Cannon" ) ).lock() }
@@ -172,8 +263,44 @@ namespace orastus
 				doAddEmptyTile( cell );
 				break;
 			case GridCell::State::eStart:
-			case GridCell::State::ePath:
-				doAddPathTile( cell );
+				doAddPathTile( cell
+					, m_pathStartTileMesh
+					, castor::Quaternion::fromAxisAngle( castor::Point3f{ 0.0, 1.0, 0.0 }, 180.0_degrees ) );
+				break;
+			case GridCell::State::ePathStraightSN:
+				doAddPathTile( cell
+					, m_pathStraightTileMesh
+					, castor::Quaternion::identity() );
+				break;
+			case GridCell::State::ePathStraightEW:
+				doAddPathTile( cell
+					, m_pathStraightTileMesh
+					, castor::Quaternion::fromAxisAngle( castor::Point3f{ 0.0, 1.0, 0.0 }, 90.0_degrees ) );
+				break;
+			case GridCell::State::ePathTurnNE:
+				doAddPathTile( cell
+					, m_pathTurnTileMesh
+					, castor::Quaternion::fromAxisAngle( castor::Point3f{ 0.0, 1.0, 0.0 }, 180.0_degrees ) );
+				break;
+			case GridCell::State::ePathTurnES:
+				doAddPathTile( cell
+					, m_pathTurnTileMesh
+					, castor::Quaternion::fromAxisAngle( castor::Point3f{ 0.0, 1.0, 0.0 }, 270.0_degrees ) );
+				break;
+			case GridCell::State::ePathTurnSW:
+				doAddPathTile( cell
+					, m_pathTurnTileMesh
+					, castor::Quaternion::identity() );
+				break;
+			case GridCell::State::ePathTurnWN:
+				doAddPathTile( cell
+					, m_pathTurnTileMesh
+					, castor::Quaternion::fromAxisAngle( castor::Point3f{ 0.0, 1.0, 0.0 }, 90.0_degrees ) );
+				break;
+			case GridCell::State::ePathArea:
+				doAddPathTile( cell
+					, m_pathAreaTileMesh
+					, castor::Quaternion::identity() );
 				break;
 			default:
 				break;
@@ -433,17 +560,12 @@ namespace orastus
 
 		if ( prv != m_path.end() )
 		{
-			auto cur = prv + 1;
+			auto cur = std::next( prv );
+			GridPathNode const * from{};
 
 			while ( cur != m_path.end() )
 			{
-				doPrepareGridLine( *prv, *cur, m_grid );
-
-				if ( prv == m_path.begin() )
-				{
-					m_grid( prv->y, prv->x ).state = GridCell::State::eStart;
-				}
-
+				doPrepareGridLine( *prv, *cur, from, m_grid );
 				++prv;
 				++cur;
 			}
@@ -454,6 +576,7 @@ namespace orastus
 
 	void Game::doAddTile( GridCell & cell
 		, castor3d::MeshResPtr mesh
+		, castor::Quaternion const & orientation
 		, bool pickable )
 	{
 		String name = cuT( "Tile_" ) + std::to_string( cell.x ) + cuT( "x" ) + std::to_string( cell.y );
@@ -461,6 +584,7 @@ namespace orastus
 		auto geometry = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
 		node->setPosition( doConvert( castor::Point2i{ cell.x, cell.y } )
 			+ castor::Point3f{ 0, m_cellDimensions[1] / 2, 0 } );
+		node->setOrientation( orientation );
 		node->attachTo( *m_mapNode );
 		m_scene.getGeometryCache().add( geometry );
 		cell.entity = m_ecs.createMapBlock( geometry, pickable );
@@ -468,14 +592,20 @@ namespace orastus
 
 	void Game::doAddEmptyTile( GridCell & cell )
 	{
-		doAddTile( cell, m_emptyTileMesh, true );
-		cell.state = GridCell::State::eEmpty;
+		doAddTile( cell
+			, m_emptyTileMesh
+			, castor::Quaternion::identity()
+			, true );
 	}
 
-	void Game::doAddPathTile( GridCell & cell )
+	void Game::doAddPathTile( GridCell & cell
+		, castor3d::MeshResPtr mesh
+		, castor::Quaternion const & orientation )
 	{
-		doAddTile( cell, m_pathTileMesh, false );
-		cell.state = GridCell::State::ePath;
+		doAddTile( cell
+			, mesh
+			, orientation
+			, false );
 	}
 
 	void Game::doAddTarget( GridCell & cell )

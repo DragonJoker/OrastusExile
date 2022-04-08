@@ -278,9 +278,12 @@ namespace orastus
 		void doPrepareGrid();
 		void doAddTile( GridCell & cell
 			, castor3d::MeshResPtr mesh
+			, castor::Quaternion const & orientation
 			, bool pickable );
 		void doAddEmptyTile( GridCell & cell );
-		void doAddPathTile( GridCell & cell );
+		void doAddPathTile( GridCell & cell
+			, castor3d::MeshResPtr mesh
+			, castor::Quaternion const & orientation );
 		void doAddTarget( GridCell & cell );
 		castor3d::GeometrySPtr doCreateBullet( Entity source );
 		castor3d::GeometrySPtr doCreateTowerBase( castor::String const & name
@@ -310,7 +313,10 @@ namespace orastus
 		castor3d::SceneNodeSPtr m_targetNode;
 		castor3d::MeshResPtr m_emptyTileMesh;
 		castor::Point3f m_cellDimensions;
-		castor3d::MeshResPtr m_pathTileMesh;
+		castor3d::MeshResPtr m_pathStartTileMesh;
+		castor3d::MeshResPtr m_pathStraightTileMesh;
+		castor3d::MeshResPtr m_pathTurnTileMesh;
+		castor3d::MeshResPtr m_pathAreaTileMesh;
 		castor3d::MeshResPtr m_towerBaseMesh;
 		castor3d::MeshResPtr m_shortRangeTowerMesh;
 		castor3d::MeshResPtr m_longRangeTowerMesh;

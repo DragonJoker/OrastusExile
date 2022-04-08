@@ -18,6 +18,7 @@ scene "Scene"
 	ambient_light 0.1 0.1 0.1
 	background_colour 0.5 0.5 0.5
 	lpv_indirect_attenuation 0.1
+	include "scene-materials.cscn"
 	include "enemies.cscn"
 	include "hud.cscn"
 	include "map.cscn"

@@ -54,42 +54,61 @@ material "Target"
 	}
 }
 
-material "Imp-dirt_sel"
-{
-
-	pass
-	{
-		diffuse 0.976471 0.713726 0.450980
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
-		two_sided true
-	}
-}
-
-material "Imp-foliage_sel"
-{
-
-	pass
-	{
-		diffuse 0.0 1.0 0.0
-		specular 0.00000 1.00000 0.00000
-		ambient 1.00000
-		shininess 50.0000
-		two_sided true
-	}
-}
-
 // Meshes
+
+mesh "PathStartTile"
+{
+	import "Meshes/PathStartTile.cmsh"
+
+	default_materials
+	{
+		material 0 "foliage"
+		material 1 "dirtDark"
+		material 2 "dirt"
+		material 3 "stone"
+		material 4 "stoneDark"
+	}
+}
 
 mesh "EmptyTile"
 {
-	import "Meshes/tile.glb" --rescale=16.0
+	import "Meshes/EmptyTile.cmsh"
+
+	default_materials
+	{
+		material 0 "dirt"
+		material 1 "foliage"
+	}
 }
 
-mesh "PathTile"
+mesh "PathAreaTile"
 {
-	import "Meshes/tile_dirt.glb" --rescale=16.0
+	import "Meshes/PathAreaTile.cmsh"
+	default_material "dirt"
+}
+
+mesh "PathStraightTile"
+{
+	import "Meshes/PathStraightTile.cmsh"
+
+	default_materials
+	{
+		material 0 "dirt"
+		material 1 "foliage"
+		material 2 "dirtDark"
+	}
+}
+
+mesh "PathTurnTile"
+{
+	import "Meshes/PathTurnTile.cmsh"
+
+	default_materials
+	{
+		material 0 "dirtDark"
+		material 1 "dirt"
+		material 2 "foliage"
+	}
 }
 
 mesh "Target"

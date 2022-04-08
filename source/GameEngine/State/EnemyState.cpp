@@ -63,7 +63,7 @@ namespace orastus
 				if ( data.current != data.path.end() )
 				{
 					data.destination = game.convert( castor::Point2i{ data.current->x, data.current->y } )
-						+ castor::Point3f{ 0, game.getCellHeight(), 0 };
+						+ castor::Point3f{ 0, game.getCellHeight() / 2, 0 };
 					result = walkToDestination( game
 						, data
 						, speed
@@ -113,7 +113,7 @@ namespace orastus
 
 				if ( life )
 				{
-					auto const angle = castor::Angle::fromDegrees( -float( elapsed.count() ) * 120 / 1000.0f );
+					auto const angle = castor::Angle::fromDegrees( -float( elapsed.count() ) * 240 / 1000.0f );
 					node->yaw( angle );
 					return walkToDestination( game
 						, *walkData

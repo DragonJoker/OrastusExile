@@ -28,8 +28,14 @@ namespace orastus
 			eStart,
 			//! Cell with a tower.
 			eTower,
-			//! Grid path cell.
-			ePath,
+			//! Grid path cells.
+			ePathStraightSN,
+			ePathStraightEW,
+			ePathTurnNE,
+			ePathTurnES,
+			ePathTurnSW,
+			ePathTurnWN,
+			ePathArea,
 			//! Grid path target point.
 			eTarget,
 			//! Invalid cell.
