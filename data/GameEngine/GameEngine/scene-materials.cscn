@@ -1,4 +1,102 @@
+// Samplers
+
+sampler "Nearest"
+{
+	min_filter nearest
+	mag_filter nearest
+	lod_bias 0.0
+	u_wrap_mode repeat
+	v_wrap_mode repeat
+	w_wrap_mode repeat
+	border_colour float_opaque_black
+}
+
+sampler "Linear"
+{
+	min_filter linear
+	mag_filter linear
+	min_lod -500.0
+	max_lod 500.0
+	lod_bias 0.0
+	u_wrap_mode clamp_to_edge
+	v_wrap_mode clamp_to_edge
+	w_wrap_mode clamp_to_edge
+	border_colour float_opaque_black
+}
+
 // Materials
+
+material "Bullet"
+{
+	pass
+	{
+		diffuse 0.5 0.0 0.5
+		specular 0.5 0.0 0.5
+	}
+}
+
+material "Boulder"
+{
+	pass
+	{
+		diffuse 0.5 0.5 0.0
+		specular 0.5 0.5 0.0
+	}
+}
+
+material "MapBase"
+{
+	pass
+	{
+		diffuse 0.2 1.0 0.5
+		specular 0.2 1.0 0.5
+	}
+}
+
+material "MapMouseOk"
+{
+	pass
+	{
+		diffuse 0.0 1.0 0.0
+		specular 0.0 1.0 0.0
+		alpha 0.75
+	}
+}
+
+material "MapMouseNOk"
+{
+	pass
+	{
+		diffuse 1.0 0.0 0.0
+		specular 1.0 0.0 0.0
+		alpha 0.75
+	}
+}
+
+material "MapCube_sel"
+{
+	pass
+	{
+		diffuse 0.0 0.64 0.0
+		specular 0.0 0.64 0.0
+
+		texture_unit
+		{
+			image "Textures/Cube.png"
+			sampler "Nearest"
+			diffuse_mask 0x00FFFFFF
+		}
+	}
+}
+
+material "Target"
+{
+	pass
+	{
+		diffuse 1 1 0 1
+		specular 1 1 0 1
+	}
+}
 
 material "dirt"
 {

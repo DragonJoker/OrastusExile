@@ -1,0 +1,214 @@
+// Materials
+
+material "HUDBackground"
+{
+	pass
+	{
+		alpha 0.0
+	}
+}
+
+material "HUDButtonBackground"
+{
+	pass
+	{
+		diffuse 0.031 0.329 0.431 1.0
+	}
+}
+
+material "HUDButtonBorder"
+{
+	pass
+	{
+		diffuse 0.055 0.035 0.196
+	}
+}
+
+material "PauseBackground"
+{
+	pass
+	{
+		diffuse 0.0 0.0 0.0
+		alpha 0.8
+	}
+}
+
+material "HUDDetails"
+{
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/HUDDetails.png"
+			sampler	"Linear"
+			diffuse_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDBuild"
+{
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/HUDBuild.png"
+			sampler	"Linear"
+			diffuse_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDThumbShortRange"
+{
+	pass
+	{
+		diffuse 0.031 0.329 0.431 1.0
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbShortRange.png"
+			sampler	"Linear"
+			diffuse_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDThumbShortRangeHighlight"
+{
+	pass
+	{
+		diffuse 0.0 1.0 1.0
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbShortRange.png"
+			sampler	"Linear"
+			diffuse_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDThumbShortRangePush"
+{
+	pass
+	{
+		diffuse 0.031 0.329 0.431
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbShortRange.png"
+			sampler	"Linear"
+			diffuse_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDThumbSplash"
+{
+	pass
+	{
+		diffuse 0.031 0.329 0.431
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbSplash.png"
+			sampler	"Linear"
+			diffuse_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDThumbSplashHighlight"
+{
+	pass
+	{
+		diffuse 0.0 1.0 1.0
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbSplash.png"
+			sampler	"Linear"
+			diffuse_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDThumbSplashPush"
+{
+	pass
+	{
+		diffuse 0.031 0.329 0.431 1.0
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbSplash.png"
+			sampler	"Linear"
+			diffuse_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDBackgroundTop"
+{
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/HUDBackgroundTop.png"
+			sampler	"Linear"
+			diffuse_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDBackgroundBottom"
+{
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/HUDBackgroundBottom.png"
+			sampler	"Linear"
+			diffuse_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "ResourcePanel"
+{
+	pass
+	{
+		diffuse 0.0 0.0 0.0
+
+		texture_unit
+		{
+			image "Textures/HUDPanel.png"
+			sampler	"Linear"
+			diffuse_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}

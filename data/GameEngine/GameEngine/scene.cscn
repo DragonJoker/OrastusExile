@@ -2,23 +2,13 @@ materials blinn_phong
 
 scene "Scene"
 {
-	sampler "Nearest"
-	{
-		min_filter nearest
-		mag_filter nearest
-		lod_bias 0.0
-		u_wrap_mode repeat
-		v_wrap_mode repeat
-		w_wrap_mode repeat
-		border_colour float_opaque_black
-	}
-
 	// Scene configuration
 
 	ambient_light 0.1 0.1 0.1
 	background_colour 0.5 0.5 0.5
 	lpv_indirect_attenuation 0.1
 	include "scene-materials.cscn"
+	include "hud-materials.cscn"
 	include "enemies.cscn"
 	include "hud.cscn"
 	include "map.cscn"
@@ -35,6 +25,8 @@ scene "Scene"
 		front "Textures/bg/bkg1_back.png"
 		back "Textures/bg/bkg1_front.png"
 	}
+
+	// Camera
 
 	scene_node "MainCameraNode"
 	{
