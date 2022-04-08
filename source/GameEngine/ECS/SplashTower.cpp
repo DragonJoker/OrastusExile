@@ -64,9 +64,14 @@ namespace orastus
 		m_ecs.createComponentData( entity
 			, m_pickable
 			, true );
-		m_ecs.createComponentData( entity
-			, m_animation
-			, animation );
+
+		if ( animation )
+		{
+			m_ecs.createComponentData( entity
+				, m_animation
+				, animation );
+		}
+
 		m_ecs.createComponentData( entity
 			, m_attack
 			, attack );
@@ -95,8 +100,13 @@ namespace orastus
 		stream << cuT( "\n  SplashRange: " ) << m_ecs.getComponentData< float >( entity, m_splashRange ).getValue();
 		stream << cuT( "\n  Geometry: " ) << m_ecs.getComponentData< castor3d::GeometrySPtr >( entity, m_geometry ).getValue()->getName();
 		stream << cuT( "\n  Pickable: " ) << m_ecs.getComponentData< bool >( entity, m_pickable ).getValue();
-		stream << cuT( "\n  Animation: " ) << m_ecs.getComponentData< AnimationDataPtr >( entity, m_animation ).getValue()->animation->getName();
 		stream << cuT( "\n  Attack: " ) << m_ecs.getComponentData< AttackDataPtr >( entity, m_attack ).getValue()->target.getId();
+
+		if ( m_ecs.hasComponent( entity, m_animation ) )
+		{
+			stream << cuT( "\n  Animation: " ) << m_ecs.getComponentData< AnimationDataPtr >( entity, m_animation ).getValue()->animation->getName();
+		}
+
 		return stream.str();
 	}
 }

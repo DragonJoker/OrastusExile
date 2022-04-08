@@ -66,6 +66,7 @@ namespace orastus
 		m_totalEnemies = 0u;
 		m_timeSinceLastSpawn = std::chrono::milliseconds{};
 		m_count = 0u;
+		m_kills = 0u;
 		m_enemiesCache = nullptr;
 	}
 
@@ -97,6 +98,7 @@ namespace orastus
 		if ( it != std::end( m_liveEnemies ) )
 		{
 			m_liveEnemies.erase( it );
+			++m_kills;
 		}
 
 		m_enemiesCache->push_back( enemy );

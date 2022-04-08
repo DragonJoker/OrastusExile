@@ -21,9 +21,6 @@
 #include <Castor3D/Scene/Light/Light.hpp>
 #include <Castor3D/Scene/Light/PointLight.hpp>
 
-using namespace castor;
-using namespace castor3d;
-
 namespace orastus
 {
 	//*********************************************************************************************
@@ -57,7 +54,7 @@ namespace orastus
 		}
 
 		void doPrepareTarget( GridPathNode const & cur
-			, Scene & scene
+			, castor3d::Scene & scene
 			, Grid & grid )
 		{
 			for ( uint32_t x = cur.x - 2; x <= cur.x + 2; ++x )
@@ -137,21 +134,19 @@ namespace orastus
 			{ 17, 23 },
 			{ 17, 27 },
 		}
+		, m_mapNode{ m_scene.getSceneNodeCache().find( cuT( "MapBase" ) ).lock() }
+		, m_targetNode{ m_scene.getSceneNodeCache().find( cuT( "Target" ) ).lock() }
+		, m_emptyTileMesh{ m_scene.getMeshCache().find( cuT( "EmptyTile" ) ) }
+		, m_cellDimensions{ m_emptyTileMesh.lock()->getBoundingBox().getDimensions() }
+		, m_pathTileMesh{ m_scene.getMeshCache().find( cuT( "PathTile" ) ) }
+		, m_towerBaseMesh{ m_scene.getMeshCache().find( cuT( "TowerBase" ) ).lock() }
+		, m_shortRangeTowerMesh{ m_scene.getMeshCache().find( cuT( "Ballista" ) ).lock() }
+		, m_longRangeTowerMesh{ m_scene.getMeshCache().find( cuT( "Cannon" ) ).lock() }
+		, m_bulletMesh{ m_scene.getMeshCache().find( cuT( "Bullet" ) ).lock() }
+		, m_bulletMaterial{ m_scene.getMaterialView().find( cuT( "Bullet" ) ).lock() }
 		, m_enemySpawner{ m_ecs, *this }
 		, m_bulletSpawner{ m_ecs, *this }
 	{
-		m_mapNode = m_scene.getSceneNodeCache().find( cuT( "MapBase" ) ).lock();
-		m_emptyTileMesh = m_scene.getMeshCache().find( cuT( "EmptyTile" ) );
-		m_pathTileMesh = m_scene.getMeshCache().find( cuT( "PathTile" ) );
-		m_shortRangeTowerMesh = m_scene.getMeshCache().find( cuT( "ShortRange" ) ).lock();
-		m_longRangeTowerMesh = m_scene.getMeshCache().find( cuT( "HeavySplash" ) ).lock();
-		m_bulletMesh = m_scene.getMeshCache().find( cuT( "Bullet" ) ).lock();
-		m_bulletMaterial = m_scene.getMaterialView().find( cuT( "Bullet" ) ).lock();
-		m_targetNode = m_scene.getSceneNodeCache().find( cuT( "Target" ) ).lock();
-		auto mesh = m_emptyTileMesh.lock();
-		m_cellDimensions[0] = mesh->getBoundingBox().getMax()[0] - mesh->getBoundingBox().getMin()[0];
-		m_cellDimensions[1] = mesh->getBoundingBox().getMax()[1] - mesh->getBoundingBox().getMin()[1];
-		m_cellDimensions[2] = mesh->getBoundingBox().getMax()[2] - mesh->getBoundingBox().getMin()[2];
 		m_hud.initialise();
 		m_state = State::eInitial;
 	}
@@ -216,13 +211,11 @@ namespace orastus
 	{
 		if ( isRunning() )
 		{
-#if !defined( NDEBUG )
-			m_elapsed = std::chrono::milliseconds{ 40 };
-#else
-			m_elapsed = std::chrono::duration_cast< std::chrono::milliseconds >( Clock::now() - m_saved );
-#endif
+			m_elapsed = std::min( 40_ms
+				, std::chrono::duration_cast< castor::Milliseconds >( Clock::now() - m_saved ) );
 			m_ecs.update( *this, m_elapsed );
 			m_enemySpawner.update( m_elapsed );
+			m_hud.update();
 			m_saved = Clock::now();
 		}
 	}
@@ -256,7 +249,7 @@ namespace orastus
 		m_hud.updateTowerInfo( m_ecs, Entity{} );
 		m_selectedCell = nullptr;
 
-		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
 				m_selectedBlock.unselect();
@@ -296,7 +289,7 @@ namespace orastus
 		auto baseNode = m_scene.getSceneNodeCache().add( name + cuT( "_Base" ) ).lock();
 		baseNode->attachTo( *m_mapNode );
 		auto node = m_scene.getSceneNodeCache().add( name ).lock();
-		node->setOrientation( Quaternion::fromAxisAngle( Point3f{ 1, 0, 1 }, 10.0_degrees ) );
+		node->setOrientation( castor::Quaternion::fromAxisAngle( castor::Point3f{ 1, 0, 1 }, 10.0_degrees ) );
 		node->attachTo( *baseNode );
 		auto result = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
 		m_scene.getGeometryCache().add( result );
@@ -304,28 +297,28 @@ namespace orastus
 			, m_scene
 			, *node
 			, m_scene.getLightsFactory()
-			, LightType::ePoint );
+			, castor3d::LightType::ePoint );
 		auto meshName = mesh.lock()->getName();
 
 		if ( meshName.find( "Red" ) != castor::String::npos )
 		{
-			light->setColour( RgbColour::fromPredefined( PredefinedRgbColour::eRed ) );
+			light->setColour( castor::RgbColour::fromPredefined( castor::PredefinedRgbColour::eRed ) );
 		}
 		else if ( meshName.find( "Green" ) != castor::String::npos )
 		{
-			light->setColour( RgbColour::fromPredefined( PredefinedRgbColour::eGreen ) );
+			light->setColour( castor::RgbColour::fromPredefined( castor::PredefinedRgbColour::eGreen ) );
 		}
 		else if ( meshName.find( "Purple" ) != castor::String::npos )
 		{
-			light->setColour( RgbColour::fromComponents( 0.569f, 0.514f, 0.875f ) );
+			light->setColour( castor::RgbColour::fromComponents( 0.569f, 0.514f, 0.875f ) );
 		}
 		else
 		{
-			light->setColour( RgbColour::fromComponents( 0.733, 0.537, 0.337 ) );
+			light->setColour( castor::RgbColour::fromComponents( 0.733, 0.537, 0.337 ) );
 		}
 
 		light->setIntensity( 0.8f, 1.0f );
-		light->getPointLight()->setAttenuation( Point3f{ 1.0f, 0.1f, 0.0f } );
+		light->getPointLight()->setAttenuation( castor::Point3f{ 1.0f, 0.1f, 0.0f } );
 		m_scene.getLightCache().add( name, light );
 		return result;
 	}
@@ -336,25 +329,24 @@ namespace orastus
 		if ( m_selectedCell->state == GridCell::State::eEmpty )
 		{
 			String name = cuT( "ShortRangeTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
+			doCreateTowerBase( name + "Base"
+				, *m_selectedCell
+				, m_towerBaseMesh );
 			auto tower = doCreateTower( name
 				, *m_selectedCell
-				, m_shortRangeTowerMesh
-				, { cuT( "short_range_body" ), cuT( "short_range_accessories" ) } );
-			String animName = cuT( "armature_short_range.1|attack" );
-			auto anim = doCreateAnimation( tower
-				, animName );
+				, *m_towerBaseMesh.lock()
+				, m_shortRangeTowerMesh );
 
 			if ( tower )
 			{
-				auto data = std::make_shared< AnimationData >( anim, animName );
-				auto shoot = std::make_shared< AttackData >( 500_ms );
+				auto shoot = std::make_shared< AttackData >( 0_ms );
 				m_selectedCell->entity = m_ecs.createTower( 1000_ms
 					, 3u
 					, 40.0f
 					, 120.0f
 					, 1u
 					, tower
-					, data
+					, nullptr
 					, shoot );
 				auto stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
 					, m_ecs.getComponent( Ecs::StateComponent ) ).getValue();
@@ -370,25 +362,24 @@ namespace orastus
 		if ( m_selectedCell->state == GridCell::State::eEmpty )
 		{
 			String name = cuT( "LongRangeTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
+			doCreateTowerBase( name + "Base"
+				, *m_selectedCell
+				, m_towerBaseMesh );
 			auto tower = doCreateTower( name
 				, *m_selectedCell
-				, m_longRangeTowerMesh
-				, { cuT( "splash_accessories" ), cuT( "splash_accessories" ), cuT( "splash_body" ) } );
-			String animName = cuT( "armature_short_range.1|attack" );
-			auto anim = doCreateAnimation( tower
-				, animName );
+				, *m_towerBaseMesh.lock()
+				, m_longRangeTowerMesh );
 
 			if ( tower )
 			{
-				auto data = std::make_shared< AnimationData >( anim, animName );
-				auto shoot = std::make_shared< AttackData >( 800_ms );
-				m_selectedCell->entity = m_ecs.createTower( 6000_ms
+				auto shoot = std::make_shared< AttackData >( 0_ms );
+				m_selectedCell->entity = m_ecs.createTower( 3000_ms
 					, 5u
 					, 100.0f
 					, 200.0f
 					, 1u
 					, tower
-					, data
+					, nullptr
 					, shoot );
 				auto stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
 					, m_ecs.getComponent( Ecs::StateComponent ) ).getValue();
@@ -414,9 +405,9 @@ namespace orastus
 		}
 	}
 
-	Point3f Game::convert( castor::Point2i const & position )const
+	castor::Point3f Game::convert( castor::Point2i const & position )const
 	{
-		return Point3f( float( position[0] - int( m_grid.getWidth() ) / 2 ) * m_cellDimensions[0]
+		return castor::Point3f( float( position[0] - int( m_grid.getWidth() ) / 2 ) * m_cellDimensions[0]
 			, 0
 			, float( position[1] - int( m_grid.getHeight() ) / 2 ) * m_cellDimensions[2] );
 	}
@@ -468,7 +459,8 @@ namespace orastus
 		String name = cuT( "Tile_" ) + std::to_string( cell.x ) + cuT( "x" ) + std::to_string( cell.y );
 		auto node = m_scene.getSceneNodeCache().add( name ).lock();
 		auto geometry = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
-		node->setPosition( doConvert( Point2i{ cell.x, cell.y } ) + Point3f{ 0, m_cellDimensions[1] / 2, 0 } );
+		node->setPosition( doConvert( castor::Point2i{ cell.x, cell.y } )
+			+ castor::Point3f{ 0, m_cellDimensions[1] / 2, 0 } );
 		node->attachTo( *m_mapNode );
 		m_scene.getGeometryCache().add( geometry );
 		cell.entity = m_ecs.createMapBlock( geometry, pickable );
@@ -488,7 +480,7 @@ namespace orastus
 
 	void Game::doAddTarget( GridCell & cell )
 	{
-		m_targetNode->setPosition( doConvert( Point2i{ cell.x, cell.y + 1 } ) );
+		m_targetNode->setPosition( doConvert( castor::Point2i{ cell.x, cell.y + 1 } ) );
 		cell.state = GridCell::State::eTarget;
 	}
 
@@ -511,30 +503,38 @@ namespace orastus
 		return geometry;
 	}
 
-	GeometrySPtr Game::doCreateTower( String const & name
+	castor3d::GeometrySPtr Game::doCreateTowerBase( castor::String const & name
 		, GridCell & cell
-		, castor3d::MeshResPtr mesh
-		, StringArray matNames )
+		, castor3d::MeshResPtr mesh )
 	{
 		auto node = m_scene.getSceneNodeCache().add( name ).lock();
-		node->setPosition( doConvert( Point2i{ cell.x, cell.y } ) + Point3f{ 0, m_cellDimensions[1], 0 } );
+		node->setPosition( doConvert( castor::Point2i{ cell.x, cell.y } )
+			+ castor::Point3f{ 0, m_cellDimensions[1], 0 }
+			+ castor::Point3f{ 0, mesh.lock().get()->getBoundingBox().getDimensions()[1] / 2.0f, 0 } );
+		node->attachTo( *m_mapNode );
+		auto base = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
+		m_scene.getGeometryCache().add( base );
+		return base;
+	}
+
+	castor3d::GeometrySPtr Game::doCreateTower( String const & name
+		, GridCell & cell
+		, castor3d::Mesh const & base
+		, castor3d::MeshResPtr mesh )
+	{
+		auto node = m_scene.getSceneNodeCache().add( name ).lock();
+		node->setPosition( doConvert( castor::Point2i{ cell.x, cell.y } )
+			+ castor::Point3f{ 0, m_cellDimensions[1], 0 }
+			+ castor::Point3f{ 0, base.getBoundingBox().getDimensions()[1], 0 }
+			+ castor::Point3f{ 0, mesh.lock().get()->getBoundingBox().getDimensions()[1] / 2.0f, 0 } );
 		node->attachTo( *m_mapNode );
 		auto tower = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
-		node->setScale( Point3f{ 0.15, 0.15, 0.15 } );
-		uint32_t index = 0u;
-
-		for ( auto matName : matNames )
-		{
-			tower->setMaterial( *mesh.lock()->getSubmesh( index ), m_scene.getMaterialView().find( matName ).lock().get() );
-			++index;
-		}
-
 		m_scene.getGeometryCache().add( tower );
 		cell.state = GridCell::State::eTower;
 		return tower;
 	}
 
-	 AnimatedObjectGroupSPtr Game::doCreateAnimation( GeometrySPtr geometry
+	castor3d::AnimatedObjectGroupSPtr Game::doCreateAnimation( castor3d::GeometrySPtr geometry
 		, String const & animName )
 	{
 		 CU_Require( geometry );
@@ -571,13 +571,13 @@ namespace orastus
 
 	 void Game::doSelectMapBlock( Entity const & entity )
 	 {
-		GeometrySPtr geometry = doGetGeometry( entity );
+		auto geometry = doGetGeometry( entity );
 
 		if ( geometry )
 		{
 			m_hud.updateTowerInfo( m_ecs, Entity{} );
 			m_hud.showBuild();
-			m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePostRender
+			m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePostRender
 				, [this, geometry, entity]()
 				{
 					m_selectedBlock.select( entity, geometry );
@@ -588,13 +588,13 @@ namespace orastus
 
 	 void Game::doSelectTower( Entity const & entity )
 	{
-		GeometrySPtr geometry = doGetGeometry( entity );
+		auto geometry = doGetGeometry( entity );
 
 		if ( geometry )
 		{
 			m_hud.updateTowerInfo( m_ecs, entity );
 			m_hud.hideBuild();
-			m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePostRender
+			m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePostRender
 				, [this, geometry, entity]()
 				{
 					m_selectedBlock.unselect();
@@ -603,13 +603,13 @@ namespace orastus
 		}
 	}
 
-	GeometrySPtr Game::doGetGeometry( Entity const & entity )
+	 castor3d::GeometrySPtr Game::doGetGeometry( Entity const & entity )
 	{
-		GeometrySPtr result;
+		 castor3d::GeometrySPtr result;
 
 		try
 		{
-			result = m_ecs.getComponentData< GeometrySPtr >( entity
+			result = m_ecs.getComponentData< castor3d::GeometrySPtr >( entity
 				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
 		}
 		catch ( Ecs::ComponentDataMatchException & exc )

@@ -21,19 +21,24 @@ namespace orastus
 
 		EFO_API void killEnemy( Entity enemy );
 
-		inline uint32_t getWave()const
+		uint32_t getWave()const
 		{
 			return m_totalsWaves;
 		}
 
-		inline uint32_t getEnemiesLife()const
+		uint32_t getEnemiesLife()const
 		{
 			return m_life.getValue();
 		}
 
-		inline uint32_t getEnemiesBounty()const
+		uint32_t getEnemiesBounty()const
 		{
 			return m_bounty.getValue();
+		}
+
+		uint32_t getKills()const
+		{
+			return m_kills;
 		}
 
 	private:
@@ -42,7 +47,7 @@ namespace orastus
 		void doSpawn( Grid const & grid
 			, GridPath const & path );
 
-		inline bool doIsWaveEnded()const
+		bool doIsWaveEnded()const
 		{
 			return m_count == 0;
 		}
@@ -51,6 +56,7 @@ namespace orastus
 		Ecs & m_ecs;
 		Game & m_game;
 		uint32_t m_count{ 0 };
+		uint32_t m_kills{ 0 };
 		std::chrono::milliseconds m_timeBetweenTwoSpawns{ 0u };
 		std::chrono::milliseconds m_timeSinceLastSpawn{ 0u };
 		uint32_t m_totalsWaves{ 0u };

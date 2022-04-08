@@ -81,7 +81,7 @@ namespace orastus
 			direction = castor::point::getNormalised( direction );
 			castor::Point3f up{ 0, 1, 0 };
 			auto right = castor::point::cross( direction, up );
-			auto transform = castor::matrix::lookAt( towerNode.getDerivedPosition(), towerNode.getDerivedPosition() - direction, up );
+			auto transform = castor::matrix::lookAt( towerNode.getDerivedPosition(), towerNode.getDerivedPosition() + direction, up );
 			towerNode.setOrientation( castor::Quaternion::fromMatrix( transform ) );
 		}
 
@@ -127,18 +127,23 @@ namespace orastus
 
 		State createShootingState( Ecs & ecs, Entity const & entity )
 		{
-			auto animdata = ecs.getComponentData< AnimationDataPtr >( entity
-				, ecs.getComponent( Ecs::AnimationComponent ) ).getValue();
+			auto animdata = ecs.hasComponent( entity, ecs.getComponent( Ecs::AnimationComponent ) )
+				? ecs.getComponentData< AnimationDataPtr >( entity
+					, ecs.getComponent( Ecs::AnimationComponent ) ).getValue()
+				: nullptr;
 
 			if ( !animdata )
 			{
-				throw std::runtime_error{ "No animation component" };
+				if ( !ecs.hasComponent( entity, ecs.getComponent( Ecs::CooldownComponent ) ) )
+				{
+					throw std::runtime_error{ "Need either a cooldown or an animation component" };
+				}
 			}
 
 			auto attackdata = ecs.getComponentData< AttackDataPtr >( entity
 				, ecs.getComponent( Ecs::AttackComponent ) ).getValue();
 
-			if ( !animdata )
+			if ( !attackdata )
 			{
 				throw std::runtime_error{ "No attack component" };
 			}
@@ -146,7 +151,7 @@ namespace orastus
 			auto geometry = ecs.getComponentData< castor3d::GeometrySPtr >( entity
 				, ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
 
-			if ( !animdata )
+			if ( !geometry )
 			{
 				throw std::runtime_error{ "No geometry component" };
 			}
@@ -180,7 +185,38 @@ namespace orastus
 					}
 				}
 
-				if ( attackdata->target )
+				if ( !animdata )
+				{
+					if ( attackdata->target )
+					{
+						doTurnToTarget( ecs
+							, attackdata->target
+							, *node );
+
+						if ( total >= ecs.getComponentData< Milliseconds >( entity
+								, ecs.getComponent( Ecs::CooldownComponent ) ).getValue() )
+						{
+							if ( !attackdata->shot )
+							{
+								game.createBullet( entity
+									, attackdata->target );
+								attackdata->shot = true;
+							}
+
+							result = true;
+						}
+						else
+						{
+							attackdata->shot = false;
+						}
+					}
+					else if ( total >= ecs.getComponentData< Milliseconds >( entity
+						, ecs.getComponent( Ecs::CooldownComponent ) ).getValue() )
+					{
+						result = true;
+					}
+				}
+				else if ( attackdata->target )
 				{
 					doTurnToTarget( ecs
 						, attackdata->target

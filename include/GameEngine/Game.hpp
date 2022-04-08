@@ -249,6 +249,30 @@ namespace orastus
 		{
 			return m_scene;
 		}
+		/**
+		*\return
+		*	The current wave.
+		*/
+		uint32_t getWave()const
+		{
+			return m_enemySpawner.getWave();
+		}
+		/**
+		*\return
+		*	The total enemy kill count.
+		*/
+		uint32_t getKills()const
+		{
+			return m_enemySpawner.getKills();
+		}
+		/**
+		*\return
+		*	The current wave enemies life points.
+		*/
+		uint32_t getEnemiesLife()const
+		{
+			return m_enemySpawner.getEnemiesLife();
+		}
 
 	private:
 		void doPrepareGrid();
@@ -259,10 +283,13 @@ namespace orastus
 		void doAddPathTile( GridCell & cell );
 		void doAddTarget( GridCell & cell );
 		castor3d::GeometrySPtr doCreateBullet( Entity source );
+		castor3d::GeometrySPtr doCreateTowerBase( castor::String const & name
+			, GridCell & cell
+			, castor3d::MeshResPtr mesh );
 		castor3d::GeometrySPtr doCreateTower( castor::String const & name
 			, GridCell & cell
-			, castor3d::MeshResPtr mesh
-			, castor::StringArray matNames );
+			, castor3d::Mesh const & base
+			, castor3d::MeshResPtr mesh );
 		castor3d::AnimatedObjectGroupSPtr doCreateAnimation( castor3d::GeometrySPtr geometry
 			, castor::String const & animName );
 		void doSelectMapBlock( Entity const & entity );
@@ -279,11 +306,12 @@ namespace orastus
 		Grid m_grid;
 		Hud m_hud;
 		GridPath m_path;
-		castor::Point3f m_cellDimensions;
 		castor3d::SceneNodeSPtr m_mapNode;
 		castor3d::SceneNodeSPtr m_targetNode;
 		castor3d::MeshResPtr m_emptyTileMesh;
+		castor::Point3f m_cellDimensions;
 		castor3d::MeshResPtr m_pathTileMesh;
+		castor3d::MeshResPtr m_towerBaseMesh;
 		castor3d::MeshResPtr m_shortRangeTowerMesh;
 		castor3d::MeshResPtr m_longRangeTowerMesh;
 		castor3d::MeshResPtr m_bulletMesh;

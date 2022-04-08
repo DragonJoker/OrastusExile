@@ -9,18 +9,15 @@
 #include <Castor3D/Overlay/TextOverlay.hpp>
 #include <Castor3D/Scene/Scene.hpp>
 
-using namespace castor;
-using namespace castor3d;
-
 namespace orastus
 {
 	namespace
 	{
-		TextOverlaySPtr getTextOverlay( OverlayCache & cache
-			, String const & name )
+		castor3d::TextOverlaySPtr getTextOverlay( castor3d::OverlayCache & cache
+			, castor::String const & name )
 		{
-			TextOverlaySPtr result;
-			OverlaySPtr overlay = cache.find( name ).lock();
+			castor3d::TextOverlaySPtr result;
+			auto overlay = cache.find( name ).lock();
 
 			if ( overlay )
 			{
@@ -34,7 +31,7 @@ namespace orastus
 		void doUpdateText( Ecs const & ecs
 			, Entity const & entity
 			, ComponentId const & component
-			, TextOverlayWPtr const & ptext )
+			, castor3d::TextOverlayWPtr const & ptext )
 		{
 			auto & data = ecs.getComponentData< T >( entity
 				, ecs.getComponent( component ) );
@@ -49,7 +46,7 @@ namespace orastus
 	}
 
 	Hud::Hud( Game & game
-		, Scene const & scene )
+		, castor3d::Scene const & scene )
 		: m_game{ game }
 		, m_scene{ scene }
 		, m_lives{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "LivesValue" ) ) }
@@ -66,7 +63,7 @@ namespace orastus
 
 	void Hud::initialise()
 	{
-		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
 				auto & cache = m_scene.getEngine()->getOverlayCache();
@@ -83,7 +80,7 @@ namespace orastus
 
 	void Hud::start()
 	{
-		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
 				auto & cache = m_scene.getEngine()->getOverlayCache();
@@ -100,7 +97,7 @@ namespace orastus
 
 	void Hud::pause()
 	{
-		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
 				auto & cache = m_scene.getEngine()->getOverlayCache();
@@ -116,7 +113,7 @@ namespace orastus
 
 	void Hud::resume()
 	{
-		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
 				auto & cache = m_scene.getEngine()->getOverlayCache();
@@ -132,7 +129,7 @@ namespace orastus
 
 	void Hud::help()
 	{
-		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
 				auto & cache = m_scene.getEngine()->getOverlayCache();
@@ -148,7 +145,7 @@ namespace orastus
 
 	void Hud::gameOver()
 	{
-		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
 				auto & cache = m_scene.getEngine()->getOverlayCache();
@@ -160,8 +157,8 @@ namespace orastus
 				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( true );
 				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
 
-				//getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "ResultLevelValue" ) )->setCaption( StringStream() << m_game.getWave() );
-				//getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "ResultKillsValue" ) )->setCaption( StringStream() << m_game.getKills() );
+				getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "ResultLevelValue" ) )->setCaption( castor::string::toString( m_game.getWave() ) );
+				getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "ResultKillsValue" ) )->setCaption( castor::string::toString( m_game.getKills() ) );
 			} ) );
 	}
 
@@ -178,7 +175,7 @@ namespace orastus
 			{
 				m_game.createLongRangeTower();
 			} );
-		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
 				auto & cache = m_scene.getEngine()->getOverlayCache();
@@ -188,7 +185,7 @@ namespace orastus
 
 	void Hud::hideBuild()
 	{
-		m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
 				auto & cache = m_scene.getEngine()->getOverlayCache();
@@ -204,7 +201,7 @@ namespace orastus
 	{
 		if ( entity )
 		{
-			m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+			m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 				, [this, &ecs, entity]()
 				{
 					doUpdateText< uint32_t >( ecs, entity, Ecs::DamageComponent, m_towerDamage );
@@ -214,7 +211,7 @@ namespace orastus
 		}
 		else
 		{
-			m_scene.getEngine()->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+			m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 				, [this]()
 				{
 					m_towerDamage.lock()->setVisible( false );
@@ -240,26 +237,26 @@ namespace orastus
 		//	text->setCaption( StringStream() << m_game.getOre() );
 		//}
 
-		//text = m_level.lock();
+		auto text = m_level.lock();
 
-		//if ( text )
-		//{
-		//	text->setCaption( StringStream() << m_game.getWave() );
-		//}
+		if ( text )
+		{
+			text->setCaption( castor::string::toString( m_game.getWave() ) );
+		}
 
-		//text = m_kills.lock();
+		text = m_kills.lock();
 
-		//if ( text )
-		//{
-		//	text->setCaption( StringStream() << m_game.getKills() );
-		//}
+		if ( text )
+		{
+			text->setCaption( castor::string::toString( m_game.getKills() ) );
+		}
 
-		//text = m_enemyLife.lock();
+		text = m_enemyLife.lock();
 
-		//if ( text )
-		//{
-		//	text->setCaption( StringStream() << m_game.getEnemiesLife() );
-		//}
+		if ( text )
+		{
+			text->setCaption( castor::string::toString( m_game.getEnemiesLife() ) );
+		}
 
 		//text = m_enemyBounty.lock();
 
