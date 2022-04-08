@@ -56,13 +56,22 @@ scene "Scene"
 
 window "Window"
 {
+	fullscreen false
+	vsync false
 	render_target
 	{
 		format argb32
 		size 1024 768
 		scene "Scene"
 		camera "MainCamera"
+
+		smaa
+		{
+			mode T2X
+			preset ultra
+			edgeDetection colour
+			enablePredication true
+			enableReprojection true
+		}
 	}
-	fullscreen false
-	vsync false
 }
