@@ -30,7 +30,7 @@ material "Bullet"
 {
 	pass
 	{
-		diffuse 0.5 0.0 0.5
+		albedo 0.5 0.0 0.5
 		specular 0.5 0.0 0.5
 	}
 }
@@ -39,7 +39,7 @@ material "Boulder"
 {
 	pass
 	{
-		diffuse 0.5 0.5 0.0
+		albedo 0.5 0.5 0.0
 		specular 0.5 0.5 0.0
 	}
 }
@@ -48,7 +48,7 @@ material "MapBase"
 {
 	pass
 	{
-		diffuse 0.2 1.0 0.5
+		albedo 0.2 1.0 0.5
 		specular 0.2 1.0 0.5
 	}
 }
@@ -57,7 +57,7 @@ material "MapMouseOk"
 {
 	pass
 	{
-		diffuse 0.0 1.0 0.0
+		albedo 0.0 1.0 0.0
 		specular 0.0 1.0 0.0
 		alpha 0.75
 	}
@@ -67,7 +67,7 @@ material "MapMouseNOk"
 {
 	pass
 	{
-		diffuse 1.0 0.0 0.0
+		albedo 1.0 0.0 0.0
 		specular 1.0 0.0 0.0
 		alpha 0.75
 	}
@@ -77,14 +77,14 @@ material "MapCube_sel"
 {
 	pass
 	{
-		diffuse 0.0 0.64 0.0
+		albedo 0.0 0.64 0.0
 		specular 0.0 0.64 0.0
 
 		texture_unit
 		{
 			image "Textures/Cube.png"
 			sampler "Nearest"
-			diffuse_mask 0x00FFFFFF
+			albedo_mask 0x00FFFFFF
 		}
 	}
 }
@@ -93,7 +93,7 @@ material "Target"
 {
 	pass
 	{
-		diffuse 1 1 0 1
+		albedo 1 1 0 1
 		specular 1 1 0 1
 	}
 }
@@ -103,10 +103,9 @@ material "dirt"
 
 	pass
 	{
-		diffuse 0.976471 0.713726 0.450980
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.976471 0.713726 0.450980
+		specular 0.976471 0.713726 0.450980
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -116,10 +115,9 @@ material "dirtDark"
 
 	pass
 	{
-		diffuse 0.800000 0.584314 0.368627
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.800000 0.584314 0.368627
+		specular 0.800000 0.584314 0.368627
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -129,10 +127,9 @@ material "dirt_sel"
 
 	pass
 	{
-		diffuse 0.976471 0.713726 0.450980
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.976471 0.713726 0.450980
+		specular 0.976471 0.713726 0.450980
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -142,10 +139,9 @@ material "foliage"
 
 	pass
 	{
-		diffuse 0.266667 0.709804 0.552941
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.266667 0.709804 0.552941
+		specular 0.266667 0.709804 0.552941
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -155,10 +151,9 @@ material "foliage_sel"
 
 	pass
 	{
-		diffuse 0.00000 1.00000 0.00000
+		albedo 0.00000 1.00000 0.00000
 		specular 0.00000 1.00000 0.00000
-		ambient 1.00000
-		shininess 50.0000
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -168,10 +163,9 @@ material "glass"
 
 	pass
 	{
-		diffuse 1.00000 1.00000 1.00000
+		albedo 1.00000 1.00000 1.00000
 		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -181,10 +175,9 @@ material "purple"
 
 	pass
 	{
-		diffuse 0.454902 0.411765 0.701961
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.454902 0.411765 0.701961
+		specular 0.454902 0.411765 0.701961
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -194,10 +187,9 @@ material "red"
 
 	pass
 	{
-		diffuse 0.839216 0.356863 0.356863
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.839216 0.356863 0.356863
+		specular 0.839216 0.356863 0.356863
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -207,10 +199,9 @@ material "snowRoad"
 
 	pass
 	{
-		diffuse 0.701961 0.854902 0.894118
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.701961 0.854902 0.894118
+		specular 0.701961 0.854902 0.894118
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -220,10 +211,9 @@ material "snowRoadDark"
 
 	pass
 	{
-		diffuse 0.466667 0.741176 0.807843
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.466667 0.741176 0.807843
+		specular 0.466667 0.741176 0.807843
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -233,10 +223,9 @@ material "stone"
 
 	pass
 	{
-		diffuse 0.658824 0.843137 0.886275
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.658824 0.843137 0.886275
+		specular 0.658824 0.843137 0.886275
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -246,10 +235,9 @@ material "stoneDark"
 
 	pass
 	{
-		diffuse 0.474017 0.608681 0.641000
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.474017 0.608681 0.641000
+		specular 0.474017 0.608681 0.641000
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -259,10 +247,9 @@ material "stoneDark_sel"
 
 	pass
 	{
-		diffuse 0.00000 1.00000 0.00000
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.00000 1.00000 0.00000
+		specular 0.00000 1.00000 0.00000
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -272,10 +259,9 @@ material "stone_sel"
 
 	pass
 	{
-		diffuse 0.00000 1.00000 0.00000
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.00000 1.00000 0.00000
+		specular 0.00000 1.00000 0.00000
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -285,10 +271,9 @@ material "wood"
 
 	pass
 	{
-		diffuse 0.878431 0.533333 0.360784
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.878431 0.533333 0.360784
+		specular 0.878431 0.533333 0.360784
+		glossiness 0.25
 		two_sided true
 	}
 }
@@ -298,10 +283,9 @@ material "wood_sel"
 
 	pass
 	{
-		diffuse 0.00000 1.00000 0.00000
-		specular 1.00000 1.00000 1.00000
-		ambient 1.00000
-		shininess 50.0000
+		albedo 0.00000 1.00000 0.00000
+		specular 0.00000 1.00000 0.00000
+		glossiness 0.25
 		two_sided true
 	}
 }

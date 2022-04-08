@@ -444,7 +444,7 @@ namespace orastus
 			light->setColour( castor::RgbColour::fromComponents( 0.733, 0.537, 0.337 ) );
 		}
 
-		light->setIntensity( 0.8f, 1.0f );
+		light->setIntensity( 4.0f, 5.0f );
 		light->getPointLight()->setAttenuation( castor::Point3f{ 1.0f, 0.1f, 0.0f } );
 		m_scene.getLightCache().add( name, light );
 		return result;
