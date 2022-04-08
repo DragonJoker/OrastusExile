@@ -240,65 +240,17 @@ namespace orastus
 
 		bool OrastusExile::doParseCommandLine()
 		{
-			wxCmdLineParser parser( wxApp::argc, wxApp::argv );
-			parser.AddSwitch( wxT( "h" ), wxT( "help" ), _( "Displays this help" ) );
-			parser.AddOption( wxT( "l" ), wxT( "log" ), _( "Defines log level" ), wxCMD_LINE_VAL_NUMBER );
-			parser.AddParam( _( "The initial scene file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-			parser.AddSwitch( wxT( "opengl3" ), wxEmptyString, _( "Defines the renderer to OpenGl 3.x." ) );
-			parser.AddSwitch( wxT( "opengl4" ), wxEmptyString, _( "Defines the renderer to OpenGl 4.x." ) );
-			parser.AddSwitch( wxT( "vulkan" ), wxEmptyString, _( "Defines the renderer to Vulkan." ) );
-			parser.AddSwitch( wxT( "direct3d11" ), wxEmptyString, _( "Defines the renderer to Direct3D 11." ) );
-			parser.AddSwitch( wxT( "test" ), wxEmptyString, _( "Defines the renderer to Test" ) );
-			bool result = parser.Parse( false ) == 0;
+			bool result = true;
 
-			// S'il y avait des erreurs ou "-h" ou "--help", on affiche l'aide et on sort
-			if ( !result || parser.Found( wxT( 'h' ) ) )
+			try
 			{
-				parser.Usage();
-				result = false;
+				main::Options options{ wxApp::argc, wxApp::argv };
+				options.read( m_config );
+				castor::Logger::initialise( m_config.log );
 			}
-
-			if ( result )
+			catch ( bool )
 			{
-				LogType logLevel = LogType::eCount;
-				long log;
-
-				if ( !parser.Found( wxT( "l" ), &log ) )
-				{
-					logLevel = DefaultLogType;
-				}
-				else
-				{
-					logLevel = LogType( log );
-				}
-
-				Logger::initialise( logLevel );
-
-				if ( parser.Found( wxT( "opengl3" ) ) )
-				{
-					m_rendererType = cuT( "opengl3" );
-				}
-				else if ( parser.Found( wxT( "opengl4" ) ) )
-				{
-					m_rendererType = cuT( "opengl4" );
-				}
-				else if ( parser.Found( wxT( "vulkan" ) ) )
-				{
-					m_rendererType = cuT( "vulkan" );
-				}
-				else if ( parser.Found( wxT( "direct3d11" ) ) )
-				{
-					m_rendererType = cuT( "direct3d11" );
-				}
-				else if ( parser.Found( wxT( "test" ) ) )
-				{
-					m_rendererType = cuT( "test" );
-				}
-
-				if ( parser.GetParamCount() > 0 )
-				{
-					m_fileName = parser.GetParam( 0 ).ToStdString();
-				}
+				result = false;
 			}
 
 			return result;
