@@ -24,58 +24,58 @@ namespace orastus
 			waitAsyncLoads();
 			m_mutex.lock();
 
-			for ( auto l_pair : m_mapImages )
+			for ( auto pair : m_mapImages )
 			{
-				delete l_pair.second;
+				delete pair.second;
 			}
 
 			m_mapImages.clear();
 			m_mutex.unlock();
 		}
 
-		wxImage * ImagesLoader::getBitmap( uint32_t p_id )
+		wxImage * ImagesLoader::getBitmap( uint32_t id )
 		{
-			wxImage * l_return = nullptr;
+			wxImage * result = nullptr;
 			m_mutex.lock();
-			auto l_it = m_mapImages.find( p_id );
-			auto l_itEnd = m_mapImages.end();
-			m_mutex.unlock();
+			auto it = m_mapImages.find( id );
+			auto end = m_mapImages.end();
 
-			if ( l_it != l_itEnd )
+			if ( it != end )
 			{
-				l_return = l_it->second;
+				result = it->second;
 			}
 
-			return l_return;
+			m_mutex.unlock();
+			return result;
 		}
 
-		void ImagesLoader::addBitmap( uint32_t p_id, char const * const * p_pBits )
+		void ImagesLoader::addBitmap( uint32_t id, char const * const * bits )
 		{
 			m_mutex.lock();
-			auto l_it = m_mapImages.find( p_id );
-			auto l_itEnd = m_mapImages.end();
+			auto it = m_mapImages.find( id );
+			auto end = m_mapImages.end();
 			m_mutex.unlock();
 
-			if ( l_it == l_itEnd )
+			if ( it == end )
 			{
-				thread_sptr l_threadLoad = std::make_shared< std::thread >( [p_pBits, p_id]()
+				thread_sptr threadLoad = std::make_shared< std::thread >( [bits, id]()
 				{
-					wxImage * l_pImage = new wxImage;
-					l_pImage->Create( p_pBits );
+					wxImage * image = new wxImage;
+					image->Create( bits );
 					m_mutex.lock();
-					m_mapImages.insert( std::make_pair( p_id, l_pImage ) );
+					m_mapImages.insert( std::make_pair( id, image ) );
 					m_mutex.unlock();
 				} );
-				m_arrayCurrentLoads.push_back( l_threadLoad );
+				m_arrayCurrentLoads.push_back( threadLoad );
 			}
 		}
 
 		void ImagesLoader::waitAsyncLoads()
 		{
-			for ( auto l_thread : m_arrayCurrentLoads )
+			for ( auto thread : m_arrayCurrentLoads )
 			{
-				l_thread->join();
-				l_thread.reset();
+				thread->join();
+				thread.reset();
 			}
 
 			m_arrayCurrentLoads.clear();

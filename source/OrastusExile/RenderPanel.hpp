@@ -31,7 +31,7 @@ namespace orastus
 			: public wxPanel
 		{
 		public:
-			RenderPanel( wxWindow * p_parent, wxSize const & p_size, Game & p_game );
+			RenderPanel( wxWindow * parent, wxSize const & size, Game & game );
 			~RenderPanel();
 			void reset();
 			void setRenderTarget( castor3d::RenderTargetSPtr target );
@@ -56,28 +56,28 @@ namespace orastus
 			float doTransformY( int y );
 			int doTransformX( float x );
 			int doTransformY( float y );
-			void doStartTimer( TimerID p_id );
-			void doStopTimer( TimerID p_id );
+			void doStartTimer( TimerID id );
+			void doStopTimer( TimerID id );
 
 			DECLARE_EVENT_TABLE()
-			void onSize( wxSizeEvent & p_event );
-			void onMove( wxMoveEvent & p_event );
-			void onPaint( wxPaintEvent & p_event );
-			void onSetFocus( wxFocusEvent & p_event );
-			void onKillFocus( wxFocusEvent & p_event );
-			void onKeyDown( wxKeyEvent & p_event );
-			void onKeyUp( wxKeyEvent & p_event );
-			void onMouseLDown( wxMouseEvent & p_event );
-			void onMouseLUp( wxMouseEvent & p_event );
-			void onMouseRDown( wxMouseEvent & p_event );
-			void onMouseRUp( wxMouseEvent & p_event );
-			void onMouseMove( wxMouseEvent & p_event );
-			void onMouseWheel( wxMouseEvent & p_event );
-			void onMouseTimer( wxTimerEvent & p_event );
-			void onTimerUp( wxTimerEvent & p_event );
-			void onTimerDown( wxTimerEvent & p_event );
-			void onTimerLeft( wxTimerEvent & p_event );
-			void onTimerRight( wxTimerEvent & p_event );
+			void onSize( wxSizeEvent & event );
+			void onMove( wxMoveEvent & event );
+			void onPaint( wxPaintEvent & event );
+			void onSetFocus( wxFocusEvent & event );
+			void onKillFocus( wxFocusEvent & event );
+			void onKeyDown( wxKeyEvent & event );
+			void onKeyUp( wxKeyEvent & event );
+			void onMouseLDown( wxMouseEvent & event );
+			void onMouseLUp( wxMouseEvent & event );
+			void onMouseRDown( wxMouseEvent & event );
+			void onMouseRUp( wxMouseEvent & event );
+			void onMouseMove( wxMouseEvent & event );
+			void onMouseWheel( wxMouseEvent & event );
+			void onMouseTimer( wxTimerEvent & event );
+			void onTimerUp( wxTimerEvent & event );
+			void onTimerDown( wxTimerEvent & event );
+			void onTimerLeft( wxTimerEvent & event );
+			void onTimerRight( wxTimerEvent & event );
 
 		private:
 			float m_x{ 0.0 };

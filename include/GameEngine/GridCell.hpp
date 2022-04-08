@@ -44,11 +44,11 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor.
-		*\param[in] p_x
+		*\param[in] px
 		*	The cell X coordinate.
-		*\param[in] p_y
+		*\param[in] py
 		*	The cell Y coordinate.
-		*\param[in] p_state
+		*\param[in] pstate
 		*	The cell initial state.
 		*/
 		explicit GridCell( uint32_t px = 0u

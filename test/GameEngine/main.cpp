@@ -19,12 +19,12 @@ See licence file in root folder, MIT.txt
 
 int main( int argc, char * const * const argv )
 {
-	uint32_t l_result = 0;
-	uint32_t l_count = 1;
+	uint32_t result = 0;
+	uint32_t count = 1;
 
 	if ( argc == 2 )
 	{
-		l_count = uint32_t( std::max< int >( 1, atoi( argv[2] ) ) );
+		count = uint32_t( std::max< int >( 1, atoi( argv[2] ) ) );
 	}
 
 #if defined( NDEBUG )
@@ -45,7 +45,7 @@ int main( int argc, char * const * const argv )
 	Testing::registerType( std::make_unique< orastus::test::TowerTest >() );
 	Testing::registerType( std::make_unique< orastus::test::EnemyTest >() );
 	Testing::registerType( std::make_unique< orastus::test::BulletTest >() );
-	BENCHLOOP( l_count, l_result );
+	BENCHLOOP( count, result );
 	castor::Logger::cleanup();
-	return int( l_result );
+	return int( result );
 }

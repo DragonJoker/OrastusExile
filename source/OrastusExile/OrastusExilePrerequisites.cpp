@@ -13,9 +13,9 @@ namespace orastus
 {
 	namespace main
 	{
-		castor::Size makeSize( wxSize const & p_size )
+		castor::Size makeSize( wxSize const & size )
 		{
-			return castor::Size{ uint32_t( p_size.x ), uint32_t( p_size.y ) };
+			return castor::Size{ uint32_t( size.x ), uint32_t( size.y ) };
 		}
 
 		wxSize makeWxSize( castor::Size const & size )

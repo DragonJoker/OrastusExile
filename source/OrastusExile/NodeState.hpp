@@ -26,23 +26,23 @@ namespace orastus
 			/**
 			*\brief
 			*	Définit le noeud affecté par les évènements.
-			*\param[in] p_listener
+			*\param[in] listener
 			*	Le listener qui recevra les évènements.
-			*\param[in] p_node
+			*\param[in] node
 			*	Le noeud
 			*/
-			NodeState( castor3d::FrameListener & p_listener
-				, castor3d::SceneNodeRPtr p_node );
+			NodeState( castor3d::FrameListener & listener
+				, castor3d::SceneNodeRPtr node );
 			/**
 			*\brief
 			*	Réinitialise l'état.
 			*/
-			void reset( float p_speed );
+			void reset( float speed );
 			/**
 			*\brief
 			*	Met à jour la vitesse maximale (de rotation et translation).
 			*/
-			void setMaxSpeed( float p_speed );
+			void setMaxSpeed( float speed );
 			/**
 			*\brief
 			*	Met à jour l'angle et le zoom en fonction des vitesses.
@@ -53,31 +53,31 @@ namespace orastus
 			/**
 			*\brief
 			*	Définit la vitesse de rotation du noeud.
-			*param[in] p_value
+			*param[in] value
 			*	La nouvelle valeur.
 			*/
-			void setAngularVelocity( castor::Point2f const & p_value )noexcept;
+			void setAngularVelocity( castor::Point2f const & value )noexcept;
 			/**
 			*\brief
 			*	Définit la vitesse de translation du noeud.
-			*param[in] p_value
+			*param[in] value
 			*	La nouvelle valeur.
 			*/
-			void setScalarVelocity( castor::Point3f const & p_value )noexcept;
+			void setScalarVelocity( castor::Point3f const & value )noexcept;
 			/**
 			*\brief
 			*	Définit la vitesse de rotation du noeud.
-			*param[in] p_value
+			*param[in] value
 			*	La nouvelle valeur.
 			*/
-			void addAngularVelocity( castor::Point2f const & p_value )noexcept;
+			void addAngularVelocity( castor::Point2f const & value )noexcept;
 			/**
 			*\brief
 			*	Définit la vitesse de translation du noeud.
-			*param[in] p_value
+			*param[in] value
 			*	La nouvelle valeur.
 			*/
-			void addScalarVelocity( castor::Point3f const & p_value )noexcept;
+			void addScalarVelocity( castor::Point3f const & value )noexcept;
 
 		private:
 			//! Le listener qui recevra les évènements de déplacement / rotation.

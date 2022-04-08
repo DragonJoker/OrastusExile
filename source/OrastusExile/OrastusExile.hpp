@@ -26,17 +26,17 @@ namespace orastus
 		public:
 			OrastusExile();
 
-			inline MainFrame * getMainFrame()const
+			MainFrame * getMainFrame()const
 			{
 				return m_mainFrame;
 			}
 
-			inline castor3d::Engine const & getCastor()const
+			castor3d::Engine const & getCastor()const
 			{
 				return *m_castor;
 			}
 
-			inline castor3d::Engine & getCastor()
+			castor3d::Engine & getCastor()
 			{
 				return *m_castor;
 			}

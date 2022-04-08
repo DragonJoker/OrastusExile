@@ -11,9 +11,9 @@ namespace orastus
 {
 	struct WalkData
 	{
-		EFO_API WalkData( GridPath const & p_path
-			, Game const & p_game );
-		EFO_API WalkData & operator=( WalkData const & p_rhs );
+		EFO_API WalkData( GridPath const & path
+			, Game const & game );
+		EFO_API WalkData & operator=( WalkData const & rhs );
 
 		GridPath path;
 		GridPath::const_iterator current;

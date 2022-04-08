@@ -186,49 +186,49 @@ namespace orastus
 
 		bool OrastusExile::OnInit()
 		{
-			bool l_return = doParseCommandLine();
-			wxDisplay l_display;
-			wxRect l_rect = l_display.GetClientArea();
-			wxWindow * l_window = nullptr;
+			bool result = doParseCommandLine();
+			wxDisplay display;
+			wxRect rect = display.GetClientArea();
+			wxWindow * window = nullptr;
 
-			if ( l_return )
+			if ( result )
 			{
-				l_return = doInitialiseLocale();
+				result = doInitialiseLocale();
 			}
 
-			if ( l_return )
+			if ( result )
 			{
 				try
 				{
 					doLoadImages();
-					l_return = doInitialiseCastor();
+					result = doInitialiseCastor();
 
-					if ( l_return )
+					if ( result )
 					{
-						l_window = doInitialiseMainFrame();
-						l_return = l_window != nullptr;
+						window = doInitialiseMainFrame();
+						result = window != nullptr;
 					}
 				}
 				catch ( Exception & exc )
 				{
 					Logger::logError( std::stringstream() << ShortName << " - Initialisation failed : " << exc.getFullDescription() );
-					l_return = false;
+					result = false;
 				}
 				catch ( std::exception & exc )
 				{
 					Logger::logError( std::stringstream() << ShortName << " - Initialisation failed : " << exc.what() );
-					l_return = false;
+					result = false;
 				}
 			}
 
-			wxApp::SetTopWindow( l_window );
+			wxApp::SetTopWindow( window );
 
-			if ( !l_return )
+			if ( !result )
 			{
 				doCleanup();
 			}
 
-			return l_return;
+			return result;
 		}
 
 		int OrastusExile::OnExit()
@@ -240,98 +240,96 @@ namespace orastus
 
 		bool OrastusExile::doParseCommandLine()
 		{
-			wxCmdLineParser l_parser( wxApp::argc, wxApp::argv );
-			l_parser.AddSwitch( wxT( "h" ), wxT( "help" ), _( "Displays this help" ) );
-			l_parser.AddOption( wxT( "l" ), wxT( "log" ), _( "Defines log level" ), wxCMD_LINE_VAL_NUMBER );
-			l_parser.AddParam( _( "The initial scene file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-			l_parser.AddSwitch( wxT( "opengl3" ), wxEmptyString, _( "Defines the renderer to OpenGl 3.x." ) );
-			l_parser.AddSwitch( wxT( "opengl4" ), wxEmptyString, _( "Defines the renderer to OpenGl 4.x." ) );
-			l_parser.AddSwitch( wxT( "vulkan" ), wxEmptyString, _( "Defines the renderer to Vulkan." ) );
-			l_parser.AddSwitch( wxT( "direct3d11" ), wxEmptyString, _( "Defines the renderer to Direct3D 11." ) );
-			l_parser.AddSwitch( wxT( "test" ), wxEmptyString, _( "Defines the renderer to Test" ) );
-			bool l_return = l_parser.Parse( false ) == 0;
+			wxCmdLineParser parser( wxApp::argc, wxApp::argv );
+			parser.AddSwitch( wxT( "h" ), wxT( "help" ), _( "Displays this help" ) );
+			parser.AddOption( wxT( "l" ), wxT( "log" ), _( "Defines log level" ), wxCMD_LINE_VAL_NUMBER );
+			parser.AddParam( _( "The initial scene file" ), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+			parser.AddSwitch( wxT( "opengl3" ), wxEmptyString, _( "Defines the renderer to OpenGl 3.x." ) );
+			parser.AddSwitch( wxT( "opengl4" ), wxEmptyString, _( "Defines the renderer to OpenGl 4.x." ) );
+			parser.AddSwitch( wxT( "vulkan" ), wxEmptyString, _( "Defines the renderer to Vulkan." ) );
+			parser.AddSwitch( wxT( "direct3d11" ), wxEmptyString, _( "Defines the renderer to Direct3D 11." ) );
+			parser.AddSwitch( wxT( "test" ), wxEmptyString, _( "Defines the renderer to Test" ) );
+			bool result = parser.Parse( false ) == 0;
 
 			// S'il y avait des erreurs ou "-h" ou "--help", on affiche l'aide et on sort
-			if ( !l_return || l_parser.Found( wxT( 'h' ) ) )
+			if ( !result || parser.Found( wxT( 'h' ) ) )
 			{
-				l_parser.Usage();
-				l_return = false;
+				parser.Usage();
+				result = false;
 			}
 
-			if ( l_return )
+			if ( result )
 			{
-				LogType l_eLogLevel = LogType::eCount;
-				long l_log;
+				LogType logLevel = LogType::eCount;
+				long log;
 
-				if ( !l_parser.Found( wxT( "l" ), &l_log ) )
+				if ( !parser.Found( wxT( "l" ), &log ) )
 				{
-					l_eLogLevel = DefaultLogType;
+					logLevel = DefaultLogType;
 				}
 				else
 				{
-					l_eLogLevel = LogType( l_log );
+					logLevel = LogType( log );
 				}
 
-				Logger::initialise( l_eLogLevel );
+				Logger::initialise( logLevel );
 
-				if ( l_parser.Found( wxT( "opengl3" ) ) )
+				if ( parser.Found( wxT( "opengl3" ) ) )
 				{
 					m_rendererType = cuT( "opengl3" );
 				}
-				else if ( l_parser.Found( wxT( "opengl4" ) ) )
+				else if ( parser.Found( wxT( "opengl4" ) ) )
 				{
 					m_rendererType = cuT( "opengl4" );
 				}
-				else if ( l_parser.Found( wxT( "vulkan" ) ) )
+				else if ( parser.Found( wxT( "vulkan" ) ) )
 				{
 					m_rendererType = cuT( "vulkan" );
 				}
-				else if ( l_parser.Found( wxT( "direct3d11" ) ) )
+				else if ( parser.Found( wxT( "direct3d11" ) ) )
 				{
 					m_rendererType = cuT( "direct3d11" );
 				}
-				else if ( l_parser.Found( wxT( "test" ) ) )
+				else if ( parser.Found( wxT( "test" ) ) )
 				{
 					m_rendererType = cuT( "test" );
 				}
 
-				wxString l_strFileName;
-
-				if ( l_parser.GetParamCount() > 0 )
+				if ( parser.GetParamCount() > 0 )
 				{
-					m_fileName = l_parser.GetParam( 0 ).ToStdString();
+					m_fileName = parser.GetParam( 0 ).ToStdString();
 				}
 			}
 
-			return l_return;
+			return result;
 		}
 
 		bool OrastusExile::doInitialiseLocale()
 		{
-			long l_lLanguage = wxLANGUAGE_DEFAULT;
-			Path l_pathCurrent = File::getExecutableDirectory().getPath();
+			long language = wxLANGUAGE_DEFAULT;
+			Path pathCurrent = File::getExecutableDirectory().getPath();
 
 			// load language if possible, fall back to english otherwise
-			if ( wxLocale::IsAvailable( l_lLanguage ) )
+			if ( wxLocale::IsAvailable( language ) )
 			{
-				m_locale = std::make_unique< wxLocale >( l_lLanguage, wxLOCALE_LOAD_DEFAULT );
+				m_locale = std::make_unique< wxLocale >( language, wxLOCALE_LOAD_DEFAULT );
 				// add locale search paths
-				m_locale->AddCatalogLookupPathPrefix( l_pathCurrent / cuT( "share" ) / ShortName.ToStdString() );
+				m_locale->AddCatalogLookupPathPrefix( pathCurrent / cuT( "share" ) / ShortName.ToStdString() );
 				m_locale->AddCatalog( ShortName );
 
 				if ( !m_locale->IsOk() )
 				{
 					std::cerr << "Selected language is wrong" << std::endl;
-					l_lLanguage = wxLANGUAGE_ENGLISH;
-					m_locale = std::make_unique< wxLocale >( l_lLanguage );
+					language = wxLANGUAGE_ENGLISH;
+					m_locale = std::make_unique< wxLocale >( language );
 				}
 			}
 			else
 			{
 				std::cerr << "The selected language is not supported by your system."
 					<< "Try installing support for this language." << std::endl;
-				l_lLanguage = wxLANGUAGE_ENGLISH;
-				m_locale = std::make_unique< wxLocale >( l_lLanguage );
+				language = wxLANGUAGE_ENGLISH;
+				m_locale = std::make_unique< wxLocale >( language );
 			}
 
 			return true;
@@ -339,8 +337,6 @@ namespace orastus
 
 		bool OrastusExile::doInitialiseCastor()
 		{
-			bool l_return = true;
-
 			if ( !File::directoryExists( Engine::getEngineDirectory() ) )
 			{
 				File::directoryCreate( Engine::getEngineDirectory() );
@@ -385,14 +381,7 @@ namespace orastus
 					, m_config.gpuIndex } );
 			}
 
-			l_return = true;
-
-			if ( l_return )
-			{
-				l_return = m_castor->loadRenderer( m_rendererType );
-			}
-
-			return l_return;
+			return m_castor->loadRenderer( m_rendererType );
 		}
 
 		void OrastusExile::doLoadPlugins()

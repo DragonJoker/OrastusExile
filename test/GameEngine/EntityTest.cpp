@@ -30,9 +30,9 @@ namespace orastus
 #else
 			CT_EQUAL( sizeof( Entity ), sizeof( Id ) + sizeof( String ) );
 #endif
-			Entity l_1{ cuT( "1" ) };
-			Entity l_2{ cuT( "2" ) };
-			CT_NEQUAL( l_1.getId(), l_2.getId() );
+			Entity i1{ cuT( "1" ) };
+			Entity i2{ cuT( "2" ) };
+			CT_NEQUAL( i1.getId(), i2.getId() );
 		}
 	}
 }

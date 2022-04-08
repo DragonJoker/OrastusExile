@@ -32,8 +32,8 @@ namespace orastus
 			~ImagesLoader();
 
 			static void cleanup();
-			static void addBitmap( uint32_t p_id, char const * const * p_pBits );
-			static wxImage * getBitmap( uint32_t p_id );
+			static void addBitmap( uint32_t id, char const * const * bits );
+			static wxImage * getBitmap( uint32_t id );
 			static void waitAsyncLoads();
 		};
 	}

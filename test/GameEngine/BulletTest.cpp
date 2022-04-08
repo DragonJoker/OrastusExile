@@ -26,13 +26,13 @@ namespace orastus
 
 		void BulletTest::Creation()
 		{
-			Ecs l_ecs;
-			float l_speed{ 100.0f };
-			uint32_t l_damage{ 1000u };
-			auto l_bullet = l_ecs.createBullet( nullptr
-				, std::make_shared< TrackData >( Entity{}, l_speed, l_damage ) );
-			CT_EQUAL( l_ecs.getComponentData< TrackDataPtr >( l_bullet, l_ecs.getComponent( Ecs::TrackComponent ) ).getValue()->speed, l_speed );
-			CT_EQUAL( l_ecs.getComponentData< TrackDataPtr >( l_bullet, l_ecs.getComponent( Ecs::TrackComponent ) ).getValue()->damage, l_damage );
+			Ecs ecs;
+			float speed{ 100.0f };
+			uint32_t damage{ 1000u };
+			auto bullet = ecs.createBullet( nullptr
+				, std::make_shared< TrackData >( Entity{}, speed, damage ) );
+			CT_EQUAL( ecs.getComponentData< TrackDataPtr >( bullet, ecs.getComponent( Ecs::TrackComponent ) ).getValue()->speed, speed );
+			CT_EQUAL( ecs.getComponentData< TrackDataPtr >( bullet, ecs.getComponent( Ecs::TrackComponent ) ).getValue()->damage, damage );
 		}
 	}
 }

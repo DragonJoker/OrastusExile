@@ -26,45 +26,45 @@ namespace orastus
 
 		void ComponentDataTest::Creation()
 		{
-			Milliseconds l_time{ 100 };
-			ComponentData< Milliseconds > l_cooldown{ l_time };
-			CT_EQUAL( l_cooldown.getValue(), l_time );
+			Milliseconds time{ 100 };
+			ComponentData< Milliseconds > cooldown{ time };
+			CT_EQUAL( cooldown.getValue(), time );
 
-			uint32_t l_dmg{ 1000 };
-			ComponentData< uint32_t > l_damage{ l_dmg };
-			CT_EQUAL( l_damage.getValue(), l_dmg );
+			uint32_t dmg{ 1000 };
+			ComponentData< uint32_t > damage{ dmg };
+			CT_EQUAL( damage.getValue(), dmg );
 
-			float l_rng{ 0.56f };
-			ComponentData< float > l_range{ l_rng };
-			CT_EQUAL( l_range.getValue(), l_rng );
+			float rng{ 0.56f };
+			ComponentData< float > range{ rng };
+			CT_EQUAL( range.getValue(), rng );
 		}
 
 		void ComponentDataTest::Comparison()
 		{
-			Milliseconds l_time1{ 100 };
-			Milliseconds l_time2{ 101 };
-			ComponentData< Milliseconds > l_cooldown1{ l_time1 };
-			ComponentData< Milliseconds > l_cooldown2{ l_time2 };
-			CT_NEQUAL( l_cooldown1, l_cooldown2 );
-			CT_EQUAL( l_cooldown1, l_cooldown1 );
+			Milliseconds time1{ 100 };
+			Milliseconds time2{ 101 };
+			ComponentData< Milliseconds > cooldown1{ time1 };
+			ComponentData< Milliseconds > cooldown2{ time2 };
+			CT_NEQUAL( cooldown1, cooldown2 );
+			CT_EQUAL( cooldown1, cooldown1 );
 
-			uint32_t l_dmg1{ 100 };
-			uint32_t l_dmg2{ 101 };
-			ComponentData< uint32_t > l_damage1{ l_dmg1 };
-			ComponentData< uint32_t > l_damage2{ l_dmg2 };
-			CT_NEQUAL( l_damage1, l_damage2 );
-			CT_EQUAL( l_damage1, l_damage1 );
+			uint32_t dmg1{ 100 };
+			uint32_t dmg2{ 101 };
+			ComponentData< uint32_t > damage1{ dmg1 };
+			ComponentData< uint32_t > damage2{ dmg2 };
+			CT_NEQUAL( damage1, damage2 );
+			CT_EQUAL( damage1, damage1 );
 
-			float l_rad1{ 0.5f };
-			float l_rad2{ 0.6f };
-			ComponentData< float > l_range1{ l_rad1 };
-			ComponentData< float > l_range2{ l_rad2 };
-			CT_NEQUAL( l_range1, l_range2 );
-			CT_EQUAL( l_range1, l_range1 );
+			float rg1{ 0.5f };
+			float rg2{ 0.6f };
+			ComponentData< float > range1{ rg1 };
+			ComponentData< float > range2{ rg2 };
+			CT_NEQUAL( range1, range2 );
+			CT_EQUAL( range1, range1 );
 
-			ComponentData< float > l_range{ l_rad1 };
-			ComponentData< uint32_t > l_damage{ l_dmg2 };
-			CT_NEQUAL( l_range, l_damage );
+			ComponentData< float > range{ rg1 };
+			ComponentData< uint32_t > damage{ dmg2 };
+			CT_NEQUAL( range, damage );
 		}
 	}
 }

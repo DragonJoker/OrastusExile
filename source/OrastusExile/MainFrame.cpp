@@ -30,14 +30,14 @@ namespace orastus
 				eID_RENDER_TIMER,
 			}	eID;
 
-			void doUpdate( Game & p_game )
+			void doUpdate( Game & game )
 			{
 				if ( !wxGetApp().getCastor().isCleaned() )
 				{
-					p_game.update();
-					wxGetApp().getCastor().postEvent( makeCpuFunctorEvent( EventType::ePostRender, [&p_game]()
+					game.update();
+					wxGetApp().getCastor().postEvent( makeCpuFunctorEvent( EventType::ePostRender, [&game]()
 					{
-						doUpdate( p_game );
+						doUpdate( game );
 					} ) );
 				}
 			}
@@ -58,14 +58,14 @@ namespace orastus
 			{
 				wxGetApp().getCastor().initialise( 120, CASTOR3D_THREADED );
 				doLoadScene();
-				wxBoxSizer * l_sizer{ new wxBoxSizer{ wxHORIZONTAL } };
-				l_sizer->Add( m_panel.get(), wxSizerFlags( 1 ).Shaped().Centre() );
-				l_sizer->SetSizeHints( this );
-				SetSizer( l_sizer );
+				wxBoxSizer * sizer{ new wxBoxSizer{ wxHORIZONTAL } };
+				sizer->Add( m_panel.get(), wxSizerFlags( 1 ).Shaped().Centre() );
+				sizer->SetSizeHints( this );
+				SetSizer( sizer );
 			}
-			catch ( std::exception & p_exc )
+			catch ( std::exception & exc )
 			{
-				wxMessageBox( p_exc.what() );
+				wxMessageBox( exc.what() );
 			}
 		}
 
@@ -75,11 +75,11 @@ namespace orastus
 
 		void MainFrame::doLoadScene()
 		{
-			auto & l_engine = wxGetApp().getCastor();
-			auto target = doLoadScene( l_engine
+			auto & engine = wxGetApp().getCastor();
+			auto target = doLoadScene( engine
 				, File::getExecutableDirectory().getPath() / cuT( "share" ) / cuT( "GameEngine" ) / cuT( "GameEngine.zip" )
-				, l_engine.getRenderLoop().getWantedFps()
-				, l_engine.isThreaded() );
+				, engine.getRenderLoop().getWantedFps()
+				, engine.isThreaded() );
 
 			if ( target )
 			{
@@ -114,43 +114,44 @@ namespace orastus
 
 #endif
 
-				if ( l_engine.isThreaded() )
+				if ( engine.isThreaded() )
 				{
-					l_engine.getRenderLoop().beginRendering();
-					l_engine.postEvent( makeCpuFunctorEvent( EventType::ePostRender, [this]()
-					{
-						doUpdate( *m_game );
-					} ) );
+					engine.getRenderLoop().beginRendering();
+					engine.postEvent( makeCpuFunctorEvent( EventType::ePostRender
+						, [this]()
+						{
+							doUpdate( *m_game );
+						} ) );
 				}
 				else
 				{
 					m_timer = new wxTimer( this, eID_RENDER_TIMER );
-					m_timer->Start( 1000 / int( l_engine.getRenderLoop().getWantedFps() ), true );
+					m_timer->Start( 1000 / int( engine.getRenderLoop().getWantedFps() ), true );
 				}
 			}
 		}
 
-		RenderTargetSPtr MainFrame::doLoadScene( Engine & p_engine
-			, castor::Path const & p_fileName
-			, uint32_t p_wantedFps
-			, bool p_threaded )
+		RenderTargetSPtr MainFrame::doLoadScene( Engine & engine
+			, castor::Path const & fileName
+			, uint32_t wantedFps
+			, bool threaded )
 		{
-			RenderTargetSPtr l_return;
+			RenderTargetSPtr result;
 
-			if ( File::fileExists( p_fileName ) )
+			if ( File::fileExists( fileName ) )
 			{
-				Logger::logInfo( cuT( "Loading scene file : " ) + p_fileName );
+				Logger::logInfo( cuT( "Loading scene file : " ) + fileName );
 
-				if ( p_fileName.getExtension() == cuT( "cscn" ) || p_fileName.getExtension() == cuT( "zip" ) )
+				if ( fileName.getExtension() == cuT( "cscn" ) || fileName.getExtension() == cuT( "zip" ) )
 				{
 					try
 					{
-						castor3d::SceneFileParser parser( p_engine );
-						auto preprocessed = parser.processFile( "Castor3D", p_fileName );
+						castor3d::SceneFileParser parser( engine );
+						auto preprocessed = parser.processFile( "Castor3D", fileName );
 
 						if ( preprocessed.parse() )
 						{
-							l_return = parser.getRenderWindow().renderTarget;
+							result = parser.getRenderWindow().renderTarget;
 						}
 						else
 						{
@@ -165,10 +166,10 @@ namespace orastus
 			}
 			else
 			{
-				wxMessageBox( _( "Scene file doesn't exist :" ) + wxString( wxT( "\n" ) ) + p_fileName );
+				wxMessageBox( _( "Scene file doesn't exist :" ) + wxString( wxT( "\n" ) ) + fileName );
 			}
 
-			return l_return;
+			return result;
 		}
 
 		BEGIN_EVENT_TABLE( MainFrame, wxFrame )
@@ -183,15 +184,15 @@ namespace orastus
 			EVT_RIGHT_UP( MainFrame::OnMouseRUp )
 		END_EVENT_TABLE()
 
-		void MainFrame::onPaint( wxPaintEvent & p_event )
+		void MainFrame::onPaint( wxPaintEvent & event )
 		{
-			wxPaintDC l_paintDC( this );
-			p_event.Skip();
+			wxPaintDC paintDC( this );
+			event.Skip();
 		}
 
-		void MainFrame::onClose( wxCloseEvent & p_event )
+		void MainFrame::onClose( wxCloseEvent & event )
 		{
-			auto & l_engine = wxGetApp().getCastor();
+			auto & engine = wxGetApp().getCastor();
 			Hide();
 
 			if ( m_timer )
@@ -203,20 +204,20 @@ namespace orastus
 
 			if ( m_panel )
 			{
-				if ( l_engine.isThreaded() )
+				if ( engine.isThreaded() )
 				{
-					l_engine.getRenderLoop().pause();
+					engine.getRenderLoop().pause();
 				}
 
 				m_panel->reset();
 
-				if ( l_engine.isThreaded() )
+				if ( engine.isThreaded() )
 				{
-					l_engine.getRenderLoop().resume();
+					engine.getRenderLoop().resume();
 				}
 			}
 
-			l_engine.cleanup();
+			engine.cleanup();
 
 			if ( m_panel )
 			{
@@ -225,25 +226,25 @@ namespace orastus
 			}
 
 			DestroyChildren();
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void MainFrame::onEraseBackground( wxEraseEvent & p_event )
+		void MainFrame::onEraseBackground( wxEraseEvent & event )
 		{
-			p_event.Skip();
+			event.Skip();
 		}
 
-		void MainFrame::onRenderTimer( wxTimerEvent & p_event )
+		void MainFrame::onRenderTimer( wxTimerEvent & event )
 		{
-			auto & l_castor = wxGetApp().getCastor();
+			auto & engine = wxGetApp().getCastor();
 
-			if ( !l_castor.isCleaned() )
+			if ( !engine.isCleaned() )
 			{
-				if ( !l_castor.isThreaded() )
+				if ( !engine.isThreaded() )
 				{
-					l_castor.getRenderLoop().renderSyncFrame();
+					engine.getRenderLoop().renderSyncFrame();
 					m_game->update();
-					m_timer->Start( 1000 / int( l_castor.getRenderLoop().getWantedFps() ), true );
+					m_timer->Start( 1000 / int( engine.getRenderLoop().getWantedFps() ), true );
 				}
 			}
 		}

@@ -36,11 +36,11 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor.
-		*\param[in] p_value
+		*\param[in] value
 		*	The component data's value.
 		*/
-		inline explicit ComponentData( T const & p_value )
-			: m_value{ p_value }
+		inline explicit ComponentData( T const & value )
+			: m_value{ value }
 		{
 		}
 		/**
@@ -54,12 +54,12 @@ namespace orastus
 		/**
 		*\brief
 		*	Sets the component data's value.
-		*\param[in] p_value
+		*\param[in] value
 		*	The new value.
 		*/
-		inline void setValue( T const & p_value )
+		inline void setValue( T const & value )
 		{
-			m_value = p_value;
+			m_value = value;
 		}
 
 	protected:
@@ -70,79 +70,79 @@ namespace orastus
 	*/
 	/**@{*/
 	template< typename T, typename U >
-	inline bool operator==( ComponentData< T > const & p_lhs, ComponentData< U > const & p_rhs )
+	inline bool operator==( ComponentData< T > const & lhs, ComponentData< U > const & rhs )
 	{
 		return false;
 	}
 
 	template< typename T >
-	inline bool operator==( ComponentData< T > const & p_lhs, ComponentData< T > const & p_rhs )
+	inline bool operator==( ComponentData< T > const & lhs, ComponentData< T > const & rhs )
 	{
-		return p_lhs.getValue() == p_rhs.getValue();
+		return lhs.getValue() == rhs.getValue();
 	}
 
 	template< typename T, typename U >
-	inline bool operator!=( ComponentData< T > const & p_lhs, ComponentData< U > const & p_rhs )
+	inline bool operator!=( ComponentData< T > const & lhs, ComponentData< U > const & rhs )
 	{
-		return !( p_lhs == p_rhs );
+		return !( lhs == rhs );
 	}
 	/**@}*/
 	/**
 	*\brief
 	*	Convenience function to create an entity component data.
-	*\param[in] p_value
+	*\param[in] value
 	*	The component data's value.
 	*\return
 	*	The created ComponentData.
 	*/
 	template< typename T >
-	std::shared_ptr< ComponentData< T > > makeComponentData( T const & p_value )
+	std::shared_ptr< ComponentData< T > > makeComponentData( T const & value )
 	{
-		return std::make_shared< ComponentData< T > >( p_value );
+		return std::make_shared< ComponentData< T > >( value );
 	}
 	/**
 	*\brief
 	*	Casts from one component data type to another.
-	*\param[in] p_value
+	*\param[in] value
 	*	The component data.
 	*\return
 	*	The casted ComponentData.
 	*/
 	template< typename T >
-	inline ComponentData< T > & componentCast( BaseComponentData & p_data )
+	inline ComponentData< T > & componentCast( BaseComponentData & data )
 	{
 #if !defined( NDEBUG )
 
-		if ( !dynamic_cast< ComponentData< T > const * >( &p_data ) )
+		if ( !dynamic_cast< ComponentData< T > const * >( &data ) )
 		{
 			CU_Failure( "ComponentData type mismatch." );
 		}
 
 #endif
 
-		return static_cast< ComponentData< T > & >( p_data );
+		return static_cast< ComponentData< T > & >( data );
 	}
 	/**
 	*\brief
 	*	Casts from one component data type to another.
-	*\param[in] p_value
+	*\param[in] value
 	*	The component data.
 	*\return
 	*	The casted ComponentData.
 	*/
 	template< typename T >
-	inline ComponentData< T > const & componentCast( BaseComponentData const & p_data )
+	inline ComponentData< T > const & componentCast( BaseComponentData const & data )
 	{
 #if !defined( NDEBUG )
 
-		if ( !dynamic_cast< ComponentData< T > const * >( &p_data ) )
+		if ( !dynamic_cast< ComponentData< T > const * >( &data ) )
 		{
 			CU_Failure( "ComponentData type mismatch." );
 		}
 
 #endif
 
-		return static_cast< ComponentData< T > const & >( p_data );
+		return static_cast< ComponentData< T > const & >( data );
 	}
 }
 

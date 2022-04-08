@@ -11,9 +11,9 @@ namespace orastus
 {
 	struct TrackData
 	{
-		EFO_API TrackData( Entity p_target
-			, float p_speed
-			, uint32_t p_damage );
+		EFO_API TrackData( Entity target
+			, float speed
+			, uint32_t damage );
 
 		float speed;
 		Entity target;

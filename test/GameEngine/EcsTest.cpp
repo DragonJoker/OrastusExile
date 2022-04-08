@@ -25,9 +25,9 @@ namespace orastus
 
 		void EcsTest::Hashing()
 		{
-			auto l_id = Ecs::hash( "ABCDEFGH" );
-			auto l_un = Ecs::unhash( l_id );
-			CT_EQUAL( l_un, String( "ABCDEFGH" ) );
+			auto id = Ecs::hash( "ABCDEFGH" );
+			auto un = Ecs::unhash( id );
+			CT_EQUAL( un, String( "ABCDEFGH" ) );
 		}
 	}
 }

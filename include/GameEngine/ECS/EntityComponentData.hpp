@@ -21,15 +21,15 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor.
-		*\param[in] p_entity
+		*\param[in] pentity
 		*	The entity.
-		*\param[in] p_data
+		*\param[in] pdata
 		*	The data.
 		*/
-		inline EntityComponentData( Entity const & p_entity
-			, ComponentDataPtr && p_data )
-			: entity{ p_entity }
-			, data{ std::move( p_data ) }
+		inline EntityComponentData( Entity const & pentity
+			, ComponentDataPtr && pdata )
+			: entity{ pentity }
+			, data{ std::move( pdata ) }
 		{
 		}
 

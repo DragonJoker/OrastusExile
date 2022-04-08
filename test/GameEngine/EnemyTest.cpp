@@ -26,12 +26,12 @@ namespace orastus
 
 		void EnemyTest::Creation()
 		{
-			Ecs l_ecs;
-			float l_speed{ 100.0f };
-			uint32_t l_life{ 1000u };
-			auto l_enemy = l_ecs.createEnemy( l_speed, l_life, nullptr, nullptr );
-			CT_EQUAL( l_ecs.getComponentData< float >( l_enemy, l_ecs.getComponent( Ecs::SpeedComponent ) ).getValue(), l_speed );
-			CT_EQUAL( l_ecs.getComponentData< uint32_t >( l_enemy, l_ecs.getComponent( Ecs::LifeComponent ) ).getValue(), l_life );
+			Ecs ecs;
+			float speed{ 100.0f };
+			uint32_t life{ 1000u };
+			auto enemy = ecs.createEnemy( speed, life, nullptr, nullptr );
+			CT_EQUAL( ecs.getComponentData< float >( enemy, ecs.getComponent( Ecs::SpeedComponent ) ).getValue(), speed );
+			CT_EQUAL( ecs.getComponentData< uint32_t >( enemy, ecs.getComponent( Ecs::LifeComponent ) ).getValue(), life );
 		}
 	}
 }

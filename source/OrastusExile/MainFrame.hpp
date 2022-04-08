@@ -21,16 +21,16 @@ namespace orastus
 
 		private:
 			void doLoadScene();
-			castor3d::RenderTargetSPtr doLoadScene( castor3d::Engine & p_engine
-				, castor::Path const & p_fileName
-				, uint32_t p_wantedFps
-				, bool p_threaded );
+			castor3d::RenderTargetSPtr doLoadScene( castor3d::Engine & engine
+				, castor::Path const & fileName
+				, uint32_t wantedFps
+				, bool threaded );
 
 			DECLARE_EVENT_TABLE()
-			void onPaint( wxPaintEvent  & p_event );
-			void onClose( wxCloseEvent  & p_event );
-			void onEraseBackground( wxEraseEvent & p_event );
-			void onRenderTimer( wxTimerEvent & p_event );
+			void onPaint( wxPaintEvent  & event );
+			void onClose( wxCloseEvent  & event );
+			void onEraseBackground( wxEraseEvent & event );
+			void onRenderTimer( wxTimerEvent & event );
 			void onKeyDown( wxKeyEvent & event );
 			void onKeyUp( wxKeyEvent & event );
 			void OnMouseLdown( wxMouseEvent & event );
