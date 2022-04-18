@@ -3,11 +3,11 @@ namespace orastus
 	template< typename T >
 	inline void Ecs::createComponentData( Entity const & entity
 		, Component const & component
-		, T const & data )
+		, T data )
 	{
 		auto & datas = m_entitiesComponents.find( component.getName() )->second;
 		datas.emplace_back( entity
-			, makeComponentData( data ) );
+			, makeComponentData( std::move( data ) ) );
 	}
 
 	template< typename T >

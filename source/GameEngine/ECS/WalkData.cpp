@@ -9,7 +9,7 @@ namespace orastus
 		: path{ ppath }
 		, current{ path.begin() }
 		, destination{ game.convert( castor::Point2i{ current->x, current->y } )
-			+ castor::Point3f{ 0, game.getCellHeight(), 0 } }
+			+ castor::Point3f{ 0, game.getCellHeight() / 2.0f, 0 } }
 	{
 	}
 

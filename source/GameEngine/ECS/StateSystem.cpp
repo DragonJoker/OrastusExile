@@ -16,7 +16,7 @@ namespace orastus
 	void StateSystem::update( Game & game
 		, Milliseconds const & elapsed )
 	{
-		auto states = m_ecs.getComponentDatas( m_ecs.getComponent( Ecs::StateComponent ) );
+		auto & states = m_ecs.getComponentDatas( m_ecs.getComponent( Ecs::StateComponent ) );
 
 		for ( auto & data : states )
 		{

@@ -5,12 +5,17 @@
 #include "GameEngine/ECS/MapBlock.hpp"
 #include "GameEngine/ECS/Tower.hpp"
 #include "GameEngine/ECS/SplashTower.hpp"
+#include "GameEngine/ECS/AnimationData.hpp"
+#include "GameEngine/ECS/AttackData.hpp"
+#include "GameEngine/ECS/TrackData.hpp"
+#include "GameEngine/ECS/WalkData.hpp"
 
 namespace orastus
 {
 	namespace
 	{
 		String const STATE_COMPONENT_DESC = cuT( "State component" );
+		String const STATUS_COMPONENT_DESC = cuT( "Status component" );
 		String const COOLDOWN_COMPONENT_DESC = cuT( "Cooldown" );
 		String const DAMAGE_COMPONENT_DESC = cuT( "Damage" );
 		String const RANGE_COMPONENT_DESC = cuT( "Range" );
@@ -29,6 +34,7 @@ namespace orastus
 	}
 
 	ComponentId const Ecs::StateComponent = Ecs::hash( "state   " );
+	ComponentId const Ecs::StatusComponent = Ecs::hash( "status  " );
 	ComponentId const Ecs::CooldownComponent = Ecs::hash( "cooldown" );
 	ComponentId const Ecs::DamageComponent = Ecs::hash( "damage  " );
 	ComponentId const Ecs::RangeComponent = Ecs::hash( "range   " );
@@ -108,8 +114,8 @@ namespace orastus
 			, bulletSpeed
 			, requiredLevel
 			, geometry
-			, animation
-			, attack );
+			, std::move( animation )
+			, std::move( attack ) );
 		return entity;
 	}
 
@@ -134,8 +140,8 @@ namespace orastus
 			, splashRange
 			, requiredLevel
 			, geometry
-			, animation
-			, attack );
+			, std::move( animation )
+			, std::move( attack ) );
 		return entity;
 	}
 
@@ -149,7 +155,7 @@ namespace orastus
 			, speed
 			, life
 			, geometry
-			, walkData );
+			, std::move( walkData ) );
 		return entity;
 	}
 
@@ -163,7 +169,7 @@ namespace orastus
 			, speed
 			, life
 			, geometry
-			, walkData );
+			, std::move( walkData ) );
 	}
 
 	Entity Ecs::createBullet( castor3d::GeometrySPtr geometry
@@ -172,7 +178,7 @@ namespace orastus
 		auto entity = doCreateEntity( "Bullet" );
 		m_bulletSet->createData( entity
 			, geometry
-			, track );
+			, std::move( track ) );
 		return entity;
 	}
 
@@ -182,7 +188,7 @@ namespace orastus
 	{
 		m_bulletSet->resetData( entity
 			, geometry
-			, track );
+			, std::move( track ) );
 	}
 
 	void Ecs::printMapBlock( Entity const & entity )const
@@ -251,6 +257,7 @@ namespace orastus
 	void Ecs::doRegisterComponents()
 	{
 		doCreateComponent( StateComponent, STATE_COMPONENT_DESC );
+		doCreateComponent( StatusComponent, STATUS_COMPONENT_DESC );
 		doCreateComponent( CooldownComponent, COOLDOWN_COMPONENT_DESC );
 		doCreateComponent( DamageComponent, DAMAGE_COMPONENT_DESC );
 		doCreateComponent( SplashDamageComponent, SPLASH_DAMAGE_COMPONENT_DESC );
@@ -270,10 +277,10 @@ namespace orastus
 
 	void Ecs::doCreateAssemblages()
 	{
-		m_towerSet = std::make_shared< Tower >( *this );
-		m_splashTowerSet = std::make_shared< SplashTower >( *this );
-		m_enemySet = std::make_shared< Enemy >( *this );
-		m_bulletSet = std::make_shared< Bullet >( *this );
-		m_mapBlockSet = std::make_shared< MapBlock >( *this );
+		m_towerSet = std::make_unique< Tower >( *this );
+		m_splashTowerSet = std::make_unique< SplashTower >( *this );
+		m_enemySet = std::make_unique< Enemy >( *this );
+		m_bulletSet = std::make_unique< Bullet >( *this );
+		m_mapBlockSet = std::make_unique< MapBlock >( *this );
 	}
 }

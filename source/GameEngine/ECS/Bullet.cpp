@@ -23,7 +23,7 @@ namespace orastus
 	{
 		m_ecs.createComponentData( entity
 			, m_track
-			, track );
+			, std::move( track ) );
 
 		if ( geometry )
 		{
@@ -32,7 +32,7 @@ namespace orastus
 				, geometry );
 			m_ecs.createComponentData( entity
 				, m_state
-				, std::make_shared< StateMachine >( bullet::createTrackingState( m_ecs, entity ), false ) );
+				, std::make_unique< StateMachine >( bullet::createTrackingState( m_ecs, entity ), false ) );
 		}
 	}
 

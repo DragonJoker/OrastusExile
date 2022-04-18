@@ -4,6 +4,7 @@
 #include "GameEngine/ECS/AttackData.hpp"
 #include "GameEngine/ECS/Ecs.hpp"
 #include "GameEngine/ECS/Entity.hpp"
+#include "GameEngine/State/EnemyState.hpp"
 #include "GameEngine/Game.hpp"
 
 #include <Castor3D/Scene/Geometry.hpp>
@@ -33,7 +34,7 @@ namespace orastus
 
 	namespace tower
 	{
-		bool doIsInRange( Ecs const & ecs
+		bool isInRange( Ecs const & ecs
 			, Entity const & enemy
 			, castor3d::SceneNode const & towerNode
 			, float range )
@@ -44,7 +45,21 @@ namespace orastus
 			return castor::point::distance( towerNode.getPosition(), enemyNode->getPosition() ) <= range;
 		}
 
-		Entity doLookForEnemy( Ecs & ecs
+		bool isTargetable( Ecs const & ecs
+			, Entity const & enemy
+			, BaseComponentData const & lifeComponent )
+		{
+			auto status = ecs.getComponentData< EnemyState >( enemy
+				, ecs.getComponent( Ecs::StatusComponent ) ).getValue();
+			return status != EnemyState::eSpawning
+				&& status != EnemyState::eEscaping
+				&& status != EnemyState::eEscaped
+				&& status != EnemyState::eDead
+				&& status != EnemyState::eDying
+				&& componentCast< uint32_t >( lifeComponent ).getValue();
+		}
+
+		Entity lookForEnemy( Ecs & ecs
 			, EntityComponentsList const & enemies
 			, castor3d::SceneNode const & towerNode
 			, float range )
@@ -55,11 +70,13 @@ namespace orastus
 				enemy != enemies.end() && !result;
 				++enemy )
 			{
-				if ( doIsInRange( ecs
+				if ( isTargetable( ecs
+						, enemy->entity
+						, *enemy->data )
+					&& isInRange( ecs
 						, enemy->entity
 						, towerNode
-						, range )
-					&& componentCast< uint32_t >( *enemy->data ).getValue() )
+						, range ) )
 				{
 					result = enemy->entity;
 				}
@@ -68,7 +85,7 @@ namespace orastus
 			return result;
 		}
 
-		void doTurnToTarget( Ecs const & ecs
+		void turnToTarget( Ecs const & ecs
 			, Entity const & enemy
 			, castor3d::SceneNode & towerNode )
 		{
@@ -110,7 +127,7 @@ namespace orastus
 				, Milliseconds const & total )
 				{
 					auto & enemies = ecs.getComponentDatas( ecs.getComponent( Ecs::LifeComponent ) );
-					auto target = doLookForEnemy( ecs
+					auto target = lookForEnemy( ecs
 						, enemies
 						, *node
 						, range );
@@ -129,7 +146,7 @@ namespace orastus
 		{
 			auto animdata = ecs.hasComponent( entity, ecs.getComponent( Ecs::AnimationComponent ) )
 				? ecs.getComponentData< AnimationDataPtr >( entity
-					, ecs.getComponent( Ecs::AnimationComponent ) ).getValue()
+					, ecs.getComponent( Ecs::AnimationComponent ) ).getValue().get()
 				: nullptr;
 
 			if ( !animdata )
@@ -140,7 +157,7 @@ namespace orastus
 				}
 			}
 
-			auto attackdata = ecs.getComponentData< AttackDataPtr >( entity
+			auto & attackdata = ecs.getComponentData< AttackDataPtr >( entity
 				, ecs.getComponent( Ecs::AttackComponent ) ).getValue();
 
 			if ( !attackdata )
@@ -163,7 +180,7 @@ namespace orastus
 				throw std::runtime_error{ "Geometry is not attached" };
 			}
 
-			return State{ [&ecs, entity, attackdata, animdata, node]( Game & game
+			return State{ [&ecs, entity, &attackdata, animdata, node]( Game & game
 				, Milliseconds const & elapsed
 				, Milliseconds const & total )
 			{
@@ -178,7 +195,7 @@ namespace orastus
 					{
 						auto range = ecs.getComponentData< float >( entity
 							, ecs.getComponent( Ecs::RangeComponent ) ).getValue();
-						attackdata->target = doLookForEnemy( ecs
+						attackdata->target = lookForEnemy( ecs
 							, ecs.getComponentDatas( ecs.getComponent( Ecs::LifeComponent ) )
 							, *node
 							, range );
@@ -189,7 +206,7 @@ namespace orastus
 				{
 					if ( attackdata->target )
 					{
-						doTurnToTarget( ecs
+						turnToTarget( ecs
 							, attackdata->target
 							, *node );
 
@@ -218,7 +235,7 @@ namespace orastus
 				}
 				else if ( attackdata->target )
 				{
-					doTurnToTarget( ecs
+					turnToTarget( ecs
 						, attackdata->target
 						, *node );
 

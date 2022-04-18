@@ -60,7 +60,7 @@ namespace orastus
 		Game::getBulletNode( geometry )->setPosition( sourceNode->getPosition() );
 		m_ecs.resetBullet( bullet
 			, geometry
-			, std::make_shared< TrackData >( target, speed, damage ) );
+			, std::make_unique< TrackData >( target, speed, damage ) );
 	}
 
 	void BulletSpawner::fireBullet( Entity source
@@ -75,7 +75,7 @@ namespace orastus
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
 		Game::getBulletNode( geometry )->setPosition( sourceNode->getPosition() );
 		auto bullet = m_ecs.createBullet( geometry
-			, std::make_shared< TrackData >( target, speed, damage ) );
+			, std::make_unique< TrackData >( target, speed, damage ) );
 		m_liveBullets.insert( m_liveBullets.end(), bullet );
 		++m_totalSpawned;
 	}

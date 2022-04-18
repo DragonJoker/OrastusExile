@@ -20,6 +20,7 @@ namespace orastus
 		EFO_API void update( Milliseconds const & elapsed );
 
 		EFO_API void killEnemy( Entity enemy );
+		EFO_API void enemyArrived( Entity enemy );
 
 		uint32_t getWave()const
 		{

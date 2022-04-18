@@ -389,6 +389,12 @@ namespace orastus
 		m_enemySpawner.killEnemy( entity );
 	}
 
+	void Game::enemyArrived( Entity entity )
+	{
+		loseLife();
+		m_enemySpawner.enemyArrived( entity );
+	}
+
 	void Game::killBullet( Entity entity )
 	{
 		m_bulletSpawner.killBullet( entity );
@@ -408,6 +414,10 @@ namespace orastus
 		{
 			m_enemySpawner.killEnemy( target );
 		}
+	}
+
+	void Game::loseLife()
+	{
 	}
 
 	castor3d::GeometrySPtr Game::createEnemy( castor::String const & name
@@ -466,16 +476,15 @@ namespace orastus
 
 			if ( tower )
 			{
-				auto shoot = std::make_shared< AttackData >( 0_ms );
-				m_selectedCell->entity = m_ecs.createTower( 1000_ms
+				m_selectedCell->entity = m_ecs.createTower( 700_ms
 					, 3u
 					, 40.0f
-					, 120.0f
+					, 240.0f
 					, 1u
 					, tower
 					, nullptr
-					, shoot );
-				auto stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
+					, std::make_unique< AttackData >( 0_ms ) );
+				auto & stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
 					, m_ecs.getComponent( Ecs::StateComponent ) ).getValue();
 				stateMachine->addState( tower::createShootingState( m_ecs, m_selectedCell->entity ) );
 				doSelectEntity( m_selectedCell->entity );
@@ -499,16 +508,15 @@ namespace orastus
 
 			if ( tower )
 			{
-				auto shoot = std::make_shared< AttackData >( 0_ms );
-				m_selectedCell->entity = m_ecs.createTower( 3000_ms
+				m_selectedCell->entity = m_ecs.createTower( 2000_ms
 					, 5u
 					, 100.0f
 					, 200.0f
 					, 1u
 					, tower
 					, nullptr
-					, shoot );
-				auto stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
+					, std::make_unique< AttackData >( 0_ms ) );
+				auto & stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
 					, m_ecs.getComponent( Ecs::StateComponent ) ).getValue();
 				stateMachine->addState( tower::createShootingState( m_ecs, m_selectedCell->entity ) );
 				doSelectEntity( m_selectedCell->entity );

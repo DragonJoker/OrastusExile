@@ -4,6 +4,7 @@ See licence file in root folder, MIT.txt
 #include "EnemyTest.hpp"
 
 #include <GameEngine/ECS/Ecs.hpp>
+#include <GameEngine/ECS/WalkData.hpp>
 #include <GameEngine/State/EnemyState.hpp>
 
 namespace orastus

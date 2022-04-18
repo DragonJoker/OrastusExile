@@ -14,6 +14,7 @@ namespace orastus
 		, m_geometry{ m_ecs.getComponent( Ecs::GeometryComponent ) }
 		, m_walk{ m_ecs.getComponent( Ecs::WalkComponent ) }
 		, m_state{ m_ecs.getComponent( Ecs::StateComponent ) }
+		, m_status{ m_ecs.getComponent( Ecs::StatusComponent ) }
 	{
 	}
 
@@ -31,16 +32,22 @@ namespace orastus
 			, life );
 		m_ecs.createComponentData( entity
 			, m_walk
-			, walkData );
+			, std::move( walkData ) );
+		m_ecs.createComponentData( entity
+			, m_status
+			, EnemyState::eSpawning );
 
 		if ( geometry )
 		{
 			m_ecs.createComponentData( entity
 				, m_geometry
 				, geometry );
+			auto states = std::make_unique< StateMachine >( enemy::createSpawningState( m_ecs, entity ), false );
+			states->addState( enemy::createWalkingState( m_ecs, entity ) );
+			states->addState( enemy::createEscapingState( m_ecs, entity ) );
 			m_ecs.createComponentData( entity
 				, m_state
-				, std::make_shared< StateMachine >( enemy::createWalkingState( m_ecs, entity ), false ) );
+				, std::move( states ) );
 		}
 	}
 
@@ -54,6 +61,8 @@ namespace orastus
 			, m_speed ).setValue( speed );
 		m_ecs.getComponentData< uint32_t >( entity
 			, m_life ).setValue( life );
+		m_ecs.getComponentData< EnemyState >( entity
+			, m_status ).setValue( EnemyState::eSpawning );
 		*m_ecs.getComponentData< WalkDataPtr >( entity
 			, m_walk ).getValue() = *walkData;
 		m_ecs.getComponentData< StateMachinePtr >( entity

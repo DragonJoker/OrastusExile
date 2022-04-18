@@ -30,7 +30,7 @@ namespace orastus
 			float speed{ 100.0f };
 			uint32_t damage{ 1000u };
 			auto bullet = ecs.createBullet( nullptr
-				, std::make_shared< TrackData >( Entity{}, speed, damage ) );
+				, std::make_unique< TrackData >( Entity{}, speed, damage ) );
 			CT_EQUAL( ecs.getComponentData< TrackDataPtr >( bullet, ecs.getComponent( Ecs::TrackComponent ) ).getValue()->speed, speed );
 			CT_EQUAL( ecs.getComponentData< TrackDataPtr >( bullet, ecs.getComponent( Ecs::TrackComponent ) ).getValue()->damage, damage );
 		}

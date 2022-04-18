@@ -76,6 +76,7 @@ namespace orastus
 		Component const & m_geometry;
 		Component const & m_walk;
 		Component const & m_state;
+		Component const & m_status;
 	};
 }
 

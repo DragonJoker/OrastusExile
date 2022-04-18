@@ -14,13 +14,13 @@ namespace orastus
 	{
 		State createTrackingState( Ecs & ecs, Entity const & entity )
 		{
-			auto trackData = ecs.getComponentData< TrackDataPtr >( entity
+			auto & trackData = ecs.getComponentData< TrackDataPtr >( entity
 				, ecs.getComponent( Ecs::TrackComponent ) ).getValue();
 			auto geometry = ecs.getComponentData< castor3d::GeometrySPtr >( entity
 				, ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
 			auto node = Game::getBulletNode( geometry );
 
-			return State{ [&ecs, entity, trackData, node]( Game & game
+			return State{ [&ecs, entity, &trackData, node]( Game & game
 				, Milliseconds const & elapsed
 				, Milliseconds const & total )
 			{

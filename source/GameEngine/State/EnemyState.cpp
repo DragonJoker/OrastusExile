@@ -14,6 +14,8 @@ namespace orastus
 	{
 		switch ( state )
 		{
+		case EnemyState::eSpawning:
+			return cuT( "Spawning" );
 		case EnemyState::eWalking:
 			return cuT( "Walking" );
 		case EnemyState::eFrozen:
@@ -24,8 +26,12 @@ namespace orastus
 			return cuT( "Dying" );
 		case EnemyState::eDead:
 			return cuT( "Dead" );
-		case EnemyState::eArrived:
-			return cuT( "Arrived" );
+		case EnemyState::eCapturing:
+			return cuT( "Capturing" );
+		case EnemyState::eEscaping:
+			return cuT( "Escaping" );
+		case EnemyState::eEscaped:
+			return cuT( "Escaped" );
 		default:
 			CU_Failure( "Unexpected enemy state." );
 			return "Unknown";
@@ -34,69 +40,132 @@ namespace orastus
 
 	namespace enemy
 	{
-		bool walkToDestination( Game & game
-			, WalkData & data
-			, float speed
-			, castor3d::SceneNode & node
-			, Milliseconds const & elapsed )
+		namespace details
 		{
-			auto distance = float( elapsed.count() ) * speed / 1000.0f;
-			castor::Point3f nextPosition = data.destination;
-			castor::Point3f position{ node.getPosition() };
-			castor::Point3f direction{ nextPosition - position };
-			auto distanceToDst = float( castor::point::length( direction ) );
-			direction[0] *= distance / distanceToDst;
-			direction[2] *= distance / distanceToDst;
-			bool reachDst{ distanceToDst <= distance };
-			bool result = false;
-
-			if ( !reachDst )
+			bool spawn( Ecs & ecs
+				, Entity const & entity
+				, WalkData & data
+				, float speed
+				, castor3d::SceneNode & node
+				, Milliseconds const & elapsed )
 			{
-				// not at destination
-				nextPosition = position + direction;
-			}
-			else if ( distanceToDst < distance )
-			{
-				// after destination => start walking to next destination
-				++data.current;
+				auto distance = float( elapsed.count() ) * speed / 1000.0f;
+				castor::Point3f nextPosition = data.destination;
+				castor::Point3f position{ node.getPosition() };
+				castor::Point3f direction{ nextPosition - position };
+				auto distanceToDst = float( castor::point::length( direction ) );
+				direction[1] *= distance / distanceToDst;
+				bool result{ distanceToDst <= distance };
 
-				if ( data.current != data.path.end() )
+				if ( !result )
 				{
-					data.destination = game.convert( castor::Point2i{ data.current->x, data.current->y } )
-						+ castor::Point3f{ 0, game.getCellHeight() / 2, 0 };
-					result = walkToDestination( game
-						, data
-						, speed
-						, node
-						, elapsed );
+					// not at destination
+					nextPosition = position + direction;
 				}
 				else
 				{
-					result = true;
-					std::cout << "\nArrived at destination" << std::endl;
-					node.setPosition( castor::Point3f{ 0, -10, 0 } );
+					ecs.getComponentData< EnemyState >( entity
+						, ecs.getComponent( Ecs::StatusComponent ) ).setValue( EnemyState::eWalking );
 				}
-			}
-			else
-			{
-				// Right on the destination node.
-				++data.current;
-				data.destination = game.convert( castor::Point2i{ data.current->x, data.current->y } )
-					+ castor::Point3f{ 0, game.getCellHeight() / 2, 0 };
-			}
 
-			if ( !result )
-			{
 				node.setPosition( nextPosition );
+				return result;
 			}
 
-			return result;
+			bool walkToDestination( Game & game
+				, WalkData & data
+				, float speed
+				, castor3d::SceneNode & node
+				, Milliseconds const & elapsed )
+			{
+				auto distance = float( elapsed.count() ) * speed / 1000.0f;
+				castor::Point3f nextPosition = data.destination;
+				castor::Point3f position{ node.getPosition() };
+				castor::Point3f direction{ nextPosition - position };
+				auto distanceToDst = float( castor::point::length( direction ) );
+				direction[0] *= distance / distanceToDst;
+				direction[2] *= distance / distanceToDst;
+				bool reachDst{ distanceToDst <= distance };
+				bool result = false;
+
+				if ( !reachDst )
+				{
+					// not at destination
+					nextPosition = position + direction;
+				}
+				else if ( distanceToDst < distance )
+				{
+					// after destination => start walking to next destination
+					++data.current;
+
+					if ( data.current != data.path.end() )
+					{
+						data.destination = game.convert( castor::Point2i{ data.current->x, data.current->y } )
+							+ castor::Point3f{ 0, game.getCellHeight() / 2.0f, 0 };
+						result = walkToDestination( game
+							, data
+							, speed
+							, node
+							, elapsed );
+					}
+					else
+					{
+						result = true;
+					}
+				}
+				else
+				{
+					// Right on the destination node.
+					++data.current;
+					data.destination = game.convert( castor::Point2i{ data.current->x, data.current->y } )
+						+ castor::Point3f{ 0, game.getCellHeight() / 2.0f, 0 };
+				}
+
+				if ( !result )
+				{
+					node.setPosition( nextPosition );
+				}
+
+				return result;
+			}
+
+			bool escape( Game & game
+				, Ecs & ecs
+				, Entity const & entity
+				, WalkData & data
+				, float speed
+				, castor3d::SceneNode & node
+				, Milliseconds const & elapsed )
+			{
+				auto distance = float( elapsed.count() ) * speed / 1000.0f;
+				castor::Point3f nextPosition = data.destination
+					+ castor::Point3f{ 0, game.getCellHeight() * 5.0f, 0 };
+				castor::Point3f position{ node.getPosition() };
+				castor::Point3f direction{ nextPosition - position };
+				auto distanceToDst = float( castor::point::length( direction ) );
+				direction[1] *= distance / distanceToDst;
+				bool result{ distanceToDst <= distance };
+
+				if ( !result )
+				{
+					// not at destination
+					nextPosition = position + direction;
+				}
+				else
+				{
+					ecs.getComponentData< EnemyState >( entity
+						, ecs.getComponent( Ecs::StatusComponent ) ).setValue( EnemyState::eEscaped );
+				}
+
+				node.setPosition( nextPosition );
+				return result;
+			}
 		}
 
-		State createWalkingState( Ecs & ecs
+		State createSpawningState( Ecs & ecs
 			, Entity const & entity )
 		{
-			auto walkData = ecs.getComponentData< WalkDataPtr >( entity
+			auto & walkData = ecs.getComponentData< WalkDataPtr >( entity
 				, ecs.getComponent( Ecs::WalkComponent ) ).getValue();
 			auto geometry = ecs.getComponentData< castor3d::GeometrySPtr >( entity
 				, ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
@@ -104,10 +173,37 @@ namespace orastus
 			auto & speed = ecs.getComponentData< float >( entity
 				, ecs.getComponent( Ecs::SpeedComponent ) );
 
-			return State{ [&ecs, entity, walkData, node, &speed]( Game & game
+			return State{ [&ecs, entity, &walkData, node, &speed]( Game & game
+				, Milliseconds const & elapsed
+				, Milliseconds const & total )
+				{
+					auto const angle = castor::Angle::fromDegrees( -float( elapsed.count() ) * 240 / 1000.0f );
+					node->yaw( angle );
+					return details::spawn( ecs
+						, entity
+						, *walkData
+						, speed.getValue()
+						, *node
+						, elapsed );
+				} };
+		}
+
+		State createWalkingState( Ecs & ecs
+			, Entity const & entity )
+		{
+			auto & walkData = ecs.getComponentData< WalkDataPtr >( entity
+				, ecs.getComponent( Ecs::WalkComponent ) ).getValue();
+			auto geometry = ecs.getComponentData< castor3d::GeometrySPtr >( entity
+				, ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
+			auto node = Game::getEnemyNode( geometry );
+			auto & speed = ecs.getComponentData< float >( entity
+				, ecs.getComponent( Ecs::SpeedComponent ) );
+
+			return State{ [&ecs, entity, &walkData, node, &speed]( Game & game
 				, Milliseconds const & elapsed
 				, Milliseconds const & total )
 			{
+				bool result = true;
 				auto life = ecs.getComponentData< uint32_t >( entity
 					, ecs.getComponent( Ecs::LifeComponent ) ).getValue();
 
@@ -115,15 +211,49 @@ namespace orastus
 				{
 					auto const angle = castor::Angle::fromDegrees( -float( elapsed.count() ) * 240 / 1000.0f );
 					node->yaw( angle );
-					return walkToDestination( game
+					result = details::walkToDestination( game
 						, *walkData
 						, speed.getValue()
 						, *node
 						, elapsed );
 				}
 
-				return true;
+				return result;
 			} };
+		}
+
+		State createEscapingState( Ecs & ecs
+			, Entity const & entity )
+		{
+			auto & walkData = ecs.getComponentData< WalkDataPtr >( entity
+				, ecs.getComponent( Ecs::WalkComponent ) ).getValue();
+			auto geometry = ecs.getComponentData< castor3d::GeometrySPtr >( entity
+				, ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
+			auto node = Game::getEnemyNode( geometry );
+			auto & speed = ecs.getComponentData< float >( entity
+				, ecs.getComponent( Ecs::SpeedComponent ) );
+
+			return State{ [&ecs, entity, &walkData, node, &speed]( Game & game
+				, Milliseconds const & elapsed
+				, Milliseconds const & total )
+				{
+					auto const angle = castor::Angle::fromDegrees( -float( elapsed.count() ) * 240 / 1000.0f );
+					node->yaw( angle );
+					bool result = details::escape( game
+						, ecs
+						, entity
+						, *walkData
+						, speed.getValue()
+						, *node
+						, elapsed );
+
+					if ( result )
+					{
+						game.enemyArrived( entity );
+					}
+
+					return result;
+				} };
 		}
 	}
 }

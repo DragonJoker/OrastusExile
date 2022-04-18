@@ -13,13 +13,31 @@ namespace orastus
 	{
 		/**
 		*\brief
-		*	Creates the idle state for given tower.
+		*	Creates the spawning state for given enemy.
 		*\param[in] ecs
 		*	The ECS instance.
-		*\param[in] tower
-		*	The tower's entity.
+		*\param[in] entity
+		*	The enemy's entity.
+		*/
+		EFO_API State createSpawningState( Ecs & ecs, Entity const & entity );
+		/**
+		*\brief
+		*	Creates the walking state for given enemy.
+		*\param[in] ecs
+		*	The ECS instance.
+		*\param[in] entity
+		*	The enemy's entity.
 		*/
 		EFO_API State createWalkingState( Ecs & ecs, Entity const & entity );
+		/**
+		*\brief
+		*	Creates the escaping state for given enemy.
+		*\param[in] ecs
+		*	The ECS instance.
+		*\param[in] entity
+		*	The enemy's entity.
+		*/
+		EFO_API State createEscapingState( Ecs & ecs, Entity const & entity );
 	}
 	/**
 	*\brief
@@ -27,6 +45,8 @@ namespace orastus
 	*/
 	enum class EnemyState
 	{
+		//! The enemy is spawning.
+		eSpawning,
 		//! The enemy is walking.
 		eWalking,
 		//! The enemy is frozen.
@@ -37,8 +57,12 @@ namespace orastus
 		eDying,
 		//! The enemy is dead.
 		eDead,
-		//! The enemy is arrived to its target.
-		eArrived,
+		//! The enemy is capturing a target.
+		eCapturing,
+		//! The enemy is escaping the map.
+		eEscaping,
+		//! The enemy has escaped the map.
+		eEscaped,
 	};
 	/**
 	*\brief

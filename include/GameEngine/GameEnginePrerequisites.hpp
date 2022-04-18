@@ -36,7 +36,7 @@ namespace orastus
 	class State;
 	class StateMachine;
 	using StateArray = std::vector< State >;
-	using StateMachinePtr = std::shared_ptr< StateMachine >;
+	using StateMachinePtr = std::unique_ptr< StateMachine >;
 
 	// Map
 	class Grid;
@@ -66,10 +66,10 @@ namespace orastus
 	using SplashTowerPtr = std::shared_ptr< SplashTower >;
 	using EnemyPtr = std::shared_ptr< Enemy >;
 	using BulletPtr = std::shared_ptr< Bullet >;
-	using AnimationDataPtr = std::shared_ptr< AnimationData >;
-	using AttackDataPtr = std::shared_ptr< AttackData >;
-	using TrackDataPtr = std::shared_ptr< TrackData >;
-	using WalkDataPtr = std::shared_ptr< WalkData >;
+	using AnimationDataPtr = std::unique_ptr< AnimationData >;
+	using AttackDataPtr = std::unique_ptr< AttackData >;
+	using TrackDataPtr = std::unique_ptr< TrackData >;
+	using WalkDataPtr = std::unique_ptr< WalkData >;
 	using EntityList = std::vector< Entity >;
 
 	// Game

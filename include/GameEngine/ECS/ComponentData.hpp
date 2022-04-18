@@ -21,7 +21,7 @@ namespace orastus
 		virtual ~BaseComponentData() = default;
 	};
 	//! A pointer to a BaseComponentData.
-	using ComponentDataPtr = std::shared_ptr< BaseComponentData >;
+	using ComponentDataPtr = std::unique_ptr< BaseComponentData >;
 	//! A list of ComponentData pointers.
 	using ComponentDataList = std::vector< ComponentDataPtr >;
 	/**
@@ -39,15 +39,15 @@ namespace orastus
 		*\param[in] value
 		*	The component data's value.
 		*/
-		inline explicit ComponentData( T const & value )
-			: m_value{ value }
+		explicit ComponentData( T value )
+			: m_value{ std::move( value ) }
 		{
 		}
 		/**
 		*\return
 		*	The component data's value.
 		*/
-		inline T const & getValue()const
+		T const & getValue()const
 		{
 			return m_value;
 		}
@@ -57,7 +57,7 @@ namespace orastus
 		*\param[in] value
 		*	The new value.
 		*/
-		inline void setValue( T const & value )
+		void setValue( T const & value )
 		{
 			m_value = value;
 		}
@@ -70,19 +70,19 @@ namespace orastus
 	*/
 	/**@{*/
 	template< typename T, typename U >
-	inline bool operator==( ComponentData< T > const & lhs, ComponentData< U > const & rhs )
+	bool operator==( ComponentData< T > const & lhs, ComponentData< U > const & rhs )
 	{
 		return false;
 	}
 
 	template< typename T >
-	inline bool operator==( ComponentData< T > const & lhs, ComponentData< T > const & rhs )
+	bool operator==( ComponentData< T > const & lhs, ComponentData< T > const & rhs )
 	{
 		return lhs.getValue() == rhs.getValue();
 	}
 
 	template< typename T, typename U >
-	inline bool operator!=( ComponentData< T > const & lhs, ComponentData< U > const & rhs )
+	bool operator!=( ComponentData< T > const & lhs, ComponentData< U > const & rhs )
 	{
 		return !( lhs == rhs );
 	}
@@ -96,9 +96,9 @@ namespace orastus
 	*	The created ComponentData.
 	*/
 	template< typename T >
-	std::shared_ptr< ComponentData< T > > makeComponentData( T const & value )
+	std::unique_ptr< ComponentData< T > > makeComponentData( T value )
 	{
-		return std::make_shared< ComponentData< T > >( value );
+		return std::make_unique< ComponentData< T > >( std::move( value ) );
 	}
 	/**
 	*\brief
@@ -109,7 +109,7 @@ namespace orastus
 	*	The casted ComponentData.
 	*/
 	template< typename T >
-	inline ComponentData< T > & componentCast( BaseComponentData & data )
+	ComponentData< T > & componentCast( BaseComponentData & data )
 	{
 #if !defined( NDEBUG )
 
@@ -131,7 +131,7 @@ namespace orastus
 	*	The casted ComponentData.
 	*/
 	template< typename T >
-	inline ComponentData< T > const & componentCast( BaseComponentData const & data )
+	ComponentData< T > const & componentCast( BaseComponentData const & data )
 	{
 #if !defined( NDEBUG )
 

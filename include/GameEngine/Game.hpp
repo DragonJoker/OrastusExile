@@ -102,6 +102,13 @@ namespace orastus
 		EFO_API void killEnemy( Entity entity );
 		/**
 		*\brief
+		*	An enemy has arrived to the destination.
+		*\param[in] entity
+		*	The enemy entity.
+		*/
+		EFO_API void enemyArrived( Entity entity );
+		/**
+		*\brief
 		*	Kills a bullet.
 		*\param[in] entity
 		*	The bullet entity.
@@ -120,6 +127,11 @@ namespace orastus
 		EFO_API void hit( Entity source
 			, Entity target
 			, uint32_t damage );
+		/**
+		*\brief
+		*	Makes the player lose a life.
+		*/
+		EFO_API void loseLife();
 		/**
 		*\brief
 		*	Creates an enemy geometry.

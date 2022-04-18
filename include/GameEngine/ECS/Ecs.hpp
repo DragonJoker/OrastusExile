@@ -311,7 +311,7 @@ namespace orastus
 		template< typename T >
 		inline void createComponentData( Entity const & entity
 			, Component const & component
-			, T const & data );
+			, T data );
 		/**
 		*\brief
 		*	Retrieves an entity component data.
@@ -420,6 +420,7 @@ namespace orastus
 
 	public:
 		EFO_API static ComponentId const StateComponent;
+		EFO_API static ComponentId const StatusComponent;
 		EFO_API static ComponentId const CooldownComponent;
 		EFO_API static ComponentId const DamageComponent;
 		EFO_API static ComponentId const RangeComponent;

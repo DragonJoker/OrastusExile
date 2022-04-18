@@ -59,12 +59,12 @@ namespace orastus
 		{
 			m_ecs.createComponentData( entity
 				, m_animation
-				, animation );
+				, std::move( animation ) );
 		}
 
 		m_ecs.createComponentData( entity
 			, m_attack
-			, attack );
+			, std::move( attack ) );
 
 		if ( geometry )
 		{
@@ -73,7 +73,7 @@ namespace orastus
 				, geometry );
 			m_ecs.createComponentData( entity
 				, m_state
-				, std::make_shared< StateMachine >( tower::createIdleState( m_ecs, entity ), true ) );
+				, std::make_unique< StateMachine >( tower::createIdleState( m_ecs, entity ), true ) );
 		}
 	}
 

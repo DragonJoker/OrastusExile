@@ -4,6 +4,8 @@ See licence file in root folder, MIT.txt
 #include "TowerTest.hpp"
 
 #include <GameEngine/ECS/Ecs.hpp>
+#include <GameEngine/ECS/AnimationData.hpp>
+#include <GameEngine/ECS/AttackData.hpp>
 #include <GameEngine/State/TowerState.hpp>
 
 namespace orastus
