@@ -296,7 +296,7 @@ namespace orastus
 		void doAddPathTile( GridCell & cell
 			, castor3d::MeshResPtr mesh
 			, castor::Quaternion const & orientation );
-		void doAddTarget( GridCell & cell );
+		void doAddTargets( GridCell & cell );
 		castor3d::GeometrySPtr doCreateBullet( Entity source );
 		castor3d::GeometrySPtr doCreateTowerBase( castor::String const & name
 			, GridCell & cell
@@ -306,7 +306,9 @@ namespace orastus
 			, castor3d::Mesh const & base
 			, castor3d::MeshResPtr mesh );
 		castor3d::AnimatedObjectGroupSPtr doCreateAnimation( castor3d::GeometrySPtr geometry
-			, castor::String const & animName );
+			, castor::String const & animName
+			, bool looped = false
+			, bool paused = true );
 		void doSelectMapBlock( Entity const & entity );
 		void doSelectTower( Entity const & entity );
 		castor3d::GeometrySPtr doGetGeometry( Entity const & entity );
@@ -322,7 +324,6 @@ namespace orastus
 		Hud m_hud;
 		GridPath m_path;
 		castor3d::SceneNodeSPtr m_mapNode;
-		castor3d::SceneNodeSPtr m_targetNode;
 		castor3d::MeshResPtr m_emptyTileMesh;
 		castor::Point3f m_cellDimensions;
 		castor3d::MeshResPtr m_pathStartTileMesh;
@@ -334,6 +335,7 @@ namespace orastus
 		castor3d::MeshResPtr m_longRangeTowerMesh;
 		castor3d::MeshResPtr m_bulletMesh;
 		castor3d::MaterialSPtr m_bulletMaterial;
+		castor3d::MeshRes m_cowMesh;
 		// Varying data.
 		GridCell * m_selectedCell{ nullptr };
 		Clock::time_point m_saved;

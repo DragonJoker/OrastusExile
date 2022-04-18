@@ -21,6 +21,8 @@
 #include <Castor3D/Scene/Light/Light.hpp>
 #include <Castor3D/Scene/Light/PointLight.hpp>
 
+#include <random>
+
 namespace orastus
 {
 	//*********************************************************************************************
@@ -144,13 +146,18 @@ namespace orastus
 			from = &prv;
 		}
 
+		int32_t constexpr targetXMin = -2;
+		int32_t constexpr targetXMax = 2;
+		int32_t constexpr targetYMin = -1;
+		int32_t constexpr targetYMax = 3;
+
 		void doPrepareTarget( GridPathNode const & cur
 			, castor3d::Scene & scene
 			, Grid & grid )
 		{
-			for ( uint32_t x = cur.x - 2; x <= cur.x + 2; ++x )
+			for ( uint32_t x = cur.x + targetXMin; x <= cur.x + targetXMax; ++x )
 			{
-				for ( uint32_t y = cur.y - 1; y <= cur.y + 3; ++y )
+				for ( uint32_t y = cur.y + targetYMin; y <= cur.y + targetYMax; ++y )
 				{
 					grid( y, x ).state = GridCell::State::ePathArea;
 				}
@@ -223,7 +230,6 @@ namespace orastus
 			, { 17, 23 }
 			, { 17, 27 } }
 		, m_mapNode{ m_scene.getSceneNodeCache().find( cuT( "MapBase" ) ).lock() }
-		, m_targetNode{ m_scene.getSceneNodeCache().find( cuT( "Target" ) ).lock() }
 		, m_emptyTileMesh{ m_scene.getMeshCache().find( cuT( "EmptyTile" ) ) }
 		, m_cellDimensions{ m_emptyTileMesh.lock()->getBoundingBox().getDimensions() }
 		, m_pathStartTileMesh{ m_scene.getMeshCache().find( cuT( "PathStartTile" ) ) }
@@ -235,6 +241,7 @@ namespace orastus
 		, m_longRangeTowerMesh{ m_scene.getMeshCache().find( cuT( "Cannon" ) ).lock() }
 		, m_bulletMesh{ m_scene.getMeshCache().find( cuT( "Bullet" ) ).lock() }
 		, m_bulletMaterial{ m_scene.getMaterialView().find( cuT( "Bullet" ) ).lock() }
+		, m_cowMesh{ m_scene.getMeshCache().find( cuT( "Cow" ) ).lock() }
 		, m_enemySpawner{ m_ecs, *this }
 		, m_bulletSpawner{ m_ecs, *this }
 	{
@@ -302,13 +309,18 @@ namespace orastus
 					, m_pathAreaTileMesh
 					, castor::Quaternion::identity() );
 				break;
+			case GridCell::State::eTarget:
+				doAddPathTile( cell
+					, m_pathAreaTileMesh
+					, castor::Quaternion::identity() );
+				break;
 			default:
 				break;
 			}
 		}
 
 		auto & node = *m_path.rbegin();
-		doAddTarget( m_grid( node.y, node.x ) );
+		doAddTargets( m_grid( node.y, node.x ) );
 
 		m_state = State::eStarted;
 		m_hud.start();
@@ -616,10 +628,30 @@ namespace orastus
 			, false );
 	}
 
-	void Game::doAddTarget( GridCell & cell )
+	void Game::doAddTargets( GridCell & cell )
 	{
-		m_targetNode->setPosition( doConvert( castor::Point2i{ cell.x, cell.y + 1 } ) );
-		cell.state = GridCell::State::eTarget;
+		uint32_t index = 0u;
+		std::random_device r;
+		std::default_random_engine e{ r() };
+		std::uniform_real_distribution< float > distribution{ 0.0f, 360.0f };
+
+		for ( uint32_t x = cell.x + targetXMin; x <= cell.x + targetXMax; ++x )
+		{
+			for ( uint32_t y = cell.y + targetYMin; y <= cell.y + targetYMax; ++y )
+			{
+				auto name = "Target" + castor::string::toString( index++ );
+				auto node = m_scene.getSceneNodeCache().add( name ).lock();
+				node->setPosition( doConvert( castor::Point2i{ x, y } )
+					+ castor::Point3f{ 0, getCellHeight() / 5.0f, 0 } );
+				node->yaw( castor::Angle::fromDegrees( distribution( e ) ) );
+				node->setScale( { 0.05f, 0.05f, 0.05f } );
+				node->attachTo( *m_mapNode );
+				auto cow = m_scene.getGeometryCache().create( name, m_scene, *node, m_cowMesh );
+				doCreateAnimation( cow, "C4D Animation Take", true, false );
+				m_scene.getGeometryCache().add( cow );
+			}
+		}
+
 	}
 
 	castor3d::GeometrySPtr Game::doCreateBullet( Entity source )
@@ -673,7 +705,9 @@ namespace orastus
 	}
 
 	castor3d::AnimatedObjectGroupSPtr Game::doCreateAnimation( castor3d::GeometrySPtr geometry
-		, String const & animName )
+		, String const & animName
+		, bool looped
+		, bool paused )
 	{
 		 CU_Require( geometry );
 		 auto animGroup = m_scene.getAnimatedObjectGroupCache().add( geometry->getName(), m_scene ).lock();
@@ -701,9 +735,14 @@ namespace orastus
 		 }
 
 		 animGroup->addAnimation( animName );
-		 animGroup->setAnimationLooped( animName, false );
+		 animGroup->setAnimationLooped( animName, looped );
 		 animGroup->startAnimation( animName );
-		 animGroup->pauseAnimation( animName );
+
+		 if ( paused )
+		 {
+			 animGroup->pauseAnimation( animName );
+		 }
+
 		 return animGroup;
 	 }
 

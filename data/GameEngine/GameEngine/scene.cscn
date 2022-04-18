@@ -13,6 +13,7 @@ scene "Scene"
 	include "hud.cscn"
 	include "map.cscn"
 	include "towers.cscn"
+	include "cow.cscn"
 
 	// Skybox
 

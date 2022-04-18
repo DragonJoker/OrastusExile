@@ -55,12 +55,6 @@ mesh "PathTurnTile"
 	}
 }
 
-mesh "Target"
-{
-	type "sphere" -subdiv=10 -radius=32
-	default_material "Target"
-}
-
 // Nodes
 
 scene_node "MapBase"
@@ -73,26 +67,12 @@ scene_node "Map"
 	orientation 1 0 0 -90
 }
 
-scene_node "Target"
-{
-	parent "MapBase"
-}
-
 scene_node "Light01"
 {
 	orientation 1 1 0 135.0
 }
 
 // Lights
-
-light "Target"
-{
-	parent "Target"
-	type point
-	colour 1 1 0
-	intensity 8.0 10.0
-	attenuation 1.0 0.2 0
-}
 
 light "Light01"
 {
@@ -120,12 +100,4 @@ light "Light01"
 			variance_bias 0.15
 		}
 	}
-}
-
-// Objects
-
-object "Target"
-{
-	parent "Target"
-	mesh "Target"
 }

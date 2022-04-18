@@ -1,0 +1,43 @@
+// Materials
+
+material "Cow"
+{
+	pass
+	{
+		albedo 1.00000 1.00000 1.00000
+		specular 0.165304 0.165304 0.165304
+		glossiness 0.00000
+		two_sided true
+
+		texture_unit
+		{
+			image "Textures/Cow/normal.dds"
+			normal_mask 0x00ffffff
+			invert_y true
+		}
+
+		texture_unit
+		{
+			levels_count 10
+			image "Textures/Cow/diffuse.dds"
+			albedo_mask 0x00ffffff
+			invert_y true
+		}
+
+		texture_unit
+		{
+			levels_count 10
+			image "Textures/Cow/specularGlossiness.dds"
+			specular_mask 0x00ffffff
+			invert_y true
+		}
+	}
+}
+
+// Meshes
+
+mesh "Cow"
+{
+	import "Meshes/Cow.cmsh"
+	default_material "Cow"
+}
