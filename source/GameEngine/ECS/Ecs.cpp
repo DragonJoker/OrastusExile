@@ -1,12 +1,14 @@
 #include "GameEngine/ECS/Ecs.hpp"
 
+#include "GameEngine/GridCell.hpp"
+#include "GameEngine/ECS/AnimationData.hpp"
+#include "GameEngine/ECS/AttackData.hpp"
 #include "GameEngine/ECS/Bullet.hpp"
 #include "GameEngine/ECS/Enemy.hpp"
 #include "GameEngine/ECS/MapBlock.hpp"
-#include "GameEngine/ECS/Tower.hpp"
 #include "GameEngine/ECS/SplashTower.hpp"
-#include "GameEngine/ECS/AnimationData.hpp"
-#include "GameEngine/ECS/AttackData.hpp"
+#include "GameEngine/ECS/Target.hpp"
+#include "GameEngine/ECS/Tower.hpp"
 #include "GameEngine/ECS/TrackData.hpp"
 #include "GameEngine/ECS/WalkData.hpp"
 
@@ -17,6 +19,8 @@ namespace orastus
 		String const STATE_COMPONENT_DESC = cuT( "State component" );
 		String const STATUS_COMPONENT_DESC = cuT( "Status component" );
 		String const COOLDOWN_COMPONENT_DESC = cuT( "Cooldown" );
+		String const ENTITY_COMPONENT_DESC = cuT( "Entity" );
+		String const CELL_COMPONENT_DESC = cuT( "Cell" );
 		String const DAMAGE_COMPONENT_DESC = cuT( "Damage" );
 		String const RANGE_COMPONENT_DESC = cuT( "Range" );
 		String const SPLASH_DAMAGE_COMPONENT_DESC = cuT( "Splash damage" );
@@ -36,6 +40,8 @@ namespace orastus
 	ComponentId const Ecs::StateComponent = Ecs::hash( "state   " );
 	ComponentId const Ecs::StatusComponent = Ecs::hash( "status  " );
 	ComponentId const Ecs::CooldownComponent = Ecs::hash( "cooldown" );
+	ComponentId const Ecs::EntityComponent = Ecs::hash( "entity  " );
+	ComponentId const Ecs::CellComponent = Ecs::hash( "cell    " );
 	ComponentId const Ecs::DamageComponent = Ecs::hash( "damage  " );
 	ComponentId const Ecs::RangeComponent = Ecs::hash( "range   " );
 	ComponentId const Ecs::SplashDamageComponent = Ecs::hash( "splshdmg" );
@@ -172,6 +178,25 @@ namespace orastus
 			, std::move( walkData ) );
 	}
 
+	Entity Ecs::createTarget( castor3d::GeometrySPtr geometry
+		, GridCell cell )
+	{
+		auto entity = doCreateEntity( "Target" );
+		m_targetSet->createData( entity
+			, geometry
+			, std::move( cell ) );
+		return entity;
+	}
+
+	void Ecs::resetTarget( Entity entity
+		, castor3d::GeometrySPtr geometry
+		, GridCell cell )
+	{
+		m_targetSet->resetData( entity
+			, geometry
+			, std::move( cell ) );
+	}
+
 	Entity Ecs::createBullet( castor3d::GeometrySPtr geometry
 		, TrackDataPtr track )
 	{
@@ -259,6 +284,8 @@ namespace orastus
 		doCreateComponent( StateComponent, STATE_COMPONENT_DESC );
 		doCreateComponent( StatusComponent, STATUS_COMPONENT_DESC );
 		doCreateComponent( CooldownComponent, COOLDOWN_COMPONENT_DESC );
+		doCreateComponent( EntityComponent, ENTITY_COMPONENT_DESC );
+		doCreateComponent( CellComponent, CELL_COMPONENT_DESC );
 		doCreateComponent( DamageComponent, DAMAGE_COMPONENT_DESC );
 		doCreateComponent( SplashDamageComponent, SPLASH_DAMAGE_COMPONENT_DESC );
 		doCreateComponent( RangeComponent, RANGE_COMPONENT_DESC );
@@ -277,6 +304,7 @@ namespace orastus
 
 	void Ecs::doCreateAssemblages()
 	{
+		m_targetSet = std::make_unique< Target >( *this );
 		m_towerSet = std::make_unique< Tower >( *this );
 		m_splashTowerSet = std::make_unique< SplashTower >( *this );
 		m_enemySet = std::make_unique< Enemy >( *this );

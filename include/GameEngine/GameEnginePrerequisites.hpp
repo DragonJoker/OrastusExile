@@ -53,6 +53,7 @@ namespace orastus
 	template< typename T >
 	class ComponentData;
 	class MapBlock;
+	class Target;
 	class Tower;
 	class SplashTower;
 	class Enemy;
@@ -62,6 +63,7 @@ namespace orastus
 	struct TrackData;
 	struct WalkData;
 	using MapBlockPtr = std::shared_ptr< MapBlock >;
+	using TargetPtr = std::shared_ptr< Target >;
 	using TowerPtr = std::shared_ptr< Tower >;
 	using SplashTowerPtr = std::shared_ptr< SplashTower >;
 	using EnemyPtr = std::shared_ptr< Enemy >;

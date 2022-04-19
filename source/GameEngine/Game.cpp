@@ -21,13 +21,11 @@
 #include <Castor3D/Scene/Light/Light.hpp>
 #include <Castor3D/Scene/Light/PointLight.hpp>
 
-#include <random>
-
 namespace orastus
 {
 	//*********************************************************************************************
 
-	namespace
+	namespace game
 	{
 		enum class Direction
 		{
@@ -115,7 +113,7 @@ namespace orastus
 			return GridCell::State::eStart;
 		}
 
-		void doPrepareGridLine( GridPathNode const & prv
+		void prepareGridLine( GridPathNode const & prv
 			, GridPathNode const & cur
 			, GridPathNode const *& from
 			, Grid & grid )
@@ -151,7 +149,7 @@ namespace orastus
 		int32_t constexpr targetYMin = -1;
 		int32_t constexpr targetYMax = 3;
 
-		void doPrepareTarget( GridPathNode const & cur
+		void prepareTargetsArea( GridPathNode const & cur
 			, castor3d::Scene & scene
 			, Grid & grid )
 		{
@@ -167,6 +165,50 @@ namespace orastus
 		}
 	}
 
+	//*********************************************************************************************
+
+	castor3d::AnimatedObjectGroupSPtr createAnimation( castor3d::GeometrySPtr geometry
+		, String const & animName
+		, bool looped
+		, bool paused )
+	{
+		CU_Require( geometry );
+		auto & scene = *geometry->getScene();
+		auto animGroup = scene.getAnimatedObjectGroupCache().add( geometry->getName(), scene ).lock();
+		std::chrono::milliseconds time{ 0 };
+		auto mesh = geometry->getMesh().lock();
+		CU_Require( mesh );
+
+		if ( !mesh->getAnimations().empty() )
+		{
+			auto object = animGroup->addObject( *mesh, *geometry, geometry->getName() + cuT( "_Mesh" ) );
+			time = std::max( time
+				, mesh->getAnimation( animName ).getLength() );
+		}
+
+		auto skeleton = mesh->getSkeleton();
+
+		if ( skeleton )
+		{
+			if ( !skeleton->getAnimations().empty() )
+			{
+				auto object = animGroup->addObject( *skeleton, *mesh, *geometry, geometry->getName() + cuT( "_Skeleton" ) );
+				time = std::max( time
+					, skeleton->getAnimation( animName ).getLength() );
+			}
+		}
+
+		animGroup->addAnimation( animName );
+		animGroup->setAnimationLooped( animName, looped );
+		animGroup->startAnimation( animName );
+
+		if ( paused )
+		{
+			animGroup->pauseAnimation( animName );
+		}
+
+		return animGroup;
+	}
 	//*********************************************************************************************
 
 	void Game::SelectedEntity::select( Entity const & pentity
@@ -241,9 +283,9 @@ namespace orastus
 		, m_longRangeTowerMesh{ m_scene.getMeshCache().find( cuT( "Cannon" ) ).lock() }
 		, m_bulletMesh{ m_scene.getMeshCache().find( cuT( "Bullet" ) ).lock() }
 		, m_bulletMaterial{ m_scene.getMaterialView().find( cuT( "Bullet" ) ).lock() }
-		, m_cowMesh{ m_scene.getMeshCache().find( cuT( "Cow" ) ).lock() }
 		, m_enemySpawner{ m_ecs, *this }
 		, m_bulletSpawner{ m_ecs, *this }
+		, m_targetSpawner{ m_ecs, *this }
 	{
 		m_hud.initialise();
 		m_state = State::eInitial;
@@ -398,13 +440,31 @@ namespace orastus
 
 	void Game::killEnemy( Entity entity )
 	{
+		auto target = m_ecs.getComponentData< Entity >( entity
+			, m_ecs.getComponent( Ecs::EntityComponent ) ).getValue();
+
+		if ( target )
+		{
+			m_targetSpawner.freeTarget( target );
+		}
+
 		m_enemySpawner.killEnemy( entity );
 	}
 
-	void Game::enemyArrived( Entity entity )
+	void Game::enemyEscaping( Entity entity )
 	{
-		loseLife();
-		m_enemySpawner.enemyArrived( entity );
+		auto target = m_ecs.getComponentData< Entity >( entity
+			, m_ecs.getComponent( Ecs::EntityComponent ) ).getValue();
+
+		if ( target )
+		{
+			m_targetSpawner.targetCaptured( target );
+		}
+	}
+
+	void Game::enemyEscaped( Entity entity )
+	{
+		m_enemySpawner.enemyEscaped( entity );
 	}
 
 	void Game::killBullet( Entity entity )
@@ -428,8 +488,9 @@ namespace orastus
 		}
 	}
 
-	void Game::loseLife()
+	Entity Game::selectTarget()
 	{
+		return m_targetSpawner.selectTarget();
 	}
 
 	castor3d::GeometrySPtr Game::createEnemy( castor::String const & name
@@ -574,6 +635,11 @@ namespace orastus
 		return geometry->getParent();
 	}
 
+	castor3d::SceneNodeRPtr Game::getTargetNode( castor3d::GeometrySPtr geometry )
+	{
+		return geometry->getParent();
+	}
+
 	void Game::doPrepareGrid()
 	{
 		auto prv = m_path.begin();
@@ -585,12 +651,12 @@ namespace orastus
 
 			while ( cur != m_path.end() )
 			{
-				doPrepareGridLine( *prv, *cur, from, m_grid );
+				game::prepareGridLine( *prv, *cur, from, m_grid );
 				++prv;
 				++cur;
 			}
 
-			doPrepareTarget( *prv, m_scene, m_grid );
+			game::prepareTargetsArea( *prv, m_scene, m_grid );
 		}
 	}
 
@@ -630,25 +696,11 @@ namespace orastus
 
 	void Game::doAddTargets( GridCell & cell )
 	{
-		uint32_t index = 0u;
-		std::random_device r;
-		std::default_random_engine e{ r() };
-		std::uniform_real_distribution< float > distribution{ 0.0f, 360.0f };
-
-		for ( uint32_t x = cell.x + targetXMin; x <= cell.x + targetXMax; ++x )
+		for ( uint32_t x = cell.x + game::targetXMin; x <= cell.x + game::targetXMax; ++x )
 		{
-			for ( uint32_t y = cell.y + targetYMin; y <= cell.y + targetYMax; ++y )
+			for ( uint32_t y = cell.y + game::targetYMin; y <= cell.y + game::targetYMax; ++y )
 			{
-				auto name = "Target" + castor::string::toString( index++ );
-				auto node = m_scene.getSceneNodeCache().add( name ).lock();
-				node->setPosition( doConvert( castor::Point2i{ x, y } )
-					+ castor::Point3f{ 0, getCellHeight() / 5.0f, 0 } );
-				node->yaw( castor::Angle::fromDegrees( distribution( e ) ) );
-				node->setScale( { 0.05f, 0.05f, 0.05f } );
-				node->attachTo( *m_mapNode );
-				auto cow = m_scene.getGeometryCache().create( name, m_scene, *node, m_cowMesh );
-				doCreateAnimation( cow, "C4D Animation Take", true, false );
-				m_scene.getGeometryCache().add( cow );
+				m_targetSpawner.spawn( m_grid( y, x ) );
 			}
 		}
 
@@ -703,48 +755,6 @@ namespace orastus
 		cell.state = GridCell::State::eTower;
 		return tower;
 	}
-
-	castor3d::AnimatedObjectGroupSPtr Game::doCreateAnimation( castor3d::GeometrySPtr geometry
-		, String const & animName
-		, bool looped
-		, bool paused )
-	{
-		 CU_Require( geometry );
-		 auto animGroup = m_scene.getAnimatedObjectGroupCache().add( geometry->getName(), m_scene ).lock();
-		 std::chrono::milliseconds time{ 0 };
-		 auto mesh = geometry->getMesh().lock();
-		 CU_Require( mesh );
-
-		 if ( !mesh->getAnimations().empty() )
-		 {
-			 auto object = animGroup->addObject( *mesh, *geometry, geometry->getName() + cuT( "_Mesh" ) );
-			 time = std::max( time
-				 , mesh->getAnimation( animName ).getLength() );
-		 }
-
-		 auto skeleton = mesh->getSkeleton();
-
-		 if ( skeleton )
-		 {
-			 if ( !skeleton->getAnimations().empty() )
-			 {
-				 auto object = animGroup->addObject( *skeleton, *mesh, *geometry, geometry->getName() + cuT( "_Skeleton" ) );
-				 time = std::max( time
-					 , skeleton->getAnimation( animName ).getLength() );
-			 }
-		 }
-
-		 animGroup->addAnimation( animName );
-		 animGroup->setAnimationLooped( animName, looped );
-		 animGroup->startAnimation( animName );
-
-		 if ( paused )
-		 {
-			 animGroup->pauseAnimation( animName );
-		 }
-
-		 return animGroup;
-	 }
 
 	 void Game::doSelectMapBlock( Entity const & entity )
 	 {

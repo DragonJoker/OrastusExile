@@ -230,6 +230,29 @@ namespace orastus
 			, WalkDataPtr walkData );
 		/**
 		*\brief
+		*	Creates an enemies target.
+		*\param[in] geometry
+		*	The geometry value.
+		*\param[in] cell
+		*	The cell value.
+		*/
+		EFO_API Entity createTarget( castor3d::GeometrySPtr geometry
+			, GridCell cell );
+		/**
+		*\brief
+		*	Resets an enemies target to initial state.
+		*\param[in] entity
+		*	The target entity.
+		*\param[in] geometry
+		*	The geometry value.
+		*\param[in] cell
+		*	The cell value.
+		*/
+		EFO_API void resetTarget( Entity entity
+			, castor3d::GeometrySPtr geometry
+			, GridCell cell );
+		/**
+		*\brief
 		*	Creates a bullet.
 		*\param[in] geometry
 		*	The geometry value.
@@ -422,6 +445,8 @@ namespace orastus
 		EFO_API static ComponentId const StateComponent;
 		EFO_API static ComponentId const StatusComponent;
 		EFO_API static ComponentId const CooldownComponent;
+		EFO_API static ComponentId const EntityComponent;
+		EFO_API static ComponentId const CellComponent;
 		EFO_API static ComponentId const DamageComponent;
 		EFO_API static ComponentId const RangeComponent;
 		EFO_API static ComponentId const SplashDamageComponent;
@@ -443,6 +468,7 @@ namespace orastus
 		EntityList m_entities;
 		EntityComponentsMap m_entitiesComponents;
 		// Assemblages.
+		TargetPtr m_targetSet;
 		TowerPtr m_towerSet;
 		SplashTowerPtr m_splashTowerSet;
 		EnemyPtr m_enemySet;

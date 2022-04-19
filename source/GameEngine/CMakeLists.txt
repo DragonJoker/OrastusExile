@@ -17,6 +17,7 @@ set( ${PROJECT_NAME}_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/GridPathNode.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Hud.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Resource.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/TargetSpawner.hpp
 )
 set( ${PROJECT_NAME}_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/BulletSpawner.cpp
@@ -26,6 +27,7 @@ set( ${PROJECT_NAME}_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Grid.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Hud.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Resource.cpp
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/TargetSpawner.cpp
 )
 source_group( "Header Files"
 	FILES
@@ -50,6 +52,7 @@ set( ${PROJECT_NAME}_FOLDER_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/MapBlock.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/SplashTower.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/StateSystem.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Target.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Tower.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/TrackData.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/WalkData.hpp
@@ -66,6 +69,7 @@ set( ${PROJECT_NAME}_FOLDER_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/MapBlock.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/SplashTower.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/StateSystem.cpp
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Target.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Tower.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/TrackData.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/WalkData.cpp
@@ -92,6 +96,7 @@ set( ${PROJECT_NAME}_FOLDER_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/State/EnemyState.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/State/State.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/State/StateMachine.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/State/TargetState.hpp
 )
 set( ${PROJECT_NAME}_FOLDER_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/State/TowerState.cpp
@@ -99,6 +104,7 @@ set( ${PROJECT_NAME}_FOLDER_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/State/EnemyState.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/State/State.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/State/StateMachine.cpp
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/State/TargetState.cpp
 )
 source_group( "Header Files\\State"
 	FILES

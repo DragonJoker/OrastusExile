@@ -31,6 +31,24 @@ namespace orastus
 		EFO_API State createWalkingState( Ecs & ecs, Entity const & entity );
 		/**
 		*\brief
+		*	Creates the selecting state for given enemy.
+		*\param[in] ecs
+		*	The ECS instance.
+		*\param[in] entity
+		*	The enemy's entity.
+		*/
+		EFO_API State createSelectingState( Ecs & ecs, Entity const & entity );
+		/**
+		*\brief
+		*	Creates the capturing state for given enemy.
+		*\param[in] ecs
+		*	The ECS instance.
+		*\param[in] entity
+		*	The enemy's entity.
+		*/
+		EFO_API State createCapturingState( Ecs & ecs, Entity const & entity );
+		/**
+		*\brief
 		*	Creates the escaping state for given enemy.
 		*\param[in] ecs
 		*	The ECS instance.
@@ -57,6 +75,10 @@ namespace orastus
 		eDying,
 		//! The enemy is dead.
 		eDead,
+		//! The enemy is selecting a target.
+		eSelecting,
+		//! The enemy is waiting for a target.
+		eWaiting,
 		//! The enemy is capturing a target.
 		eCapturing,
 		//! The enemy is escaping the map.

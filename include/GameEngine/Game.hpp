@@ -9,10 +9,15 @@ See licence file in root folder, MIT.txt
 #include "EnemySpawner.hpp"
 #include "Grid.hpp"
 #include "Hud.hpp"
+#include "TargetSpawner.hpp"
 #include "ECS/Ecs.hpp"
 
 namespace orastus
 {
+	castor3d::AnimatedObjectGroupSPtr createAnimation( castor3d::GeometrySPtr geometry
+		, String const & animName
+		, bool looped = false
+		, bool paused = true );
 	/**
 	*\brief
 	*	Main class for the game logic.
@@ -102,11 +107,18 @@ namespace orastus
 		EFO_API void killEnemy( Entity entity );
 		/**
 		*\brief
-		*	An enemy has arrived to the destination.
+		*	An enemy is escaping with its target.
 		*\param[in] entity
 		*	The enemy entity.
 		*/
-		EFO_API void enemyArrived( Entity entity );
+		EFO_API void enemyEscaping( Entity entity );
+		/**
+		*\brief
+		*	An enemy has escaped.
+		*\param[in] entity
+		*	The enemy entity.
+		*/
+		EFO_API void enemyEscaped( Entity entity );
 		/**
 		*\brief
 		*	Kills a bullet.
@@ -129,9 +141,11 @@ namespace orastus
 			, uint32_t damage );
 		/**
 		*\brief
-		*	Makes the player lose a life.
+		*	Select an available target to capture.
+		*\return
+		*	The target entity.
 		*/
-		EFO_API void loseLife();
+		EFO_API Entity selectTarget();
 		/**
 		*\brief
 		*	Creates an enemy geometry.
@@ -198,6 +212,15 @@ namespace orastus
 		*/
 		EFO_API static castor3d::SceneNodeRPtr getBulletNode( castor3d::GeometrySPtr geometry );
 		/**
+		*\brief
+		*	Retrieves the scene node for given target's geometry.
+		*\param[in] geometry
+		*	The geometry.
+		*\return
+		*	The scene node.
+		*/
+		EFO_API static castor3d::SceneNodeRPtr getTargetNode( castor3d::GeometrySPtr geometry );
+		/**
 		*\return
 		*	\p true if the game is started.
 		*/
@@ -257,9 +280,25 @@ namespace orastus
 		*\return
 		*	The scene.
 		*/
-		castor3d::Scene const & getScene()const
+		castor3d::Scene & getScene()const
 		{
 			return m_scene;
+		}
+		/**
+		*\return
+		*	The map base node.
+		*/
+		castor3d::SceneNode & getMapNode()const
+		{
+			return *m_mapNode;
+		}
+		/**
+		*\return
+		*	The current life count.
+		*/
+		uint32_t getLives()const
+		{
+			return m_targetSpawner.getLives();
 		}
 		/**
 		*\return
@@ -285,6 +324,14 @@ namespace orastus
 		{
 			return m_enemySpawner.getEnemiesLife();
 		}
+		/**
+		*\return
+		*	The current wave enemies bounty.
+		*/
+		uint32_t getEnemiesBounty()const
+		{
+			return m_enemySpawner.getEnemiesBounty();
+		}
 
 	private:
 		void doPrepareGrid();
@@ -305,10 +352,6 @@ namespace orastus
 			, GridCell & cell
 			, castor3d::Mesh const & base
 			, castor3d::MeshResPtr mesh );
-		castor3d::AnimatedObjectGroupSPtr doCreateAnimation( castor3d::GeometrySPtr geometry
-			, castor::String const & animName
-			, bool looped = false
-			, bool paused = true );
 		void doSelectMapBlock( Entity const & entity );
 		void doSelectTower( Entity const & entity );
 		castor3d::GeometrySPtr doGetGeometry( Entity const & entity );
@@ -335,7 +378,6 @@ namespace orastus
 		castor3d::MeshResPtr m_longRangeTowerMesh;
 		castor3d::MeshResPtr m_bulletMesh;
 		castor3d::MaterialSPtr m_bulletMaterial;
-		castor3d::MeshRes m_cowMesh;
 		// Varying data.
 		GridCell * m_selectedCell{ nullptr };
 		Clock::time_point m_saved;
@@ -345,6 +387,7 @@ namespace orastus
 		SelectedEntity m_selectedBlock;
 		EnemySpawner m_enemySpawner;
 		BulletSpawner m_bulletSpawner;
+		TargetSpawner m_targetSpawner;
 	};
 }
 

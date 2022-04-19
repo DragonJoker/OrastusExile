@@ -229,12 +229,12 @@ namespace orastus
 
 	void Hud::update()
 	{
-		//auto text = m_lives.lock();
+		auto text = m_lives.lock();
 
-		//if ( text )
-		//{
-		//	text->setCaption( StringStream() << m_game.getLives() );
-		//}
+		if ( text )
+		{
+			text->setCaption( castor::string::toString( m_game.getLives() ) );
+		}
 
 		//text = m_ore.lock();
 
@@ -243,7 +243,7 @@ namespace orastus
 		//	text->setCaption( StringStream() << m_game.getOre() );
 		//}
 
-		auto text = m_level.lock();
+		text = m_level.lock();
 
 		if ( text )
 		{
@@ -264,11 +264,11 @@ namespace orastus
 			text->setCaption( castor::string::toString( m_game.getEnemiesLife() ) );
 		}
 
-		//text = m_enemyBounty.lock();
+		text = m_enemyBounty.lock();
 
-		//if ( text )
-		//{
-		//	text->setCaption( StringStream() << m_game.getEnemiesBounty() );
-		//}
+		if ( text )
+		{
+			text->setCaption( castor::string::toString( m_game.getEnemiesBounty() ) );
+		}
 	}
 }

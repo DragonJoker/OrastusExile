@@ -108,8 +108,9 @@ namespace orastus
 		Game::getEnemyNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
 	}
 
-	void EnemySpawner::enemyArrived( Entity enemy )
+	void EnemySpawner::enemyEscaped( Entity enemy )
 	{
+		castor3d::log::info << "Enemy has escaped";
 		auto it = std::find( std::begin( m_liveEnemies )
 			, std::end( m_liveEnemies )
 			, enemy );
@@ -119,7 +120,6 @@ namespace orastus
 			m_liveEnemies.erase( it );
 		}
 
-		m_ecs.getComponentData< EnemyState >( enemy, m_ecs.getComponent( Ecs::StatusComponent ) ).setValue( EnemyState::eEscaping );
 		m_enemiesCache->push_back( enemy );
 		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( enemy
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();

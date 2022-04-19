@@ -18,9 +18,20 @@ namespace orastus
 
 		EFO_API void reset();
 		EFO_API void update( Milliseconds const & elapsed );
-
+		/**
+		*\brief
+		*	Kills an enemy.
+		*\param[in] entity
+		*	The enemy entity.
+		*/
 		EFO_API void killEnemy( Entity enemy );
-		EFO_API void enemyArrived( Entity enemy );
+		/**
+		*\brief
+		*	An enemy has escaped.
+		*\param[in] entity
+		*	The enemy entity.
+		*/
+		EFO_API void enemyEscaped( Entity enemy );
 
 		uint32_t getWave()const
 		{
