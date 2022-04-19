@@ -2,6 +2,7 @@
 
 #include "GameEngine/ECS/Ecs.hpp"
 #include "GameEngine/ECS/WalkData.hpp"
+#include "GameEngine/ECS/SoundSource.hpp"
 #include "GameEngine/State/EnemyState.hpp"
 #include "GameEngine/State/StateMachine.hpp"
 
@@ -17,6 +18,7 @@ namespace orastus
 		, m_walk{ m_ecs.getComponent( Ecs::WalkComponent ) }
 		, m_state{ m_ecs.getComponent( Ecs::StateComponent ) }
 		, m_status{ m_ecs.getComponent( Ecs::StatusComponent ) }
+		, m_killSound{ m_ecs.getComponent( Ecs::SoundSourceComponent ) }
 	{
 	}
 
@@ -24,7 +26,8 @@ namespace orastus
 		, float speed
 		, uint32_t life
 		, castor3d::GeometrySPtr geometry
-		, WalkDataPtr walkData )
+		, WalkDataPtr walkData
+		, SoundSource killSound )
 	{
 		m_ecs.createComponentData( entity
 			, m_speed
@@ -41,6 +44,9 @@ namespace orastus
 		m_ecs.createComponentData( entity
 			, m_walk
 			, std::move( walkData ) );
+		m_ecs.createComponentData( entity
+			, m_killSound
+			, std::move( killSound ) );
 		m_ecs.createComponentData( entity
 			, m_status
 			, EnemyState::eSpawning );

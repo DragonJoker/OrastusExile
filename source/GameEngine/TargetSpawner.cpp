@@ -2,6 +2,7 @@
 
 #include "GameEngine/Game.hpp"
 #include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/ECS/SoundSource.hpp"
 #include "GameEngine/State/TargetState.hpp"
 
 #include <Castor3D/Cache/SceneNodeCache.hpp>
@@ -18,7 +19,6 @@ namespace orastus
 		: m_ecs{ ecs }
 		, m_game{ game }
 		, m_targetMesh{ m_game.getScene().getMeshCache().find( cuT( "Cow" ) ).lock() }
-		, m_engine{ m_device() }
 	{
 		reset();
 	}
@@ -37,14 +37,17 @@ namespace orastus
 			auto node = scene.getSceneNodeCache().add( name ).lock();
 			node->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y } )
 				+ castor::Point3f{ 0, m_game.getCellHeight() / 5.0f, 0 } );
-			node->yaw( castor::Angle::fromDegrees( m_distribution( m_engine ) ) );
+			node->yaw( castor::Angle::fromDegrees( m_distribution( m_game.getRandomEngine() ) ) );
 			node->setScale( { 0.05f, 0.05f, 0.05f } );
 			node->attachTo( m_game.getMapNode() );
 			auto geometry = scene.getGeometryCache().create( name, scene, *node, m_targetMesh );
 			createAnimation( geometry, "C4D Animation Take", true, false );
 			scene.getGeometryCache().add( geometry );
 			m_liveTargets.push_back( m_ecs.createTarget( geometry
-				, std::move( cell ) ) );
+				, std::move( cell )
+				, SoundSource{ *node
+					, m_game.getTargetCapturedSound()
+					, false } ) );
 		}
 		else
 		{
@@ -95,7 +98,15 @@ namespace orastus
 			+ castor::Point3f{ 0, m_game.getCellHeight() / 5.0f, 0 } );
 	}
 
-	void TargetSpawner::targetCaptured( Entity target )
+	void TargetSpawner::targetBeingCaptured( Entity target )
+	{
+		m_ecs.getComponentData< TargetState >( target
+			, m_ecs.getComponent( Ecs::StatusComponent ) ).setValue( TargetState::eCapturing );
+		m_ecs.getComponentData< SoundSource >( target
+			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue().play();
+	}
+
+	bool TargetSpawner::targetCaptured( Entity target )
 	{
 		auto it = std::find( std::begin( m_selectedTargets )
 			, std::end( m_selectedTargets )
@@ -113,5 +124,6 @@ namespace orastus
 		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( target
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
 		Game::getTargetNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
+		return m_count == 0u;
 	}
 }

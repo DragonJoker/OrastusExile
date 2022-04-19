@@ -57,9 +57,9 @@ namespace orastus
 		*\param[in] value
 		*	The new value.
 		*/
-		void setValue( T const & value )
+		void setValue( T value )
 		{
-			m_value = value;
+			m_value = std::move( value );
 		}
 
 	protected:

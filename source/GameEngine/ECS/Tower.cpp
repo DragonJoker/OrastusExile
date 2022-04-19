@@ -3,6 +3,7 @@
 #include "GameEngine/ECS/Ecs.hpp"
 #include "GameEngine/ECS/AnimationData.hpp"
 #include "GameEngine/ECS/AttackData.hpp"
+#include "GameEngine/ECS/SoundSource.hpp"
 #include "GameEngine/State/TowerState.hpp"
 #include "GameEngine/State/StateMachine.hpp"
 
@@ -14,6 +15,7 @@ namespace orastus
 	Tower::Tower( Ecs & ecs )
 		: m_ecs{ ecs }
 		, m_cooldown{ m_ecs.getComponent( Ecs::CooldownComponent ) }
+		, m_timeout{ m_ecs.getComponent( Ecs::TimeoutComponent ) }
 		, m_damage{ m_ecs.getComponent( Ecs::DamageComponent ) }
 		, m_range{ m_ecs.getComponent( Ecs::RangeComponent ) }
 		, m_bulletSpeed{ m_ecs.getComponent( Ecs::SpeedComponent ) }
@@ -23,6 +25,8 @@ namespace orastus
 		, m_pickable{ m_ecs.getComponent( Ecs::PickableComponent ) }
 		, m_animation{ m_ecs.getComponent( Ecs::AnimationComponent ) }
 		, m_attack{ m_ecs.getComponent( Ecs::AttackComponent ) }
+		, m_shootSound{ m_ecs.getComponent( Ecs::SoundSourceComponent ) }
+		, m_hitSound{ m_ecs.getComponent( Ecs::SoundComponent ) }
 	{
 	}
 
@@ -34,7 +38,9 @@ namespace orastus
 		, uint32_t requiredLevel
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
-		, AttackDataPtr attack )
+		, AttackDataPtr attack
+		, SoundSource shootSound
+		, Sound const * hitSound )
 	{
 		m_ecs.createComponentData( entity
 			, m_cooldown
@@ -54,12 +60,28 @@ namespace orastus
 		m_ecs.createComponentData( entity
 			, m_pickable
 			, true );
+		m_ecs.createComponentData( entity
+			, m_shootSound
+			, std::move( shootSound ) );
+
+		if ( hitSound )
+		{
+			m_ecs.createComponentData( entity
+				, m_hitSound
+				, hitSound );
+		}
 
 		if ( animation )
 		{
 			m_ecs.createComponentData( entity
 				, m_animation
 				, std::move( animation ) );
+		}
+		else
+		{
+			m_ecs.createComponentData( entity
+				, m_timeout
+				, 0_ms );
 		}
 
 		m_ecs.createComponentData( entity

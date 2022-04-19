@@ -83,7 +83,9 @@ namespace orastus
 
 			if ( target )
 			{
-				m_game = std::make_unique< Game >( *target->getScene() );
+				m_game = std::make_unique< Game >( castor3d::Engine::getEngineDirectory() / cuT( "GameEngine" )
+					, *target->getScene()
+					, *target->getCamera() );
 				m_panel = wxMakeWindowPtr< RenderPanel >( this, MainFrameSize, *m_game );
 				m_panel->setRenderTarget( target );
 				auto & window = m_panel->getRenderWindow();

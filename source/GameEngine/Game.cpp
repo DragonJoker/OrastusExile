@@ -1,7 +1,9 @@
 #include "GameEngine/Game.hpp"
 
+#include "GameEngine/Audio.hpp"
 #include "GameEngine/Ecs/AnimationData.hpp"
 #include "GameEngine/Ecs/AttackData.hpp"
+#include "GameEngine/Ecs/SoundSource.hpp"
 #include "GameEngine/ECS/WalkData.hpp"
 #include "GameEngine/State/EnemyState.hpp"
 #include "GameEngine/State/StateMachine.hpp"
@@ -14,6 +16,7 @@
 #include <Castor3D/Model/Mesh/Mesh.hpp>
 #include <Castor3D/Model/Mesh/Submesh/Submesh.hpp>
 #include <Castor3D/Model/Skeleton/Skeleton.hpp>
+#include <Castor3D/Scene/Camera.hpp>
 #include <Castor3D/Scene/Geometry.hpp>
 #include <Castor3D/Scene/Scene.hpp>
 #include <Castor3D/Scene/Animation/AnimatedObject.hpp>
@@ -254,9 +257,13 @@ namespace orastus
 
 	//*********************************************************************************************
 
-	Game::Game( castor3d::Scene & scene )
-		: m_scene{ scene }
-		, m_hud{ *this, scene }
+	Game::Game( castor::Path const & dataFolder
+		, castor3d::Scene & scene
+		, castor3d::Camera const & camera )
+		: m_audio{ castor::makeUnique< Audio >() }
+		, m_scene{ scene }
+		, m_camera{ camera }
+		, m_hud{ *this, dataFolder, scene }
 		, m_path{ { 19, 0 }
 			, { 19, 3 }
 			, { 11, 3 }
@@ -283,6 +290,18 @@ namespace orastus
 		, m_longRangeTowerMesh{ m_scene.getMeshCache().find( cuT( "Cannon" ) ).lock() }
 		, m_bulletMesh{ m_scene.getMeshCache().find( cuT( "Bullet" ) ).lock() }
 		, m_bulletMaterial{ m_scene.getMaterialView().find( cuT( "Bullet" ) ).lock() }
+		, m_targetCapturedSounds{ &m_audio->addSound( Sound::Type::eSfx, dataFolder / "Sounds" / "cow-1.wav" )
+			, &m_audio->addSound( Sound::Type::eSfx, dataFolder / "Sounds" / "cow-2.wav" )
+			, &m_audio->addSound( Sound::Type::eSfx, dataFolder / "Sounds" / "cow-3.wav" )
+			, &m_audio->addSound( Sound::Type::eSfx, dataFolder / "Sounds" / "cow-4.wav" ) }
+		, m_ballistaShootSound{ m_audio->addSound( Sound::Type::eSfx, dataFolder / "Sounds" / "ballista_shoot.wav" ) }
+		, m_cannonShootSound{ m_audio->addSound( Sound::Type::eSfx, dataFolder / "Sounds" / "cannon_shoot.wav" ) }
+		, m_ballistaHitSound{ m_audio->addSound( Sound::Type::eSfx, dataFolder / "Sounds" / "ballista_hit.wav" ) }
+		, m_cannonHitSound{ m_audio->addSound( Sound::Type::eSfx, dataFolder / "Sounds" / "cannon_hit.wav" ) }
+		, m_enemyKillSound{ m_audio->addSound( Sound::Type::eSfx, dataFolder / "Sounds" / "enemy_kill.wav" ) }
+		, m_towerBuildSound{ m_audio->addSound( Sound::Type::eSfx, dataFolder / "Sounds" / "tower_build.wav" ), false }
+		, m_waveStartSound{ m_audio->addSound( Sound::Type::eSfx, dataFolder / "Sounds" / "wave_start.wav" ), false }
+		, m_engine{ m_device() }
 		, m_enemySpawner{ m_ecs, *this }
 		, m_bulletSpawner{ m_ecs, *this }
 		, m_targetSpawner{ m_ecs, *this }
@@ -451,14 +470,31 @@ namespace orastus
 		m_enemySpawner.killEnemy( entity );
 	}
 
-	void Game::enemyEscaping( Entity entity )
+	void Game::enemyCapturing( Entity entity )
 	{
+		m_ecs.getComponentData< EnemyState >( entity
+			, m_ecs.getComponent( Ecs::StatusComponent ) ).setValue( EnemyState::eCapturing );
 		auto target = m_ecs.getComponentData< Entity >( entity
 			, m_ecs.getComponent( Ecs::EntityComponent ) ).getValue();
 
 		if ( target )
 		{
-			m_targetSpawner.targetCaptured( target );
+			m_targetSpawner.targetBeingCaptured( target );
+		}
+	}
+
+	void Game::enemyEscaping( Entity entity )
+	{
+		m_ecs.getComponentData< EnemyState >( entity
+			, m_ecs.getComponent( Ecs::StatusComponent ) ).setValue( EnemyState::eEscaping );
+		auto target = m_ecs.getComponentData< Entity >( entity
+			, m_ecs.getComponent( Ecs::EntityComponent ) ).getValue();
+		CU_Require( target );
+
+		if ( m_targetSpawner.targetCaptured( target ) )
+		{
+			m_state = State::eEnded;
+			m_hud.gameOver();
 		}
 	}
 
@@ -476,6 +512,8 @@ namespace orastus
 		, Entity target
 		, uint32_t damage )
 	{
+		m_ecs.getComponentData< SoundSource >( source
+			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue().play();
 		m_bulletSpawner.killBullet( source );
 
 		auto & life = m_ecs.getComponentData< uint32_t >( target
@@ -549,6 +587,7 @@ namespace orastus
 
 			if ( tower )
 			{
+				m_towerBuildSound.play();
 				m_selectedCell->entity = m_ecs.createTower( 700_ms
 					, 3u
 					, 40.0f
@@ -556,7 +595,11 @@ namespace orastus
 					, 1u
 					, tower
 					, nullptr
-					, std::make_unique< AttackData >( 0_ms ) );
+					, std::make_unique< AttackData >( 0_ms )
+					, SoundSource{ *tower->getParent()
+						, m_ballistaShootSound
+						, false }
+					, &m_ballistaHitSound );
 				auto & stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
 					, m_ecs.getComponent( Ecs::StateComponent ) ).getValue();
 				stateMachine->addState( tower::createShootingState( m_ecs, m_selectedCell->entity ) );
@@ -581,6 +624,7 @@ namespace orastus
 
 			if ( tower )
 			{
+				m_towerBuildSound.play();
 				m_selectedCell->entity = m_ecs.createTower( 2000_ms
 					, 5u
 					, 100.0f
@@ -588,7 +632,11 @@ namespace orastus
 					, 1u
 					, tower
 					, nullptr
-					, std::make_unique< AttackData >( 0_ms ) );
+					, std::make_unique< AttackData >( 0_ms )
+					, SoundSource{ *tower->getParent()
+						, m_cannonShootSound
+						, false }
+					, &m_cannonHitSound );
 				auto & stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
 					, m_ecs.getComponent( Ecs::StateComponent ) ).getValue();
 				stateMachine->addState( tower::createShootingState( m_ecs, m_selectedCell->entity ) );
@@ -600,15 +648,22 @@ namespace orastus
 	void Game::createBullet( Entity source
 		, Entity target )
 	{
+		m_ecs.getComponentData< SoundSource >( source
+			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue().play();
+		auto sound = m_ecs.getComponentData< Sound const * >( source
+			, m_ecs.getComponent( Ecs::SoundComponent ) ).getValue();
+
 		if ( m_bulletSpawner.hasFreeBullet() )
 		{
 			m_bulletSpawner.fireBullet( source
-				, target );
+				, target
+				, *sound );
 		}
 		else
 		{
 			m_bulletSpawner.fireBullet( source
 				, target
+				, *sound
 				, doCreateBullet( source ) );
 		}
 	}
@@ -618,6 +673,17 @@ namespace orastus
 		return castor::Point3f( float( position[0] - int( m_grid.getWidth() ) / 2 ) * m_cellDimensions[0]
 			, 0
 			, float( position[1] - int( m_grid.getHeight() ) / 2 ) * m_cellDimensions[2] );
+	}
+
+	Sound const & Game::getTargetCapturedSound()
+	{
+		std::uniform_int_distribution< size_t > dist( 0u, m_targetCapturedSounds.size() - 1u );
+		return *m_targetCapturedSounds[dist( m_engine )];
+	}
+
+	Sound & Game::addSound( castor::Path const & file )
+	{
+		return m_audio->addSound( Sound::Type::eSfx, file );
 	}
 
 	castor3d::SceneNodeRPtr Game::getEnemyNode( castor3d::GeometrySPtr geometry )
@@ -666,14 +732,18 @@ namespace orastus
 		, bool pickable )
 	{
 		String name = cuT( "Tile_" ) + std::to_string( cell.x ) + cuT( "x" ) + std::to_string( cell.y );
-		auto node = m_scene.getSceneNodeCache().add( name ).lock();
-		auto geometry = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
-		node->setPosition( doConvert( castor::Point2i{ cell.x, cell.y } )
-			+ castor::Point3f{ 0, m_cellDimensions[1] / 2, 0 } );
-		node->setOrientation( orientation );
-		node->attachTo( *m_mapNode );
-		m_scene.getGeometryCache().add( geometry );
-		cell.entity = m_ecs.createMapBlock( geometry, pickable );
+
+		if ( !m_scene.getSceneNodeCache().has( name ) )
+		{
+			auto node = m_scene.getSceneNodeCache().add( name ).lock();
+			auto geometry = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
+			node->setPosition( doConvert( castor::Point2i{ cell.x, cell.y } )
+				+ castor::Point3f{ 0, m_cellDimensions[1] / 2, 0 } );
+			node->setOrientation( orientation );
+			node->attachTo( *m_mapNode );
+			m_scene.getGeometryCache().add( geometry );
+			cell.entity = m_ecs.createMapBlock( geometry, pickable );
+		}
 	}
 
 	void Game::doAddEmptyTile( GridCell & cell )
@@ -703,7 +773,6 @@ namespace orastus
 				m_targetSpawner.spawn( m_grid( y, x ) );
 			}
 		}
-
 	}
 
 	castor3d::GeometrySPtr Game::doCreateBullet( Entity source )

@@ -46,6 +46,7 @@ namespace orastus
 	}
 
 	Hud::Hud( Game & game
+		, castor::Path const & dataFolder
 		, castor3d::Scene const & scene )
 		: m_game{ game }
 		, m_scene{ scene }
@@ -58,6 +59,7 @@ namespace orastus
 		, m_towerSpeed{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerSpeedValue" ) ) }
 		, m_towerRange{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerRangeValue" ) ) }
 		, m_towerDamage{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerDamageValue" ) ) }
+		, m_buttonSound{ game.addSound( dataFolder / "Sounds" / "hud_button.wav" ), false }
 	{
 	}
 
@@ -168,11 +170,13 @@ namespace orastus
 		userInput->registerClickAction( cuT( "Build/ShortRange/Button" )
 			, [this]()
 			{
+				m_buttonSound.play();
 				m_game.createShortRangeTower();
 			} );
 		userInput->registerClickAction( cuT( "Build/Splash/Button" )
 			, [this]()
 			{
+				m_buttonSound.play();
 				m_game.createLongRangeTower();
 			} );
 		userInput->registerClickAction( cuT( "HUDBuild" )

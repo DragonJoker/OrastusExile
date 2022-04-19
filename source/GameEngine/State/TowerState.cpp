@@ -104,6 +104,14 @@ namespace orastus
 
 		State createIdleState( Ecs & ecs, Entity const & entity )
 		{
+			auto & attackdata = ecs.getComponentData< AttackDataPtr >( entity
+				, ecs.getComponent( Ecs::AttackComponent ) ).getValue();
+
+			if ( !attackdata )
+			{
+				throw std::runtime_error{ "No attack component" };
+			}
+
 			auto geometry = ecs.getComponentData< castor3d::GeometrySPtr >( entity
 				, ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
 
@@ -122,7 +130,7 @@ namespace orastus
 			auto range = ecs.getComponentData< float >( entity
 				, ecs.getComponent( Ecs::RangeComponent ) ).getValue();
 
-			return State{ [&ecs, entity, node, range]( Game & game
+			return State{ [&ecs, entity, node, range, &attackdata]( Game & game
 				, Milliseconds const & elapsed
 				, Milliseconds const & total )
 				{
@@ -131,6 +139,25 @@ namespace orastus
 						, enemies
 						, *node
 						, range );
+					attackdata->shot = false;
+
+					if ( !ecs.hasComponent( entity, ecs.getComponent( Ecs::AnimationComponent ) ) )
+					{
+						auto & timeoutComp = ecs.getComponentData< Milliseconds >( entity
+							, ecs.getComponent( Ecs::TimeoutComponent ) );
+						auto timeout = timeoutComp.getValue();
+
+						if ( timeout < elapsed )
+						{
+							timeout = 0_ms;
+						}
+						else
+						{
+							timeout -= elapsed;
+						}
+
+						timeoutComp.setValue( timeout );
+					}
 
 					if ( target )
 					{
@@ -151,9 +178,9 @@ namespace orastus
 
 			if ( !animdata )
 			{
-				if ( !ecs.hasComponent( entity, ecs.getComponent( Ecs::CooldownComponent ) ) )
+				if ( !ecs.hasComponent( entity, ecs.getComponent( Ecs::TimeoutComponent ) ) )
 				{
-					throw std::runtime_error{ "Need either a cooldown or an animation component" };
+					throw std::runtime_error{ "Need either a timeout or an animation component" };
 				}
 			}
 
@@ -204,34 +231,45 @@ namespace orastus
 
 				if ( !animdata )
 				{
+					auto & timeoutComp = ecs.getComponentData< Milliseconds >( entity
+						, ecs.getComponent( Ecs::TimeoutComponent ) );
+					auto timeout = timeoutComp.getValue();
+
+					if ( timeout < elapsed )
+					{
+						timeout = 0_ms;
+					}
+
 					if ( attackdata->target )
 					{
 						turnToTarget( ecs
 							, attackdata->target
 							, *node );
 
-						if ( total >= ecs.getComponentData< Milliseconds >( entity
-								, ecs.getComponent( Ecs::CooldownComponent ) ).getValue() )
+						if ( timeout == 0_ms )
 						{
-							if ( !attackdata->shot )
-							{
-								game.createBullet( entity
-									, attackdata->target );
-								attackdata->shot = true;
-							}
-
+							game.createBullet( entity
+								, attackdata->target );
+							timeout = ecs.getComponentData< Milliseconds >( entity
+								, ecs.getComponent( Ecs::CooldownComponent ) ).getValue();
 							result = true;
 						}
 						else
 						{
-							attackdata->shot = false;
+							timeout -= elapsed;
 						}
 					}
-					else if ( total >= ecs.getComponentData< Milliseconds >( entity
-						, ecs.getComponent( Ecs::CooldownComponent ) ).getValue() )
+					else
 					{
+						if ( timeout != 0_ms )
+						{
+							timeout -= elapsed;
+						}
+
 						result = true;
 					}
+
+					timeoutComp.setValue( timeout );
 				}
 				else if ( attackdata->target )
 				{

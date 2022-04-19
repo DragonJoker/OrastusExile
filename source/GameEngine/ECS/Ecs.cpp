@@ -6,6 +6,7 @@
 #include "GameEngine/ECS/Bullet.hpp"
 #include "GameEngine/ECS/Enemy.hpp"
 #include "GameEngine/ECS/MapBlock.hpp"
+#include "GameEngine/ECS/SoundSource.hpp"
 #include "GameEngine/ECS/SplashTower.hpp"
 #include "GameEngine/ECS/Target.hpp"
 #include "GameEngine/ECS/Tower.hpp"
@@ -19,6 +20,7 @@ namespace orastus
 		String const STATE_COMPONENT_DESC = cuT( "State component" );
 		String const STATUS_COMPONENT_DESC = cuT( "Status component" );
 		String const COOLDOWN_COMPONENT_DESC = cuT( "Cooldown" );
+		String const TIMEOUT_COMPONENT_DESC = cuT( "Timeout" );
 		String const ENTITY_COMPONENT_DESC = cuT( "Entity" );
 		String const CELL_COMPONENT_DESC = cuT( "Cell" );
 		String const DAMAGE_COMPONENT_DESC = cuT( "Damage" );
@@ -35,11 +37,14 @@ namespace orastus
 		String const WALK_COMPONENT_DESC = cuT( "Walk" );
 		String const ATTACK_COMPONENT_DESC = cuT( "Attack" );
 		String const TRACK_COMPONENT_DESC = cuT( "Track" );
+		String const SOUND_SOURCE_COMPONENT_DESC = cuT( "SoundSource" );
+		String const SOUND_COMPONENT_DESC = cuT( "Sound" );
 	}
 
 	ComponentId const Ecs::StateComponent = Ecs::hash( "state   " );
 	ComponentId const Ecs::StatusComponent = Ecs::hash( "status  " );
 	ComponentId const Ecs::CooldownComponent = Ecs::hash( "cooldown" );
+	ComponentId const Ecs::TimeoutComponent = Ecs::hash( "timeout " );
 	ComponentId const Ecs::EntityComponent = Ecs::hash( "entity  " );
 	ComponentId const Ecs::CellComponent = Ecs::hash( "cell    " );
 	ComponentId const Ecs::DamageComponent = Ecs::hash( "damage  " );
@@ -56,9 +61,12 @@ namespace orastus
 	ComponentId const Ecs::WalkComponent = Ecs::hash( "walk    " );
 	ComponentId const Ecs::AttackComponent = Ecs::hash( "attack  " );
 	ComponentId const Ecs::TrackComponent = Ecs::hash( "track   " );
+	ComponentId const Ecs::SoundSourceComponent = Ecs::hash( "soundsrc" );
+	ComponentId const Ecs::SoundComponent = Ecs::hash( "sound   " );
 
 	Ecs::Ecs()
 		: m_stateSystem{ *this }
+		, m_soundSystem{ *this }
 	{
 		doRegisterComponents();
 		doCreateAssemblages();
@@ -74,6 +82,7 @@ namespace orastus
 		, Milliseconds const & elapsed )
 	{
 		m_stateSystem.update( game, elapsed );
+		m_soundSystem.update( game, elapsed );
 	}
 
 	Component const & Ecs::getComponent( ComponentId const & name )const
@@ -110,7 +119,9 @@ namespace orastus
 		, uint32_t requiredLevel
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
-		, AttackDataPtr attack )
+		, AttackDataPtr attack
+		, SoundSource shootSound
+		, Sound const * hitSound )
 	{
 		auto entity = doCreateEntity( "Tower" );
 		m_towerSet->createData( entity
@@ -121,7 +132,9 @@ namespace orastus
 			, requiredLevel
 			, geometry
 			, std::move( animation )
-			, std::move( attack ) );
+			, std::move( attack )
+			, std::move( shootSound )
+			, hitSound );
 		return entity;
 	}
 
@@ -134,7 +147,9 @@ namespace orastus
 		, uint32_t requiredLevel
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
-		, AttackDataPtr attack )
+		, AttackDataPtr attack
+		, SoundSource shootSound
+		, Sound const * hitSound )
 	{
 		auto entity = doCreateEntity( "SplashTower" );
 		m_splashTowerSet->createData( entity
@@ -147,21 +162,25 @@ namespace orastus
 			, requiredLevel
 			, geometry
 			, std::move( animation )
-			, std::move( attack ) );
+			, std::move( attack )
+			, std::move( shootSound )
+			, hitSound );
 		return entity;
 	}
 
 	Entity Ecs::createEnemy( float speed
 		, uint32_t life
 		, castor3d::GeometrySPtr geometry
-		, WalkDataPtr walkData )
+		, WalkDataPtr walkData
+		, SoundSource killSound )
 	{
 		auto entity = doCreateEntity( "Enemy" );
 		m_enemySet->createData( entity
 			, speed
 			, life
 			, geometry
-			, std::move( walkData ) );
+			, std::move( walkData )
+			, std::move( killSound ) );
 		return entity;
 	}
 
@@ -179,12 +198,14 @@ namespace orastus
 	}
 
 	Entity Ecs::createTarget( castor3d::GeometrySPtr geometry
-		, GridCell cell )
+		, GridCell cell
+		, SoundSource targetCapturedSound )
 	{
 		auto entity = doCreateEntity( "Target" );
 		m_targetSet->createData( entity
 			, geometry
-			, std::move( cell ) );
+			, std::move( cell )
+			, std::move( targetCapturedSound ) );
 		return entity;
 	}
 
@@ -198,21 +219,25 @@ namespace orastus
 	}
 
 	Entity Ecs::createBullet( castor3d::GeometrySPtr geometry
+		, SoundSource soundSource
 		, TrackDataPtr track )
 	{
 		auto entity = doCreateEntity( "Bullet" );
 		m_bulletSet->createData( entity
 			, geometry
+			, std::move( soundSource )
 			, std::move( track ) );
 		return entity;
 	}
 
 	void Ecs::resetBullet( Entity entity
 		, castor3d::GeometrySPtr geometry
+		, SoundSource soundSource
 		, TrackDataPtr track )
 	{
 		m_bulletSet->resetData( entity
 			, geometry
+			, std::move( soundSource )
 			, std::move( track ) );
 	}
 
@@ -284,6 +309,7 @@ namespace orastus
 		doCreateComponent( StateComponent, STATE_COMPONENT_DESC );
 		doCreateComponent( StatusComponent, STATUS_COMPONENT_DESC );
 		doCreateComponent( CooldownComponent, COOLDOWN_COMPONENT_DESC );
+		doCreateComponent( TimeoutComponent, TIMEOUT_COMPONENT_DESC );
 		doCreateComponent( EntityComponent, ENTITY_COMPONENT_DESC );
 		doCreateComponent( CellComponent, CELL_COMPONENT_DESC );
 		doCreateComponent( DamageComponent, DAMAGE_COMPONENT_DESC );
@@ -300,6 +326,8 @@ namespace orastus
 		doCreateComponent( WalkComponent, WALK_COMPONENT_DESC );
 		doCreateComponent( AttackComponent, ATTACK_COMPONENT_DESC );
 		doCreateComponent( TrackComponent, TRACK_COMPONENT_DESC );
+		doCreateComponent( SoundSourceComponent, SOUND_SOURCE_COMPONENT_DESC );
+		doCreateComponent( SoundComponent, SOUND_COMPONENT_DESC );
 	}
 
 	void Ecs::doCreateAssemblages()

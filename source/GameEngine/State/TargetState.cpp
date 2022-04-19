@@ -50,14 +50,9 @@ namespace orastus
 				{
 					// not at destination
 					nextPosition = position + direction;
-				}
-				else
-				{
-					ecs.getComponentData< TargetState >( target
-						, ecs.getComponent( Ecs::StatusComponent ) ).setValue( TargetState::eCaptured );
+					node.setPosition( nextPosition );
 				}
 
-				node.setPosition( nextPosition );
 				return result;
 			}
 		}
@@ -86,13 +81,22 @@ namespace orastus
 				, Milliseconds const & elapsed
 				, Milliseconds const & total )
 			{
-				auto const angle = castor::Angle::fromDegrees( -float( elapsed.count() ) * 240 / 1000.0f );
-				node->yaw( angle );
-				return details::capture( game
-					, ecs
-					, entity
-					, *node
-					, elapsed );
+				auto state = ecs.getComponentData< TargetState >( entity
+					, ecs.getComponent( Ecs::StatusComponent ) ).getValue();
+				bool result = state == TargetState::eCaptured;
+
+				if ( !result )
+				{
+					auto const angle = castor::Angle::fromDegrees( -float( elapsed.count() ) * 240 / 1000.0f );
+					node->yaw( angle );
+					result = details::capture( game
+						, ecs
+						, entity
+						, *node
+						, elapsed );
+				}
+
+				return result;
 			} };
 		}
 	}

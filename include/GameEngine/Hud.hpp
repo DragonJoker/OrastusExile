@@ -6,6 +6,7 @@ See licence file in root folder, MIT.txt
 #define ___EFO_Hud_HPP___
 
 #include "GameEnginePrerequisites.hpp"
+#include "Ecs/SoundSource.hpp"
 
 namespace orastus
 {
@@ -25,6 +26,7 @@ namespace orastus
 		*	The scene.
 		*/
 		EFO_API Hud( Game & game
+			, castor::Path const & dataFolder
 			, castor3d::Scene const & scene );
 		/**
 		*\brief
@@ -90,6 +92,7 @@ namespace orastus
 		castor3d::TextOverlayWPtr m_towerSpeed;
 		castor3d::TextOverlayWPtr m_towerRange;
 		castor3d::TextOverlayWPtr m_towerDamage;
+		SoundSource m_buttonSound;
 	};
 }
 

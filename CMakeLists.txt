@@ -92,6 +92,9 @@ else ()
 	find_package( Castor3D CONFIG REQUIRED CastorUtils Castor3D )
 endif ()
 
+find_package( OpenAL CONFIG REQUIRED )
+find_package( SndFile CONFIG REQUIRED )
+
 if ( NOT Castor3D_FOUND )
 	message( SEND_ERROR "Castor3D not found." )
 endif ()

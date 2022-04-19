@@ -62,6 +62,7 @@ namespace orastus
 	struct AttackData;
 	struct TrackData;
 	struct WalkData;
+	class SoundSource;
 	using MapBlockPtr = std::shared_ptr< MapBlock >;
 	using TargetPtr = std::shared_ptr< Target >;
 	using TowerPtr = std::shared_ptr< Tower >;
@@ -77,6 +78,11 @@ namespace orastus
 	// Game
 	class Resource;
 	class Game;
+	class Audio;
+	class Sound;
+
+	CU_DeclareCUSmartPtr( orastus, Audio, EFO_API );
+	CU_DeclareCUSmartPtr( orastus, Sound, EFO_API );
 
 	// Helpers
 	template< typename T >

@@ -18,9 +18,11 @@ namespace orastus
 
 		EFO_API void reset();
 		EFO_API void fireBullet( Entity source
-			, Entity target );
+			, Entity target
+			, Sound const & sound );
 		EFO_API void fireBullet( Entity source
 			, Entity target
+			, Sound const & sound
 			, castor3d::GeometrySPtr geometry );
 		EFO_API void killBullet( Entity bullet );
 

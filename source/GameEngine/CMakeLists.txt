@@ -7,6 +7,7 @@ set( ${PROJECT_NAME}_VERSION_BUILD 0 )
 
 set( ${PROJECT_NAME}_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Ability.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Audio.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/BulletSpawner.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/EnemySpawner.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Game.hpp
@@ -17,9 +18,11 @@ set( ${PROJECT_NAME}_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/GridPathNode.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Hud.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Resource.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Sound.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/TargetSpawner.hpp
 )
 set( ${PROJECT_NAME}_SRC_FILES
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Audio.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/BulletSpawner.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/EnemySpawner.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Game.cpp
@@ -27,6 +30,7 @@ set( ${PROJECT_NAME}_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Grid.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Hud.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Resource.cpp
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Sound.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/TargetSpawner.cpp
 )
 source_group( "Header Files"
@@ -50,6 +54,8 @@ set( ${PROJECT_NAME}_FOLDER_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/EntityComponentData.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Id.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/MapBlock.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/SoundSource.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/SoundSystem.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/SplashTower.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/StateSystem.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Target.hpp
@@ -67,6 +73,8 @@ set( ${PROJECT_NAME}_FOLDER_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Entity.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Id.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/MapBlock.cpp
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/SoundSource.cpp
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/SoundSystem.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/SplashTower.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/StateSystem.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Target.cpp
@@ -148,6 +156,8 @@ target_link_libraries( ${PROJECT_NAME}
 		sdw::ShaderAST
 		sdw::ShaderWriter
 		sdw::CompilerSpirV
+		OpenAL::OpenAL
+		SndFile::sndfile
 	PUBLIC
 		castor::CastorUtils
 		castor::Castor3D

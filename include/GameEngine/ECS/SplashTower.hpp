@@ -59,7 +59,9 @@ namespace orastus
 			, uint32_t requiredLevel
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
-			, AttackDataPtr attack );
+			, AttackDataPtr attack
+			, SoundSource shootSound
+			, Sound const * hitSound );
 		/**
 		*\brief
 		*	Returns a splash tower as a string.
@@ -71,6 +73,7 @@ namespace orastus
 	private:
 		Ecs & m_ecs;
 		Component const & m_cooldown;
+		Component const & m_timeout;
 		Component const & m_damage;
 		Component const & m_range;
 		Component const & m_bulletSpeed;
@@ -82,6 +85,8 @@ namespace orastus
 		Component const & m_pickable;
 		Component const & m_animation;
 		Component const & m_attack;
+		Component const & m_shootSound;
+		Component const & m_hitSound;
 	};
 }
 

@@ -103,6 +103,8 @@ namespace orastus
 		}
 
 		m_enemiesCache->push_back( enemy );
+		m_ecs.getComponentData< SoundSource >( enemy
+			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue().play();
 		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( enemy
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
 		Game::getEnemyNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
@@ -110,7 +112,7 @@ namespace orastus
 
 	void EnemySpawner::enemyEscaped( Entity enemy )
 	{
-		castor3d::log::info << "Enemy has escaped";
+		castor3d::log::debug << "Enemy has escaped" << std::endl;
 		auto it = std::find( std::begin( m_liveEnemies )
 			, std::end( m_liveEnemies )
 			, enemy );
@@ -137,6 +139,7 @@ namespace orastus
 		auto index = getWave() % uint32_t( m_enemyMeshes.size() );
 		m_currentEnemies = m_enemyMeshes[index];
 		m_enemiesCache = &m_allEnemiesCache.emplace( m_currentEnemies.lock().get(), EntityList{} ).first->second;
+		m_game.getWaveStartSound().play();
 		std::cout << "\nStarting wave " << m_totalsWaves << std::endl;
 	}
 
@@ -156,12 +159,16 @@ namespace orastus
 		{
 			String name = cuT( "Enemy_" ) + std::to_string( ++m_totalSpawned );
 			auto geometry = m_game.createEnemy( name, m_currentEnemies );
-			Game::getEnemyNode( geometry )->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y - 1 } )
+			auto node = Game::getEnemyNode( geometry );
+			node->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y - 1 } )
 				+ castor::Point3f{ 0, m_game.getCellHeight() * 5.0f, 0 } );
 			m_liveEnemies.push_back( m_ecs.createEnemy( 40.0f
 				, m_life.getValue()
 				, geometry
-				, std::make_unique< WalkData >( path, m_game ) ) );
+				, std::make_unique< WalkData >( path, m_game )
+				, SoundSource{ *node
+					, m_game.getEnemyKillSound()
+					, false } ) );
 		}
 		else
 		{

@@ -35,13 +35,16 @@ namespace orastus
 		*\param[in] geometry
 		*	The geometry value.
 		*\param[in] walkData
-		*	The wallk data.
+		*	The walk data.
+		*\param[in] killSound
+		*	The sound emitted when the enemy is killed.
 		*/
 		EFO_API void createData( Entity const & entity
 			, float speed
 			, uint32_t life
 			, castor3d::GeometrySPtr geometry
-			, WalkDataPtr walkData );
+			, WalkDataPtr walkData
+			, SoundSource killSound );
 		/**
 		*\brief
 		*	Resets an enemy to initial state.
@@ -79,6 +82,7 @@ namespace orastus
 		Component const & m_walk;
 		Component const & m_state;
 		Component const & m_status;
+		Component const & m_killSound;
 	};
 }
 

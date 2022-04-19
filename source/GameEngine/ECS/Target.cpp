@@ -2,6 +2,7 @@
 
 #include "GameEngine/GridCell.hpp"
 #include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/ECS/SoundSource.hpp"
 #include "GameEngine/State/TargetState.hpp"
 #include "GameEngine/State/StateMachine.hpp"
 
@@ -13,12 +14,14 @@ namespace orastus
 		, m_state{ m_ecs.getComponent( Ecs::StateComponent ) }
 		, m_status{ m_ecs.getComponent( Ecs::StatusComponent ) }
 		, m_cell{ m_ecs.getComponent( Ecs::CellComponent ) }
+		, m_capturedSound{ m_ecs.getComponent( Ecs::SoundSourceComponent ) }
 	{
 	}
 
 	void Target::createData( Entity const & entity
 		, castor3d::GeometrySPtr geometry
-		, GridCell cell )
+		, GridCell cell
+		, SoundSource targetCapturedSound )
 	{
 		m_ecs.createComponentData( entity
 			, m_status
@@ -26,6 +29,9 @@ namespace orastus
 		m_ecs.createComponentData( entity
 			, m_cell
 			, std::move( cell ) );
+		m_ecs.createComponentData( entity
+			, m_capturedSound
+			, std::move( targetCapturedSound ) );
 
 		if ( geometry )
 		{

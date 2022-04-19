@@ -35,11 +35,20 @@ namespace orastus
 		EFO_API void freeTarget( Entity target );
 		/**
 		*\brief
-		*	A target is successfully captured.
+		*	A target is being captured.
 		*\param[in] target
 		*	The target entity.
 		*/
-		EFO_API void targetCaptured( Entity target );
+		EFO_API void targetBeingCaptured( Entity target );
+		/**
+		*\brief
+		*	A target is successfully captured.
+		*\param[in] target
+		*	The target entity.
+		*\return
+		*	\p true if no more target remains.
+		*/
+		EFO_API bool targetCaptured( Entity target );
 
 		uint32_t getLives()const
 		{
@@ -54,8 +63,6 @@ namespace orastus
 		EntityList m_selectedTargets;
 		EntityList m_targetsCache;
 		uint32_t m_count{ 0 };
-		std::random_device m_device;
-		std::default_random_engine m_engine;
 		std::uniform_real_distribution< float > m_distribution{ 0.0f, 360.0f };
 	};
 }

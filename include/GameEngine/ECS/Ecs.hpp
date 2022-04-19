@@ -7,6 +7,7 @@ See licence file in root folder, MIT.txt
 
 #include "EntityComponentData.hpp"
 #include "StateSystem.hpp"
+#include "SoundSystem.hpp"
 
 namespace orastus
 {
@@ -146,6 +147,10 @@ namespace orastus
 		*	The animation value.
 		*\param[in] attack
 		*	The attack data.
+		*\param[in] shootSound
+		*	The shoot sound source.
+		*\param[in] hitSound
+		*	The hit sound.
 		*\return
 		*	The entity for the created tower.
 		*/
@@ -156,7 +161,9 @@ namespace orastus
 			, uint32_t requiredLevel
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
-			, AttackDataPtr attack );
+			, AttackDataPtr attack
+			, SoundSource shootSound
+			, Sound const * hitSound );
 		/**
 		*\brief
 		*	Creates a tower with splash damage.
@@ -180,6 +187,10 @@ namespace orastus
 		*	The animation value.
 		*\param[in] attack
 		*	The attack data.
+		*\param[in] shootSound
+		*	The shoot sound source.
+		*\param[in] hitSound
+		*	The hit sound.
 		*\return
 		*	The entity for the created tower.
 		*/
@@ -192,7 +203,9 @@ namespace orastus
 			, uint32_t requiredLevel
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
-			, AttackDataPtr attack );
+			, AttackDataPtr attack
+			, SoundSource shootSound
+			, Sound const * hitSound );
 		/**
 		*\brief
 		*	Creates an enemy.
@@ -208,7 +221,8 @@ namespace orastus
 		EFO_API Entity createEnemy( float speed
 			, uint32_t life
 			, castor3d::GeometrySPtr geometry
-			, WalkDataPtr walkData );
+			, WalkDataPtr walkData
+			, SoundSource killSound );
 		/**
 		*\brief
 		*	Resets an enemy to initial state.
@@ -237,7 +251,8 @@ namespace orastus
 		*	The cell value.
 		*/
 		EFO_API Entity createTarget( castor3d::GeometrySPtr geometry
-			, GridCell cell );
+			, GridCell cell
+			, SoundSource targetCapturedSound );
 		/**
 		*\brief
 		*	Resets an enemies target to initial state.
@@ -260,6 +275,7 @@ namespace orastus
 		*	The track value.
 		*/
 		EFO_API Entity createBullet( castor3d::GeometrySPtr geometry
+			, SoundSource soundSource
 			, TrackDataPtr track );
 		/**
 		*\brief
@@ -273,6 +289,7 @@ namespace orastus
 		*/
 		EFO_API void resetBullet( Entity entity
 			, castor3d::GeometrySPtr geometry
+			, SoundSource soundSource
 			, TrackDataPtr track );
 		/**
 		*\brief
@@ -445,6 +462,7 @@ namespace orastus
 		EFO_API static ComponentId const StateComponent;
 		EFO_API static ComponentId const StatusComponent;
 		EFO_API static ComponentId const CooldownComponent;
+		EFO_API static ComponentId const TimeoutComponent;
 		EFO_API static ComponentId const EntityComponent;
 		EFO_API static ComponentId const CellComponent;
 		EFO_API static ComponentId const DamageComponent;
@@ -461,6 +479,8 @@ namespace orastus
 		EFO_API static ComponentId const WalkComponent;
 		EFO_API static ComponentId const AttackComponent;
 		EFO_API static ComponentId const TrackComponent;
+		EFO_API static ComponentId const SoundSourceComponent;
+		EFO_API static ComponentId const SoundComponent;
 
 	private:
 		// Components and entities.
@@ -476,6 +496,7 @@ namespace orastus
 		MapBlockPtr m_mapBlockSet;
 		// Systems.
 		StateSystem m_stateSystem;
+		SoundSystem m_soundSystem;
 	};
 }
 

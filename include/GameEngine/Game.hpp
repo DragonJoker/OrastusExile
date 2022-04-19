@@ -11,6 +11,11 @@ See licence file in root folder, MIT.txt
 #include "Hud.hpp"
 #include "TargetSpawner.hpp"
 #include "ECS/Ecs.hpp"
+#include "ECS/SoundSource.hpp"
+
+#include <Castor3D/Scene/Camera.hpp>
+
+#include <random>
 
 namespace orastus
 {
@@ -52,7 +57,9 @@ namespace orastus
 		*\param[in] scene
 		*	The 3D scene.
 		*/
-		EFO_API explicit Game( castor3d::Scene & scene );
+		EFO_API explicit Game( castor::Path const & dataFolder
+			, castor3d::Scene & scene
+			, castor3d::Camera const & camera );
 		/**
 		*\brief
 		*	Resets the game so a new game can be played.
@@ -105,6 +112,13 @@ namespace orastus
 		*	The enemy entity.
 		*/
 		EFO_API void killEnemy( Entity entity );
+		/**
+		*\brief
+		*	An enemy is capturing a target.
+		*\param[in] entity
+		*	The enemy entity.
+		*/
+		EFO_API void enemyCapturing( Entity entity );
 		/**
 		*\brief
 		*	An enemy is escaping with its target.
@@ -184,6 +198,16 @@ namespace orastus
 		*	The 3D position
 		*/
 		EFO_API castor::Point3f convert( castor::Point2i const & position )const;
+		/**
+		*\return
+		*	The sound emitted when a target is captured.
+		*/
+		EFO_API Sound const & getTargetCapturedSound();
+		/**
+		*\brief
+		*	Creates an SFX sound.
+		*/
+		EFO_API Sound & addSound( castor::Path const & file );
 		/**
 		*\brief
 		*	Retrieves the scene node for given enemy's geometry.
@@ -286,6 +310,14 @@ namespace orastus
 		}
 		/**
 		*\return
+		*	The scene.
+		*/
+		castor3d::SceneNode const & getCameraNode()const
+		{
+			return *m_camera.getParent();
+		}
+		/**
+		*\return
 		*	The map base node.
 		*/
 		castor3d::SceneNode & getMapNode()const
@@ -332,6 +364,38 @@ namespace orastus
 		{
 			return m_enemySpawner.getEnemiesBounty();
 		}
+		/**
+		*\return
+		*	The random engine.
+		*/
+		std::default_random_engine & getRandomEngine()
+		{
+			return m_engine;
+		}
+		/**
+		*\return
+		*	The wave start sound.
+		*/
+		SoundSource const & getWaveStartSound()const
+		{
+			return m_waveStartSound;
+		}
+		/**
+		*\return
+		*	The enemy kill sound.
+		*/
+		Sound const & getEnemyKillSound()const
+		{
+			return m_enemyKillSound;
+		}
+		/**
+		*\return
+		*	The audio system.
+		*/
+		Audio const & getAudio()const
+		{
+			return *m_audio;
+		}
 
 	private:
 		void doPrepareGrid();
@@ -361,8 +425,10 @@ namespace orastus
 
 	private:
 		// Persistent data.
+		AudioUPtr m_audio;
 		Ecs m_ecs;
 		castor3d::Scene & m_scene;
+		castor3d::Camera const & m_camera;
 		Grid m_grid;
 		Hud m_hud;
 		GridPath m_path;
@@ -378,6 +444,16 @@ namespace orastus
 		castor3d::MeshResPtr m_longRangeTowerMesh;
 		castor3d::MeshResPtr m_bulletMesh;
 		castor3d::MaterialSPtr m_bulletMaterial;
+		std::vector< Sound const * > m_targetCapturedSounds;
+		Sound const & m_ballistaShootSound;
+		Sound const & m_cannonShootSound;
+		Sound const & m_ballistaHitSound;
+		Sound const & m_cannonHitSound;
+		Sound const & m_enemyKillSound;
+		SoundSource m_towerBuildSound;
+		SoundSource m_waveStartSound;
+		std::random_device m_device;
+		std::default_random_engine m_engine;
 		// Varying data.
 		GridCell * m_selectedCell{ nullptr };
 		Clock::time_point m_saved;

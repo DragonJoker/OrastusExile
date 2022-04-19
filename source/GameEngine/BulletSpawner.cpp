@@ -2,17 +2,15 @@
 
 #include "GameEngine/Game.hpp"
 #include "GameEngine/ECS/Ecs.hpp"
-#include "GameEngine/ECS/WalkData.hpp"
+#include "GameEngine/ECS/SoundSource.hpp"
 #include "GameEngine/ECS/TrackData.hpp"
+#include "GameEngine/ECS/WalkData.hpp"
 
 #include <Castor3D/Model/Mesh/Mesh.hpp>
 #include <Castor3D/Scene/Geometry.hpp>
 #include <Castor3D/Scene/Scene.hpp>
 #include <Castor3D/Scene/SceneNode.hpp>
 #include <Castor3D/Scene/Light/PointLight.hpp>
-
-using namespace castor;
-using namespace castor3d;
 
 namespace orastus
 {
@@ -36,14 +34,15 @@ namespace orastus
 
 		for ( auto & bullet : m_bulletsCache )
 		{
-			auto geometry = m_ecs.getComponentData< GeometrySPtr >( bullet
+			auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( bullet
 				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-			Game::getBulletNode( geometry )->setPosition( Point3f{ 0, -1000, 0 } );
+			Game::getBulletNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
 		}
 	}
 	
 	void BulletSpawner::fireBullet( Entity source
-		, Entity target )
+		, Entity target
+		, Sound const & sound )
 	{
 		auto bullet = *m_bulletsCache.begin();
 		m_bulletsCache.erase( m_bulletsCache.begin() );
@@ -53,28 +52,37 @@ namespace orastus
 			, m_ecs.getComponent( Ecs::SpeedComponent ) ).getValue();
 		auto damage = m_ecs.getComponentData< uint32_t >( source
 			, m_ecs.getComponent( Ecs::DamageComponent ) ).getValue();
-		auto geometry = m_ecs.getComponentData< GeometrySPtr >( bullet
+		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( bullet
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		auto sourceNode = Game::getTowerNode( m_ecs.getComponentData< GeometrySPtr >( source
+		auto sourceNode = Game::getTowerNode( m_ecs.getComponentData< castor3d::GeometrySPtr >( source
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
-		Game::getBulletNode( geometry )->setPosition( sourceNode->getPosition() );
+		auto node = Game::getBulletNode( geometry );
+		node->setPosition( sourceNode->getPosition() );
 		m_ecs.resetBullet( bullet
 			, geometry
+			, SoundSource{ *node
+				, sound
+				, false }
 			, std::make_unique< TrackData >( target, speed, damage ) );
 	}
 
 	void BulletSpawner::fireBullet( Entity source
 		, Entity target
+		, Sound const & sound
 		, castor3d::GeometrySPtr geometry )
 	{
 		auto speed = m_ecs.getComponentData< float >( source
 			, m_ecs.getComponent( Ecs::SpeedComponent ) ).getValue();
 		auto damage = m_ecs.getComponentData< uint32_t >( source
 			, m_ecs.getComponent( Ecs::DamageComponent ) ).getValue();
-		auto sourceNode = Game::getTowerNode( m_ecs.getComponentData< GeometrySPtr >( source
+		auto sourceNode = Game::getTowerNode( m_ecs.getComponentData< castor3d::GeometrySPtr >( source
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
-		Game::getBulletNode( geometry )->setPosition( sourceNode->getPosition() );
+		auto node = Game::getBulletNode( geometry );
+		node->setPosition( sourceNode->getPosition() );
 		auto bullet = m_ecs.createBullet( geometry
+			, SoundSource{ *node
+				, sound
+				, false }
 			, std::make_unique< TrackData >( target, speed, damage ) );
 		m_liveBullets.insert( m_liveBullets.end(), bullet );
 		++m_totalSpawned;
@@ -92,8 +100,8 @@ namespace orastus
 		}
 
 		m_bulletsCache.push_back( bullet );
-		auto geometry = m_ecs.getComponentData< GeometrySPtr >( bullet
+		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( bullet
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		Game::getBulletNode( geometry )->setPosition( Point3f{ 0, -1000, 0 } );
+		Game::getBulletNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
 	}
 }
