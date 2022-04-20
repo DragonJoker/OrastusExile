@@ -202,12 +202,13 @@ namespace orastus
 		*\return
 		*	The sound emitted when a target is captured.
 		*/
-		EFO_API Sound const & getTargetCapturedSound();
+		EFO_API Sound & getTargetCapturedSound();
 		/**
 		*\brief
 		*	Creates an SFX sound.
 		*/
-		EFO_API Sound & addSound( castor::Path const & file );
+		EFO_API Sound & addSound( castor::Path const & file
+			, uint32_t maxSources );
 		/**
 		*\brief
 		*	Retrieves the scene node for given enemy's geometry.
@@ -384,7 +385,7 @@ namespace orastus
 		*\return
 		*	The enemy kill sound.
 		*/
-		Sound const & getEnemyKillSound()const
+		Sound & getEnemyKillSound()const
 		{
 			return m_enemyKillSound;
 		}
@@ -444,14 +445,14 @@ namespace orastus
 		castor3d::MeshResPtr m_longRangeTowerMesh;
 		castor3d::MeshResPtr m_bulletMesh;
 		castor3d::MaterialSPtr m_bulletMaterial;
-		std::vector< Sound const * > m_targetCapturedSounds;
-		Sound const & m_ballistaShootSound;
-		Sound const & m_cannonShootSound;
-		Sound const & m_ballistaHitSound;
-		Sound const & m_cannonHitSound;
-		Sound const & m_enemyKillSound;
-		SoundSource m_towerBuildSound;
-		SoundSource m_waveStartSound;
+		std::vector< Sound * > m_targetCapturedSounds;
+		Sound & m_ballistaShootSound;
+		Sound & m_cannonShootSound;
+		Sound & m_ballistaHitSound;
+		Sound & m_cannonHitSound;
+		Sound & m_enemyKillSound;
+		SoundSource const & m_towerBuildSound;
+		SoundSource const & m_waveStartSound;
 		std::random_device m_device;
 		std::default_random_engine m_engine;
 		// Varying data.

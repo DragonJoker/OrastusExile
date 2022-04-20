@@ -21,7 +21,7 @@ namespace orastus
 
 	void Bullet::createData( Entity const & entity
 		, castor3d::GeometrySPtr geometry
-		, SoundSource soundSource
+		, SoundSource const * soundSource
 		, TrackDataPtr track )
 	{
 		m_ecs.createComponentData( entity
@@ -38,19 +38,19 @@ namespace orastus
 				, std::make_unique< StateMachine >( bullet::createTrackingState( m_ecs, entity ), false ) );
 			m_ecs.createComponentData( entity
 				, m_hitSound
-				, std::move( soundSource ) );
+				, soundSource );
 		}
 	}
 
 	void Bullet::resetData( Entity const & entity
 		, castor3d::GeometrySPtr geometry
-		, SoundSource soundSource
+		, SoundSource const * soundSource
 		, TrackDataPtr track )
 	{
 		m_ecs.getComponentData< castor3d::GeometrySPtr >( entity
 			, m_geometry ).setValue( geometry );
-		m_ecs.getComponentData< SoundSource >( entity
-			, m_hitSound ).setValue( std::move( soundSource ) );
+		m_ecs.getComponentData< SoundSource const * >( entity
+			, m_hitSound ).setValue( soundSource );
 		*m_ecs.getComponentData< TrackDataPtr >( entity
 			, m_track ).getValue() = *track;
 		m_ecs.getComponentData< StateMachinePtr >( entity

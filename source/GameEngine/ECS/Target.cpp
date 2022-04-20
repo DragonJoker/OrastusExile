@@ -21,7 +21,7 @@ namespace orastus
 	void Target::createData( Entity const & entity
 		, castor3d::GeometrySPtr geometry
 		, GridCell cell
-		, SoundSource targetCapturedSound )
+		, SoundSource const * targetCapturedSound )
 	{
 		m_ecs.createComponentData( entity
 			, m_status
@@ -31,7 +31,7 @@ namespace orastus
 			, std::move( cell ) );
 		m_ecs.createComponentData( entity
 			, m_capturedSound
-			, std::move( targetCapturedSound ) );
+			, targetCapturedSound );
 
 		if ( geometry )
 		{

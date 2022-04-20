@@ -35,7 +35,7 @@ namespace orastus
 		*/
 		EFO_API void createData( Entity const & entity
 			, castor3d::GeometrySPtr geometry
-			, SoundSource soundSource
+			, SoundSource const * soundSource
 			, TrackDataPtr track );
 		/**
 		*\brief
@@ -50,7 +50,7 @@ namespace orastus
 		*/
 		EFO_API void resetData( Entity const & entity
 			, castor3d::GeometrySPtr geometry
-			, SoundSource soundSource
+			, SoundSource const * soundSource
 			, TrackDataPtr track );
 		/**
 		*\brief

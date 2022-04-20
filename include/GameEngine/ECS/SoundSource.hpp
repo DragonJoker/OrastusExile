@@ -16,21 +16,21 @@ namespace orastus
 	class SoundSource
 	{
 	private:
-		EFO_API SoundSource( castor3d::SceneNode const * node
-			, Sound const * sound
-			, bool looped );
+		EFO_API SoundSource( Sound const * sound
+			, bool looped
+			, castor3d::SceneNode const * node );
 
 	public:
 		EFO_API SoundSource();
 		EFO_API SoundSource( Sound const & sound
 			, bool looped );
-		EFO_API SoundSource( castor3d::SceneNode const & node
-			, Sound const & sound
-			, bool looped );
+		EFO_API SoundSource( Sound const & sound
+			, bool looped
+			, castor3d::SceneNode const & node );
 		EFO_API SoundSource( SoundSource const & rhs ) = delete;
-		EFO_API SoundSource( SoundSource && rhs )noexcept;
+		EFO_API SoundSource( SoundSource && rhs ) = delete;
 		EFO_API SoundSource & operator=( SoundSource const & rhs ) = delete;
-		EFO_API SoundSource & operator=( SoundSource && rhs )noexcept;
+		EFO_API SoundSource & operator=( SoundSource && rhs ) = delete;
 		EFO_API ~SoundSource();
 		/**
 		*\brief
@@ -41,7 +41,7 @@ namespace orastus
 		*\brief
 		*	Plays the sound.
 		*/
-		EFO_API void play()const;
+		EFO_API void play( castor3d::SceneNode const * node = nullptr )const;
 		/**
 		*\brief
 		*	Stops playing the sound.
@@ -49,7 +49,7 @@ namespace orastus
 		EFO_API void stop()const;
 
 	private:
-		castor3d::SceneNode const * m_node;
+		mutable castor3d::SceneNode const * m_node;
 		unsigned int m_source{};
 	};
 }

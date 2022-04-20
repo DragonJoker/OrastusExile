@@ -120,8 +120,8 @@ namespace orastus
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
-		, SoundSource shootSound
-		, Sound const * hitSound )
+		, SoundSource const * shootSound
+		, Sound * hitSound )
 	{
 		auto entity = doCreateEntity( "Tower" );
 		m_towerSet->createData( entity
@@ -133,7 +133,7 @@ namespace orastus
 			, geometry
 			, std::move( animation )
 			, std::move( attack )
-			, std::move( shootSound )
+			, shootSound
 			, hitSound );
 		return entity;
 	}
@@ -148,8 +148,8 @@ namespace orastus
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
-		, SoundSource shootSound
-		, Sound const * hitSound )
+		, SoundSource const * shootSound
+		, Sound * hitSound )
 	{
 		auto entity = doCreateEntity( "SplashTower" );
 		m_splashTowerSet->createData( entity
@@ -163,7 +163,7 @@ namespace orastus
 			, geometry
 			, std::move( animation )
 			, std::move( attack )
-			, std::move( shootSound )
+			, shootSound
 			, hitSound );
 		return entity;
 	}
@@ -172,7 +172,7 @@ namespace orastus
 		, uint32_t life
 		, castor3d::GeometrySPtr geometry
 		, WalkDataPtr walkData
-		, SoundSource killSound )
+		, SoundSource const * killSound )
 	{
 		auto entity = doCreateEntity( "Enemy" );
 		m_enemySet->createData( entity
@@ -180,7 +180,7 @@ namespace orastus
 			, life
 			, geometry
 			, std::move( walkData )
-			, std::move( killSound ) );
+			, killSound );
 		return entity;
 	}
 
@@ -199,13 +199,13 @@ namespace orastus
 
 	Entity Ecs::createTarget( castor3d::GeometrySPtr geometry
 		, GridCell cell
-		, SoundSource targetCapturedSound )
+		, SoundSource const * targetCapturedSound )
 	{
 		auto entity = doCreateEntity( "Target" );
 		m_targetSet->createData( entity
 			, geometry
 			, std::move( cell )
-			, std::move( targetCapturedSound ) );
+			, targetCapturedSound );
 		return entity;
 	}
 
@@ -219,25 +219,25 @@ namespace orastus
 	}
 
 	Entity Ecs::createBullet( castor3d::GeometrySPtr geometry
-		, SoundSource soundSource
+		, SoundSource const * soundSource
 		, TrackDataPtr track )
 	{
 		auto entity = doCreateEntity( "Bullet" );
 		m_bulletSet->createData( entity
 			, geometry
-			, std::move( soundSource )
+			, soundSource
 			, std::move( track ) );
 		return entity;
 	}
 
 	void Ecs::resetBullet( Entity entity
 		, castor3d::GeometrySPtr geometry
-		, SoundSource soundSource
+		, SoundSource const * soundSource
 		, TrackDataPtr track )
 	{
 		m_bulletSet->resetData( entity
 			, geometry
-			, std::move( soundSource )
+			, soundSource
 			, std::move( track ) );
 	}
 

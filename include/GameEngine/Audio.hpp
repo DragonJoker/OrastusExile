@@ -45,7 +45,8 @@ namespace orastus
 		*	Creates a sound.
 		*/
 		EFO_API Sound & addSound( Sound::Type type
-			, castor::Path const & file );
+			, castor::Path const & file
+			, uint32_t maxSources );
 
 	private:
 		ALCdevice * m_device;
@@ -53,7 +54,7 @@ namespace orastus
 		ALCcontext * m_context;
 
 	private:
-		std::vector< SoundUPtr > m_sounds;
+		std::map< castor::Path, SoundUPtr > m_sounds;
 	};
 }
 

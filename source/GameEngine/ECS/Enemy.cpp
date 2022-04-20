@@ -27,7 +27,7 @@ namespace orastus
 		, uint32_t life
 		, castor3d::GeometrySPtr geometry
 		, WalkDataPtr walkData
-		, SoundSource killSound )
+		, SoundSource const * killSound )
 	{
 		m_ecs.createComponentData( entity
 			, m_speed
@@ -46,7 +46,7 @@ namespace orastus
 			, std::move( walkData ) );
 		m_ecs.createComponentData( entity
 			, m_killSound
-			, std::move( killSound ) );
+			, killSound );
 		m_ecs.createComponentData( entity
 			, m_status
 			, EnemyState::eSpawning );

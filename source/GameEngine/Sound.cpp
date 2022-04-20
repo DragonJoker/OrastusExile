@@ -4,6 +4,7 @@
 
 #include <sndfile.h>
 
+#include <algorithm>
 #include <array>
 
 CU_ImplementCUSmartPtr( orastus, Sound )
@@ -11,7 +12,9 @@ CU_ImplementCUSmartPtr( orastus, Sound )
 namespace orastus
 {
 	Sound::Sound( Type type
-		, castor::Path const & filePath )
+		, castor::Path const & filePath
+		, uint32_t maxSources )
+		: m_maxSources{ maxSources }
 	{
 		SF_INFO info{};
 		SNDFILE * file = sf_open( filePath.c_str(), SFM_READ, &info );
@@ -55,5 +58,39 @@ namespace orastus
 			alDeleteBuffers( 1u, &m_buffer );
 			checkALError( "OpenAL buffer destruction" );
 		}
+	}
+
+	SoundSource const & Sound::createSource( bool looped )
+	{
+		if ( m_sources.size() < m_maxSources )
+		{
+			m_sources.emplace_back( std::make_unique< SoundSource >( *this, looped ), 0u );
+		}
+
+		return doGetMinUseSource();
+	}
+
+	SoundSource const & Sound::createSource( castor3d::SceneNode const & node
+		, bool looped )
+	{
+		if ( m_sources.size() < m_maxSources )
+		{
+			m_sources.emplace_back( std::make_unique< SoundSource >( *this, looped, node ), 0u );
+		}
+
+		return doGetMinUseSource();
+	}
+
+	SoundSource const & Sound::doGetMinUseSource()
+	{
+		auto it = std::min_element( m_sources.begin()
+			, m_sources.end()
+			, []( std::pair< SoundSourcePtr, uint32_t > const & lhs
+				, std::pair< SoundSourcePtr, uint32_t > const & rhs )
+			{
+				return lhs.second < rhs.second;
+			} );
+		++it->second;
+		return *it->first;
 	}
 }

@@ -1,6 +1,7 @@
 #include "GameEngine/EnemySpawner.hpp"
 
 #include "GameEngine/Game.hpp"
+#include "GameEngine/Sound.hpp"
 #include "GameEngine/ECS/Ecs.hpp"
 #include "GameEngine/ECS/WalkData.hpp"
 #include "GameEngine/State/EnemyState.hpp"
@@ -103,11 +104,12 @@ namespace orastus
 		}
 
 		m_enemiesCache->push_back( enemy );
-		m_ecs.getComponentData< SoundSource >( enemy
-			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue().play();
 		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( enemy
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		Game::getEnemyNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
+		auto node = Game::getEnemyNode( geometry );
+		m_ecs.getComponentData< SoundSource const * >( enemy
+			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue()->play( node );
+		node->setPosition( castor::Point3f{ 0, -1000, 0 } );
 	}
 
 	void EnemySpawner::enemyEscaped( Entity enemy )
@@ -166,9 +168,7 @@ namespace orastus
 				, m_life.getValue()
 				, geometry
 				, std::make_unique< WalkData >( path, m_game )
-				, SoundSource{ *node
-					, m_game.getEnemyKillSound()
-					, false } ) );
+				, &m_game.getEnemyKillSound().createSource( *node, false ) ) );
 		}
 		else
 		{

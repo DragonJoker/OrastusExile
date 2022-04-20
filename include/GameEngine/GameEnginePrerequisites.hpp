@@ -73,6 +73,7 @@ namespace orastus
 	using AttackDataPtr = std::unique_ptr< AttackData >;
 	using TrackDataPtr = std::unique_ptr< TrackData >;
 	using WalkDataPtr = std::unique_ptr< WalkData >;
+	using SoundSourcePtr = std::unique_ptr< SoundSource >;
 	using EntityList = std::vector< Entity >;
 
 	// Game

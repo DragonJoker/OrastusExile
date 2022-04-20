@@ -7,9 +7,9 @@
 
 namespace orastus
 {
-	SoundSource::SoundSource( castor3d::SceneNode const * node
-		, Sound const * sound
-		, bool looped )
+	SoundSource::SoundSource( Sound const * sound
+		, bool looped
+		, castor3d::SceneNode const * node )
 		: m_node{ node }
 	{
 		if ( sound )
@@ -42,44 +42,21 @@ namespace orastus
 	}
 
 	SoundSource::SoundSource()
-		: SoundSource{ nullptr, nullptr, false }
+		: SoundSource{ nullptr, false, nullptr }
 	{
 	}
 
 	SoundSource::SoundSource( Sound const & sound
 		, bool looped )
-		: SoundSource{ nullptr, &sound, looped }
+		: SoundSource{ &sound, looped, nullptr }
 	{
 	}
 
-	SoundSource::SoundSource( castor3d::SceneNode const & node
-		, Sound const & sound
-		, bool looped )
-		: SoundSource{ &node, &sound, looped }
+	SoundSource::SoundSource( Sound const & sound
+		, bool looped
+		, castor3d::SceneNode const & node )
+		: SoundSource{ &sound, looped, &node }
 	{
-	}
-
-	SoundSource::SoundSource( SoundSource && rhs )noexcept
-		: m_node{ rhs.m_node }
-		, m_source{ rhs.m_source }
-	{
-		rhs.m_node = nullptr;
-		rhs.m_source = AL_INVALID_VALUE;
-	}
-
-	SoundSource & SoundSource::operator=( SoundSource && rhs )noexcept
-	{
-		if ( m_source != AL_INVALID_VALUE )
-		{
-			alDeleteSources( 1u, &m_source );
-			m_source = AL_INVALID_VALUE;
-		}
-
-		m_node = rhs.m_node;
-		m_source = rhs.m_source;
-		rhs.m_node = nullptr;
-		rhs.m_source = AL_INVALID_VALUE;
-		return *this;
 	}
 
 	SoundSource::~SoundSource()
@@ -87,6 +64,7 @@ namespace orastus
 		if ( m_source != AL_INVALID_VALUE )
 		{
 			alDeleteSources( 1u, &m_source );
+			m_source = AL_INVALID_VALUE;
 		}
 	}
 
@@ -110,10 +88,11 @@ namespace orastus
 		}
 	}
 
-	void SoundSource::play()const
+	void SoundSource::play( castor3d::SceneNode const * node )const
 	{
 		if ( m_source != AL_INVALID_VALUE )
 		{
+			m_node = node;
 			alSourcePlay( m_source );
 			checkALError( "OpenAL source play" );
 		}

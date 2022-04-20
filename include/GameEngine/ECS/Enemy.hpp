@@ -44,7 +44,7 @@ namespace orastus
 			, uint32_t life
 			, castor3d::GeometrySPtr geometry
 			, WalkDataPtr walkData
-			, SoundSource killSound );
+			, SoundSource const * killSound );
 		/**
 		*\brief
 		*	Resets an enemy to initial state.

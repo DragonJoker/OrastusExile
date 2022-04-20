@@ -1,6 +1,7 @@
 #include "GameEngine/BulletSpawner.hpp"
 
 #include "GameEngine/Game.hpp"
+#include "GameEngine/Sound.hpp"
 #include "GameEngine/ECS/Ecs.hpp"
 #include "GameEngine/ECS/SoundSource.hpp"
 #include "GameEngine/ECS/TrackData.hpp"
@@ -42,7 +43,7 @@ namespace orastus
 	
 	void BulletSpawner::fireBullet( Entity source
 		, Entity target
-		, Sound const & sound )
+		, Sound & sound )
 	{
 		auto bullet = *m_bulletsCache.begin();
 		m_bulletsCache.erase( m_bulletsCache.begin() );
@@ -60,15 +61,13 @@ namespace orastus
 		node->setPosition( sourceNode->getPosition() );
 		m_ecs.resetBullet( bullet
 			, geometry
-			, SoundSource{ *node
-				, sound
-				, false }
+			, &sound.createSource( *node, false )
 			, std::make_unique< TrackData >( target, speed, damage ) );
 	}
 
 	void BulletSpawner::fireBullet( Entity source
 		, Entity target
-		, Sound const & sound
+		, Sound & sound
 		, castor3d::GeometrySPtr geometry )
 	{
 		auto speed = m_ecs.getComponentData< float >( source
@@ -80,9 +79,7 @@ namespace orastus
 		auto node = Game::getBulletNode( geometry );
 		node->setPosition( sourceNode->getPosition() );
 		auto bullet = m_ecs.createBullet( geometry
-			, SoundSource{ *node
-				, sound
-				, false }
+			, &sound.createSource( *node, false )
 			, std::make_unique< TrackData >( target, speed, damage ) );
 		m_liveBullets.insert( m_liveBullets.end(), bullet );
 		++m_totalSpawned;

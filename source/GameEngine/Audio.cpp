@@ -49,9 +49,16 @@ namespace orastus
 	}
 
 	Sound & Audio::addSound( Sound::Type type
-		, castor::Path const & file )
+		, castor::Path const & file
+		, uint32_t maxSources )
 	{
-		m_sounds.emplace_back( castor::makeUnique< Sound >( type, file ) );
-		return *m_sounds.back();
+		auto ires = m_sounds.emplace( file, nullptr );
+		
+		if ( ires.second )
+		{
+			ires.first->second = castor::makeUnique< Sound >( type, file, maxSources );
+		}
+
+		return *ires.first->second;
 	}
 }

@@ -162,8 +162,8 @@ namespace orastus
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack
-			, SoundSource shootSound
-			, Sound const * hitSound );
+			, SoundSource const * shootSound
+			, Sound * hitSound );
 		/**
 		*\brief
 		*	Creates a tower with splash damage.
@@ -204,8 +204,8 @@ namespace orastus
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack
-			, SoundSource shootSound
-			, Sound const * hitSound );
+			, SoundSource const * shootSound
+			, Sound * hitSound );
 		/**
 		*\brief
 		*	Creates an enemy.
@@ -222,7 +222,7 @@ namespace orastus
 			, uint32_t life
 			, castor3d::GeometrySPtr geometry
 			, WalkDataPtr walkData
-			, SoundSource killSound );
+			, SoundSource const * killSound );
 		/**
 		*\brief
 		*	Resets an enemy to initial state.
@@ -252,7 +252,7 @@ namespace orastus
 		*/
 		EFO_API Entity createTarget( castor3d::GeometrySPtr geometry
 			, GridCell cell
-			, SoundSource targetCapturedSound );
+			, SoundSource const * targetCapturedSound );
 		/**
 		*\brief
 		*	Resets an enemies target to initial state.
@@ -275,7 +275,7 @@ namespace orastus
 		*	The track value.
 		*/
 		EFO_API Entity createBullet( castor3d::GeometrySPtr geometry
-			, SoundSource soundSource
+			, SoundSource const * soundSource
 			, TrackDataPtr track );
 		/**
 		*\brief
@@ -289,7 +289,7 @@ namespace orastus
 		*/
 		EFO_API void resetBullet( Entity entity
 			, castor3d::GeometrySPtr geometry
-			, SoundSource soundSource
+			, SoundSource const * soundSource
 			, TrackDataPtr track );
 		/**
 		*\brief

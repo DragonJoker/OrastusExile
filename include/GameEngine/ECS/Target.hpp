@@ -36,7 +36,7 @@ namespace orastus
 		EFO_API void createData( Entity const & entity
 			, castor3d::GeometrySPtr geometry
 			, GridCell cell
-			, SoundSource targetCapturedSound );
+			, SoundSource const * targetCapturedSound );
 		/**
 		*\brief
 		*	Resets an enemy to initial state.

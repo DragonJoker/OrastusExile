@@ -60,8 +60,8 @@ namespace orastus
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack
-			, SoundSource shootSound
-			, Sound const * hitSound );
+			, SoundSource const * shootSound
+			, Sound * hitSound );
 		/**
 		*\brief
 		*	Returns a splash tower as a string.

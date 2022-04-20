@@ -23,7 +23,7 @@ namespace orastus
 
 		for ( auto & data : sources )
 		{
-			static_cast< ComponentData< SoundSource > & >( *data.data ).getValue().update( game.getCameraNode() );
+			static_cast< ComponentData< SoundSource const * > & >( *data.data ).getValue()->update( game.getCameraNode() );
 		}
 	}
 }

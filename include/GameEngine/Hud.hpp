@@ -92,7 +92,7 @@ namespace orastus
 		castor3d::TextOverlayWPtr m_towerSpeed;
 		castor3d::TextOverlayWPtr m_towerRange;
 		castor3d::TextOverlayWPtr m_towerDamage;
-		SoundSource m_buttonSound;
+		SoundSource const & m_buttonSound;
 	};
 }
 

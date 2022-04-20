@@ -39,8 +39,8 @@ namespace orastus
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
-		, SoundSource shootSound
-		, Sound const * hitSound )
+		, SoundSource const * shootSound
+		, Sound * hitSound )
 	{
 		m_ecs.createComponentData( entity
 			, m_cooldown
@@ -62,7 +62,7 @@ namespace orastus
 			, true );
 		m_ecs.createComponentData( entity
 			, m_shootSound
-			, std::move( shootSound ) );
+			, shootSound );
 
 		if ( hitSound )
 		{

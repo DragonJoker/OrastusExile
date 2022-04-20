@@ -1,6 +1,7 @@
 #include "GameEngine/Hud.hpp"
 
 #include "GameEngine/Game.hpp"
+#include "GameEngine/Sound.hpp"
 
 #include <Castor3D/Engine.hpp>
 #include <Castor3D/Cache/OverlayCache.hpp>
@@ -59,7 +60,7 @@ namespace orastus
 		, m_towerSpeed{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerSpeedValue" ) ) }
 		, m_towerRange{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerRangeValue" ) ) }
 		, m_towerDamage{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerDamageValue" ) ) }
-		, m_buttonSound{ game.addSound( dataFolder / "Sounds" / "hud_button.wav" ), false }
+		, m_buttonSound{ game.addSound( dataFolder / "Sounds" / "hud_button.wav", 1u ).createSource( false ) }
 	{
 	}
 
