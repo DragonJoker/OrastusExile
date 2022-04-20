@@ -95,34 +95,9 @@ set( ${PROJECT_NAME}_SRC_FILES
 	${${PROJECT_NAME}_FOLDER_SRC_FILES}
 )
 set( ${PROJECT_NAME}_FOLDER_HDR_FILES
-	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/State/State.hpp
-	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/State/StateMachine.hpp
-)
-set( ${PROJECT_NAME}_FOLDER_SRC_FILES
-	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/State/State.cpp
-	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/State/StateMachine.cpp
-)
-source_group( "Header Files\\State"
-	FILES
-		${${PROJECT_NAME}_FOLDER_HDR_FILES}
-)
-source_group( "Source Files\\State"
-	FILES
-		${${PROJECT_NAME}_FOLDER_SRC_FILES}
-)
-set( ${PROJECT_NAME}_HDR_FILES
-	${${PROJECT_NAME}_HDR_FILES}
-	${${PROJECT_NAME}_FOLDER_HDR_FILES}
-)
-set( ${PROJECT_NAME}_SRC_FILES
-	${${PROJECT_NAME}_SRC_FILES}
-	${${PROJECT_NAME}_FOLDER_SRC_FILES}
-)
-set( ${PROJECT_NAME}_FOLDER_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/System/BulletSystem.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/System/EnemySystem.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/System/SoundSystem.hpp
-	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/System/StateSystem.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/System/TargetSystem.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/System/TowerSystem.hpp
 )
@@ -130,7 +105,6 @@ set( ${PROJECT_NAME}_FOLDER_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/System/BulletSystem.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/System/EnemySystem.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/System/SoundSystem.cpp
-	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/System/StateSystem.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/System/TargetSystem.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/System/TowerSystem.cpp
 )

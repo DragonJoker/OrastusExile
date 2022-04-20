@@ -5,7 +5,6 @@
 #include "GameEngine/Ecs/Enemy.hpp"
 #include "GameEngine/Ecs/SoundSource.hpp"
 #include "GameEngine/Ecs/Tower.hpp"
-#include "GameEngine/State/StateMachine.hpp"
 
 #include <Castor3D/Engine.hpp>
 #include <Castor3D/Event/Frame/FrameListener.hpp>

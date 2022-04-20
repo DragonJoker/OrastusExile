@@ -9,7 +9,6 @@ See licence file in root folder, MIT.txt
 
 #include "GameEngine/System/BulletSystem.hpp"
 #include "GameEngine/System/EnemySystem.hpp"
-#include "GameEngine/System/StateSystem.hpp"
 #include "GameEngine/System/SoundSystem.hpp"
 #include "GameEngine/System/TargetSystem.hpp"
 #include "GameEngine/System/TowerSystem.hpp"
@@ -454,7 +453,6 @@ namespace orastus
 		void doCreateAssemblages();
 
 	public:
-		EFO_API static ComponentId const StateComponent;
 		EFO_API static ComponentId const TowerStateComponent;
 		EFO_API static ComponentId const SplashTowerStateComponent;
 		EFO_API static ComponentId const EnemyStateComponent;
@@ -482,7 +480,6 @@ namespace orastus
 		BulletSystem m_bulletSystem;
 		EnemySystem m_enemySystem;
 		TargetSystem m_targetSystem;
-		StateSystem m_stateSystem;
 		SoundSystem m_soundSystem;
 	};
 }

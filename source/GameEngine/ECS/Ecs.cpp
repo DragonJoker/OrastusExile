@@ -17,7 +17,6 @@ namespace orastus
 {
 	namespace
 	{
-		String const STATE_COMPONENT_DESC = cuT( "State" );
 		String const TOWER_STATE_COMPONENT_DESC = cuT( "Tower State" );
 		String const SPLASH_TOWER_STATE_COMPONENT_DESC = cuT( "Splash Tower State" );
 		String const ENEMY_STATE_COMPONENT_DESC = cuT( "Enemy State" );
@@ -29,7 +28,6 @@ namespace orastus
 		String const SOUND_SOURCE_COMPONENT_DESC = cuT( "SoundSource" );
 	}
 
-	ComponentId const Ecs::StateComponent = Ecs::hash( "state   " );
 	ComponentId const Ecs::TowerStateComponent = Ecs::hash( "twstate " );
 	ComponentId const Ecs::SplashTowerStateComponent = Ecs::hash( "stwstate" );
 	ComponentId const Ecs::EnemyStateComponent = Ecs::hash( "enmstate" );
@@ -45,7 +43,6 @@ namespace orastus
 		, m_bulletSystem{ *this }
 		, m_enemySystem{ *this }
 		, m_targetSystem{ *this }
-		, m_stateSystem{ *this }
 		, m_soundSystem{ *this }
 	{
 		doRegisterComponents();
@@ -65,7 +62,6 @@ namespace orastus
 		m_bulletSystem.update( game, elapsed );
 		m_enemySystem.update( game, elapsed );
 		m_targetSystem.update( game, elapsed );
-		m_stateSystem.update( game, elapsed );
 		m_soundSystem.update( game, elapsed );
 	}
 
@@ -282,7 +278,6 @@ namespace orastus
 
 	void Ecs::doRegisterComponents()
 	{
-		doCreateComponent( StateComponent, STATE_COMPONENT_DESC );
 		doCreateComponent( TowerStateComponent, TOWER_STATE_COMPONENT_DESC );
 		doCreateComponent( SplashTowerStateComponent, SPLASH_TOWER_STATE_COMPONENT_DESC );
 		doCreateComponent( EnemyStateComponent, ENEMY_STATE_COMPONENT_DESC );
