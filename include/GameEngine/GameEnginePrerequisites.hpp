@@ -49,6 +49,7 @@ namespace orastus
 	class EntityId;
 	class Entity;
 	class Component;
+	class BaseComponentData;
 	class Ecs;
 	template< typename T >
 	class ComponentData;

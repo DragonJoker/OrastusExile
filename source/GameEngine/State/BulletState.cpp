@@ -1,6 +1,7 @@
 #include "GameEngine/State/BulletState.hpp"
 
 #include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/ECS/Enemy.hpp"
 #include "GameEngine/ECS/Entity.hpp"
 #include "GameEngine/ECS/TrackData.hpp"
 #include "GameEngine/Game.hpp"
@@ -38,10 +39,10 @@ namespace orastus
 
 				if ( trackData->target )
 				{
-					auto life = ecs.getComponentData< uint32_t >( trackData->target
-						, ecs.getComponent( Ecs::LifeComponent ) ).getValue();
-
-					if ( life )
+					if ( isTargetable( ecs
+						, trackData->target
+						, ecs.getComponentData< uint32_t >( trackData->target
+							, ecs.getComponent( Ecs::LifeComponent ) ) ) )
 					{
 						if ( !reachDst )
 						{

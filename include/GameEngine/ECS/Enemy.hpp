@@ -9,6 +9,9 @@ See licence file in root folder, MIT.txt
 
 namespace orastus
 {
+	EFO_API bool isTargetable( Ecs const & ecs
+		, Entity const & enemy
+		, BaseComponentData const & lifeComponent );
 	/**
 	*\brief
 	*	The components used to describe an enemy.

@@ -3,6 +3,7 @@
 #include "GameEngine/ECS/AnimationData.hpp"
 #include "GameEngine/ECS/AttackData.hpp"
 #include "GameEngine/ECS/Ecs.hpp"
+#include "GameEngine/ECS/Enemy.hpp"
 #include "GameEngine/ECS/Entity.hpp"
 #include "GameEngine/State/EnemyState.hpp"
 #include "GameEngine/Game.hpp"
@@ -43,20 +44,6 @@ namespace orastus
 				, ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
 			auto enemyNode = Game::getEnemyNode( geometry );
 			return castor::point::distance( towerNode.getPosition(), enemyNode->getPosition() ) <= range;
-		}
-
-		bool isTargetable( Ecs const & ecs
-			, Entity const & enemy
-			, BaseComponentData const & lifeComponent )
-		{
-			auto status = ecs.getComponentData< EnemyState >( enemy
-				, ecs.getComponent( Ecs::StatusComponent ) ).getValue();
-			return status != EnemyState::eSpawning
-				&& status != EnemyState::eEscaping
-				&& status != EnemyState::eEscaped
-				&& status != EnemyState::eDead
-				&& status != EnemyState::eDying
-				&& componentCast< uint32_t >( lifeComponent ).getValue();
 		}
 
 		Entity lookForEnemy( Ecs & ecs

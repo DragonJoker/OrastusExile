@@ -83,7 +83,8 @@ namespace orastus
 			{
 				auto state = ecs.getComponentData< TargetState >( entity
 					, ecs.getComponent( Ecs::StatusComponent ) ).getValue();
-				bool result = state == TargetState::eCaptured;
+				bool result = state == TargetState::eCaptured
+					|| state == TargetState::eIdle;
 
 				if ( !result )
 				{

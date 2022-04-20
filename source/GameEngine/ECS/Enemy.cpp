@@ -99,4 +99,18 @@ namespace orastus
 		stream << cuT( "\n Status: " ) << getName( m_ecs.getComponentData< EnemyState >( entity, m_status ).getValue() );
 		return stream.str();
 	}
+
+	bool isTargetable( Ecs const & ecs
+		, Entity const & enemy
+		, BaseComponentData const & lifeComponent )
+	{
+		auto status = ecs.getComponentData< EnemyState >( enemy
+			, ecs.getComponent( Ecs::StatusComponent ) ).getValue();
+		return status != EnemyState::eSpawning
+			&& status != EnemyState::eEscaping
+			&& status != EnemyState::eEscaped
+			&& status != EnemyState::eDead
+			&& status != EnemyState::eDying
+			&& componentCast< uint32_t >( lifeComponent ).getValue();
+	}
 }

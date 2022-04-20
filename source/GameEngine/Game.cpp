@@ -525,7 +525,7 @@ namespace orastus
 
 		if ( !life.getValue() )
 		{
-			m_enemySpawner.killEnemy( target );
+			killEnemy( target );
 		}
 	}
 
