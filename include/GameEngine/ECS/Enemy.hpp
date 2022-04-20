@@ -5,13 +5,31 @@ See licence file in root folder, MIT.txt
 #ifndef ___EFO_Enemy_HPP___
 #define ___EFO_Enemy_HPP___
 
-#include "GameEngine/GameEnginePrerequisites.hpp"
+#include "GameEngine/ECS/Entity.hpp"
+#include "GameEngine/ECS/WalkData.hpp"
 
 namespace orastus
 {
 	EFO_API bool isTargetable( Ecs const & ecs
-		, Entity const & enemy
-		, BaseComponentData const & lifeComponent );
+		, Entity const & enemy );
+	EFO_API bool isTargetable( EnemyData const & enemy );
+	struct EnemyData
+	{
+		EFO_API EnemyData( Entity entity
+			, float speed
+			, uint32_t life
+			, castor3d::GeometrySPtr geometry
+			, WalkDataPtr walkData );
+
+		Entity entity;
+		EnemyStatus status;
+		float speed;
+		uint32_t life;
+		castor3d::GeometrySPtr geometry;
+		WalkDataPtr walkData;
+		Entity target;
+		Milliseconds timeout;
+	};
 	/**
 	*\brief
 	*	The components used to describe an enemy.
@@ -77,14 +95,8 @@ namespace orastus
 
 	private:
 		Ecs & m_ecs;
-		Component const & m_speed;
-		Component const & m_life;
-		Component const & m_timeout;
-		Component const & m_target;
+		Component const & m_enemy;
 		Component const & m_geometry;
-		Component const & m_walk;
-		Component const & m_state;
-		Component const & m_status;
 		Component const & m_killSound;
 	};
 }

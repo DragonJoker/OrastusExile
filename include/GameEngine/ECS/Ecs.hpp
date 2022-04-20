@@ -7,6 +7,7 @@ See licence file in root folder, MIT.txt
 
 #include "EntityComponentData.hpp"
 
+#include "GameEngine/System/EnemySystem.hpp"
 #include "GameEngine/System/StateSystem.hpp"
 #include "GameEngine/System/SoundSystem.hpp"
 #include "GameEngine/System/TowerSystem.hpp"
@@ -458,16 +459,12 @@ namespace orastus
 		EFO_API static ComponentId const StateComponent;
 		EFO_API static ComponentId const TowerStateComponent;
 		EFO_API static ComponentId const SplashTowerStateComponent;
+		EFO_API static ComponentId const EnemyStateComponent;
 		EFO_API static ComponentId const StatusComponent;
 		EFO_API static ComponentId const TimeoutComponent;
-		EFO_API static ComponentId const EntityComponent;
 		EFO_API static ComponentId const CellComponent;
-		EFO_API static ComponentId const SpeedComponent;
-		EFO_API static ComponentId const LifeComponent;
-		EFO_API static ComponentId const PositionComponent;
 		EFO_API static ComponentId const GeometryComponent;
 		EFO_API static ComponentId const PickableComponent;
-		EFO_API static ComponentId const WalkComponent;
 		EFO_API static ComponentId const TrackComponent;
 		EFO_API static ComponentId const SoundSourceComponent;
 
@@ -485,6 +482,7 @@ namespace orastus
 		MapBlockPtr m_mapBlockSet;
 		// Systems.
 		TowerSystem m_towerSystem;
+		EnemySystem m_enemySystem;
 		StateSystem m_stateSystem;
 		SoundSystem m_soundSystem;
 	};

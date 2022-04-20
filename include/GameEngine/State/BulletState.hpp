@@ -2,8 +2,8 @@
 See licence file in root folder, MIT.txt
 */
 #pragma once
-#ifndef ___EFO_EnemyState_HPP___
-#define ___EFO_EnemyState_HPP___
+#ifndef ___EFO_BulletState_HPP___
+#define ___EFO_BulletState_HPP___
 
 #include "State.hpp"
 

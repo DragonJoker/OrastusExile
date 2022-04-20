@@ -8,9 +8,9 @@ See licence file in root folder, MIT.txt
 #include <CastorTest/UnitTest.hpp>
 
 #include <GameEngine/ECS/Ecs.hpp>
+#include <GameEngine/ECS/Enemy.hpp>
 #include <GameEngine/ECS/Tower.hpp>
 #include <GameEngine/Resource.hpp>
-#include <GameEngine/State/EnemyState.hpp>
 
 namespace Testing
 {
@@ -26,9 +26,9 @@ namespace Testing
 	};
 
 	template<>
-	struct Stringifier< orastus::EnemyState >
+	struct Stringifier< orastus::EnemyStatus >
 	{
-		static std::string get( orastus::EnemyState const & value )
+		static std::string get( orastus::EnemyStatus const & value )
 		{
 			return orastus::getName( value );
 		}

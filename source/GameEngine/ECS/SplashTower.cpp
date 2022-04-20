@@ -101,6 +101,7 @@ namespace orastus
 	SplashTower::SplashTower( Ecs & ecs )
 		: m_ecs{ ecs }
 		, m_splashTower{ m_ecs.getComponent( Ecs::SplashTowerStateComponent ) }
+		, m_geometry{ m_ecs.getComponent( Ecs::GeometryComponent ) }
 		, m_pickable{ m_ecs.getComponent( Ecs::PickableComponent ) }
 		, m_soundSource{ m_ecs.getComponent( Ecs::SoundSourceComponent ) }
 	{
@@ -152,6 +153,9 @@ namespace orastus
 					, 0_ms } );
 		}
 
+		m_ecs.createComponentData( entity
+			, m_geometry
+			, std::move( geometry ) );
 		m_ecs.createComponentData( entity
 			, m_pickable
 			, true );

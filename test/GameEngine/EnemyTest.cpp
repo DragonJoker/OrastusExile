@@ -4,9 +4,7 @@ See licence file in root folder, MIT.txt
 #include "EnemyTest.hpp"
 
 #include <GameEngine/ECS/Ecs.hpp>
-#include <GameEngine/ECS/SoundSource.hpp>
-#include <GameEngine/ECS/WalkData.hpp>
-#include <GameEngine/State/EnemyState.hpp>
+#include <GameEngine/ECS/Enemy.hpp>
 
 namespace orastus
 {
@@ -32,8 +30,10 @@ namespace orastus
 			float speed{ 100.0f };
 			uint32_t life{ 1000u };
 			auto enemy = ecs.createEnemy( speed, life, nullptr, nullptr, {} );
-			CT_EQUAL( ecs.getComponentData< float >( enemy, ecs.getComponent( Ecs::SpeedComponent ) ).getValue(), speed );
-			CT_EQUAL( ecs.getComponentData< uint32_t >( enemy, ecs.getComponent( Ecs::LifeComponent ) ).getValue(), life );
+			auto & data = ecs.getComponentData< EnemyData >( enemy
+				, ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue();
+			CT_EQUAL( data.speed, speed );
+			CT_EQUAL( data.life, life );
 		}
 	}
 }

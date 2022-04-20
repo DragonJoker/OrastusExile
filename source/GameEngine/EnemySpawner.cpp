@@ -3,8 +3,7 @@
 #include "GameEngine/Game.hpp"
 #include "GameEngine/Sound.hpp"
 #include "GameEngine/ECS/Ecs.hpp"
-#include "GameEngine/ECS/WalkData.hpp"
-#include "GameEngine/State/EnemyState.hpp"
+#include "GameEngine/ECS/Enemy.hpp"
 
 #include <Castor3D/Model/Mesh/Mesh.hpp>
 #include <Castor3D/Scene/Geometry.hpp>
@@ -46,9 +45,9 @@ namespace orastus
 		{
 			for ( auto & enemy : enemies.second )
 			{
-				auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( enemy
+				auto & data = m_ecs.getComponentData< EnemyData >( enemy
 					, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-				Game::getEnemyNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
+				Game::getEnemyNode( data.geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
 			}
 		}
 
@@ -104,30 +103,28 @@ namespace orastus
 		}
 
 		m_enemiesCache->push_back( enemy );
-		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( enemy
-			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		auto node = Game::getEnemyNode( geometry );
+		auto & enemyData = m_ecs.getComponentData< EnemyData >( enemy
+			, m_ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue();
+		auto node = Game::getEnemyNode( enemyData.geometry );
 		m_ecs.getComponentData< SoundSource const * >( enemy
 			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue()->play( node );
 		node->setPosition( castor::Point3f{ 0, -1000, 0 } );
 	}
 
-	void EnemySpawner::enemyEscaped( Entity enemy )
+	void EnemySpawner::enemyEscaped( EnemyData const & enemy )
 	{
 		castor3d::log::debug << "Enemy has escaped" << std::endl;
 		auto it = std::find( std::begin( m_liveEnemies )
 			, std::end( m_liveEnemies )
-			, enemy );
+			, enemy.entity );
 
 		if ( it != std::end( m_liveEnemies ) )
 		{
 			m_liveEnemies.erase( it );
 		}
 
-		m_enemiesCache->push_back( enemy );
-		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( enemy
-			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		Game::getEnemyNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
+		m_enemiesCache->push_back( enemy.entity );
+		Game::getEnemyNode( enemy.geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
 	}
 
 	void EnemySpawner::doStartWave( uint32_t count )
@@ -175,14 +172,14 @@ namespace orastus
 			auto entity = m_enemiesCache->front();
 			m_liveEnemies.push_back( entity );
 			m_enemiesCache->erase( m_enemiesCache->begin() );
-			auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( entity
-				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-			Game::getEnemyNode( geometry )->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y - 1 } )
+			auto & enemy = m_ecs.getComponentData< EnemyData >( entity
+				, m_ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue();
+			Game::getEnemyNode( enemy.geometry )->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y - 1 } )
 				+ castor::Point3f{ 0, m_game.getCellHeight() * 5.0f, 0 } );
 			m_ecs.resetEnemy( entity
 				, 40.0f
 				, m_life.getValue()
-				, geometry
+				, enemy.geometry
 				, std::make_unique< WalkData >( path, m_game ) );
 		}
 

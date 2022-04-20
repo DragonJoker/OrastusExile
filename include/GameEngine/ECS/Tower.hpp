@@ -102,6 +102,7 @@ namespace orastus
 	private:
 		Ecs & m_ecs;
 		Component const & m_tower;
+		Component const & m_geometry;
 		Component const & m_pickable;
 		Component const & m_soundSource;
 	};

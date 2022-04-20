@@ -118,21 +118,21 @@ namespace orastus
 		*\param[in] entity
 		*	The enemy entity.
 		*/
-		EFO_API void enemyCapturing( Entity entity );
+		EFO_API void enemyCapturing( EnemyData const & enemy );
 		/**
 		*\brief
 		*	An enemy is escaping with its target.
 		*\param[in] entity
 		*	The enemy entity.
 		*/
-		EFO_API void enemyEscaping( Entity entity );
+		EFO_API void enemyEscaping( EnemyData const & enemy );
 		/**
 		*\brief
 		*	An enemy has escaped.
 		*\param[in] entity
 		*	The enemy entity.
 		*/
-		EFO_API void enemyEscaped( Entity entity );
+		EFO_API void enemyEscaped( EnemyData const & enemy );
 		/**
 		*\brief
 		*	Kills a bullet.

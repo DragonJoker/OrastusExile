@@ -56,6 +56,44 @@ namespace orastus
 	*	The name.
 	*/
 	EFO_API castor::String getName( TowerStatus state );
+	/**
+	*\brief
+	*	Enemy states enumeration.
+	*/
+	enum class EnemyStatus
+	{
+		//! The enemy is spawning.
+		eSpawning,
+		//! The enemy is walking.
+		eWalking,
+		//! The enemy is frozen.
+		eFrozen,
+		//! The enemy is slown down.
+		eSlown,
+		//! The enemy is dying (id est: playing the death animation)
+		eDying,
+		//! The enemy is dead.
+		eDead,
+		//! The enemy is selecting a target.
+		eSelecting,
+		//! The enemy is waiting for a target.
+		eWaiting,
+		//! The enemy is capturing a target.
+		eCapturing,
+		//! The enemy is escaping the map.
+		eEscaping,
+		//! The enemy has escaped the map.
+		eEscaped,
+	};
+	/**
+	*\brief
+	*	Retrieves the name of the given enemy state.
+	*\param[in] state
+	*	The tower state.
+	*\return
+	*	The name.
+	*/
+	EFO_API castor::String getName( EnemyStatus state );
 
 	// General
 	using castor::xchar;
@@ -93,6 +131,7 @@ namespace orastus
 	class Bullet;
 	struct AnimationData;
 	struct AttackData;
+	struct EnemyData;
 	struct SplashTowerData;
 	struct TowerData;
 	struct TrackData;

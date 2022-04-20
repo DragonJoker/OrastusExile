@@ -13,13 +13,11 @@ namespace orastus
 	namespace tower
 	{
 		bool isInRange( Ecs const & ecs
-			, Entity const & enemy
+			, EnemyData const & enemy
 			, castor3d::SceneNode const & towerNode
 			, float range )
 		{
-			auto geometry = ecs.getComponentData< castor3d::GeometrySPtr >( enemy
-				, ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-			auto enemyNode = Game::getEnemyNode( geometry );
+			auto enemyNode = Game::getEnemyNode( enemy.geometry );
 			return castor::point::distance( towerNode.getPosition(), enemyNode->getPosition() ) <= range;
 		}
 
@@ -34,13 +32,10 @@ namespace orastus
 				enemy != enemies.end() && !result;
 				++enemy )
 			{
-				if ( isTargetable( ecs
-					, enemy->entity
-					, *enemy->data )
-					&& isInRange( ecs
-						, enemy->entity
-						, towerNode
-						, range ) )
+				auto & data = componentCast< EnemyData >( *enemy->data ).getValue();
+
+				if ( isTargetable( data )
+					&& isInRange( ecs, data, towerNode, range ) )
 				{
 					result = enemy->entity;
 				}
@@ -53,9 +48,8 @@ namespace orastus
 			, Entity const & enemy
 			, castor3d::SceneNode & towerNode )
 		{
-			auto geometry = ecs.getComponentData< castor3d::GeometrySPtr >( enemy
-				, ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-			auto enemyNode = Game::getEnemyNode( geometry );
+			auto enemyNode = Game::getEnemyNode( ecs.getComponentData< EnemyData >( enemy
+				, ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue().geometry );
 			auto targetPosition = enemyNode->getDerivedPosition();
 			targetPosition[1] = towerNode.getDerivedPosition()[1];
 			auto direction = targetPosition - towerNode.getDerivedPosition();
@@ -90,7 +84,7 @@ namespace orastus
 			, TowerData & tower )
 		{
 			auto node = Game::getTowerNode( tower.geometry );
-			auto & enemies = ecs.getComponentDatas( ecs.getComponent( Ecs::LifeComponent ) );
+			auto & enemies = ecs.getComponentDatas( ecs.getComponent( Ecs::EnemyStateComponent ) );
 			auto target = lookForEnemy( ecs
 				, enemies
 				, *node
@@ -118,13 +112,13 @@ namespace orastus
 
 			if ( tower.attack->target )
 			{
-				auto life = ecs.getComponentData< uint32_t >( tower.attack->target
-					, ecs.getComponent( Ecs::LifeComponent ) ).getValue();
+				auto & enemy = ecs.getComponentData< EnemyData >( tower.attack->target
+					, ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue();
 
-				if ( !life )
+				if ( !enemy.life )
 				{
 					tower.attack->target = lookForEnemy( ecs
-						, ecs.getComponentDatas( ecs.getComponent( Ecs::LifeComponent ) )
+						, ecs.getComponentDatas( ecs.getComponent( Ecs::EnemyStateComponent ) )
 						, *node
 						, tower.range );
 				}

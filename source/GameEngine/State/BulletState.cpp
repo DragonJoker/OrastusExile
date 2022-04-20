@@ -25,8 +25,8 @@ namespace orastus
 				, Milliseconds const & elapsed
 				, Milliseconds const & total )
 			{
-				auto target = Game::getEnemyNode( ecs.getComponentData< castor3d::GeometrySPtr >( trackData->target
-					, ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
+				auto target = Game::getEnemyNode( ecs.getComponentData< EnemyData >( trackData->target
+					, ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue().geometry );
 				auto distance = float( elapsed.count() ) * trackData->speed / 1000.0f;
 				castor::Point3f nextPosition = target->getPosition();
 				castor::Point3f position{ node->getPosition() };
@@ -39,10 +39,7 @@ namespace orastus
 
 				if ( trackData->target )
 				{
-					if ( isTargetable( ecs
-						, trackData->target
-						, ecs.getComponentData< uint32_t >( trackData->target
-							, ecs.getComponent( Ecs::LifeComponent ) ) ) )
+					if ( isTargetable( ecs, trackData->target ) )
 					{
 						if ( !reachDst )
 						{

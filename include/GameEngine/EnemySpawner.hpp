@@ -31,7 +31,7 @@ namespace orastus
 		*\param[in] entity
 		*	The enemy entity.
 		*/
-		EFO_API void enemyEscaped( Entity enemy );
+		EFO_API void enemyEscaped( EnemyData const & enemy );
 
 		uint32_t getWave()const
 		{

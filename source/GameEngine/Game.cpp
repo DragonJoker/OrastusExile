@@ -1,12 +1,9 @@
 #include "GameEngine/Game.hpp"
 
 #include "GameEngine/Audio.hpp"
-#include "GameEngine/Ecs/AnimationData.hpp"
-#include "GameEngine/Ecs/AttackData.hpp"
+#include "GameEngine/Ecs/Enemy.hpp"
 #include "GameEngine/Ecs/SoundSource.hpp"
 #include "GameEngine/Ecs/Tower.hpp"
-#include "GameEngine/ECS/WalkData.hpp"
-#include "GameEngine/State/EnemyState.hpp"
 #include "GameEngine/State/StateMachine.hpp"
 
 #include <Castor3D/Engine.hpp>
@@ -459,48 +456,40 @@ namespace orastus
 
 	void Game::killEnemy( Entity entity )
 	{
-		auto target = m_ecs.getComponentData< Entity >( entity
-			, m_ecs.getComponent( Ecs::EntityComponent ) ).getValue();
+		auto & enemy = m_ecs.getComponentData< EnemyData >( entity
+			, m_ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue();
 
-		if ( target )
+		if ( enemy.target )
 		{
-			m_targetSpawner.freeTarget( target );
+			m_targetSpawner.freeTarget( enemy.target );
+			enemy.target = {};
 		}
 
 		m_enemySpawner.killEnemy( entity );
 	}
 
-	void Game::enemyCapturing( Entity entity )
+	void Game::enemyCapturing( EnemyData const & enemy )
 	{
-		m_ecs.getComponentData< EnemyState >( entity
-			, m_ecs.getComponent( Ecs::StatusComponent ) ).setValue( EnemyState::eCapturing );
-		auto target = m_ecs.getComponentData< Entity >( entity
-			, m_ecs.getComponent( Ecs::EntityComponent ) ).getValue();
-
-		if ( target )
+		if ( enemy.target )
 		{
-			m_targetSpawner.targetBeingCaptured( target );
+			m_targetSpawner.targetBeingCaptured( enemy.target );
 		}
 	}
 
-	void Game::enemyEscaping( Entity entity )
+	void Game::enemyEscaping( EnemyData const & enemy )
 	{
-		m_ecs.getComponentData< EnemyState >( entity
-			, m_ecs.getComponent( Ecs::StatusComponent ) ).setValue( EnemyState::eEscaping );
-		auto target = m_ecs.getComponentData< Entity >( entity
-			, m_ecs.getComponent( Ecs::EntityComponent ) ).getValue();
-		CU_Require( target );
+		CU_Require( enemy.target );
 
-		if ( m_targetSpawner.targetCaptured( target ) )
+		if ( m_targetSpawner.targetCaptured( enemy.target ) )
 		{
 			m_state = State::eEnded;
 			m_hud.gameOver();
 		}
 	}
 
-	void Game::enemyEscaped( Entity entity )
+	void Game::enemyEscaped( EnemyData const & enemy )
 	{
-		m_enemySpawner.enemyEscaped( entity );
+		m_enemySpawner.enemyEscaped( enemy );
 	}
 
 	void Game::killBullet( Entity entity )
@@ -519,11 +508,11 @@ namespace orastus
 			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue()->play( node );
 		m_bulletSpawner.killBullet( source );
 
-		auto & life = m_ecs.getComponentData< uint32_t >( target
-			, m_ecs.getComponent( Ecs::LifeComponent ) );
-		life.setValue( life.getValue() - std::min( life.getValue(), damage ) );
+		auto & enemy = m_ecs.getComponentData< EnemyData >( target
+			, m_ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue();
+		enemy.life -= std::min( enemy.life, damage );
 
-		if ( !life.getValue() )
+		if ( !enemy.life )
 		{
 			killEnemy( target );
 		}

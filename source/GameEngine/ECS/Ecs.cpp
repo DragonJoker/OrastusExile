@@ -20,16 +20,12 @@ namespace orastus
 		String const STATE_COMPONENT_DESC = cuT( "State" );
 		String const TOWER_STATE_COMPONENT_DESC = cuT( "Tower State" );
 		String const SPLASH_TOWER_STATE_COMPONENT_DESC = cuT( "Splash Tower State" );
+		String const ENEMY_STATE_COMPONENT_DESC = cuT( "Enemy State" );
 		String const STATUS_COMPONENT_DESC = cuT( "Status" );
 		String const TIMEOUT_COMPONENT_DESC = cuT( "Timeout" );
-		String const ENTITY_COMPONENT_DESC = cuT( "Entity" );
 		String const CELL_COMPONENT_DESC = cuT( "Cell" );
-		String const SPEED_COMPONENT_DESC = cuT( "Speed" );
-		String const LIFE_COMPONENT_DESC = cuT( "Life" );
-		String const POSIION_COMPONENT_DESC = cuT( "Position" );
 		String const GEOMETRY_COMPONENT_DESC = cuT( "Geometry" );
 		String const PICKABLE_COMPONENT_DESC = cuT( "Pickable" );
-		String const WALK_COMPONENT_DESC = cuT( "Walk" );
 		String const TRACK_COMPONENT_DESC = cuT( "Track" );
 		String const SOUND_SOURCE_COMPONENT_DESC = cuT( "SoundSource" );
 	}
@@ -37,21 +33,18 @@ namespace orastus
 	ComponentId const Ecs::StateComponent = Ecs::hash( "state   " );
 	ComponentId const Ecs::TowerStateComponent = Ecs::hash( "twstate " );
 	ComponentId const Ecs::SplashTowerStateComponent = Ecs::hash( "stwstate" );
+	ComponentId const Ecs::EnemyStateComponent = Ecs::hash( "enmstate" );
 	ComponentId const Ecs::StatusComponent = Ecs::hash( "status  " );
 	ComponentId const Ecs::TimeoutComponent = Ecs::hash( "timeout " );
-	ComponentId const Ecs::EntityComponent = Ecs::hash( "entity  " );
 	ComponentId const Ecs::CellComponent = Ecs::hash( "cell    " );
-	ComponentId const Ecs::SpeedComponent = Ecs::hash( "speed   " );
-	ComponentId const Ecs::LifeComponent = Ecs::hash( "life    " );
-	ComponentId const Ecs::PositionComponent = Ecs::hash( "position" );
 	ComponentId const Ecs::GeometryComponent = Ecs::hash( "geometry" );
 	ComponentId const Ecs::PickableComponent = Ecs::hash( "pickable" );
-	ComponentId const Ecs::WalkComponent = Ecs::hash( "walk    " );
 	ComponentId const Ecs::TrackComponent = Ecs::hash( "track   " );
 	ComponentId const Ecs::SoundSourceComponent = Ecs::hash( "soundsrc" );
 
 	Ecs::Ecs()
 		: m_towerSystem{ *this }
+		, m_enemySystem{ *this }
 		, m_stateSystem{ *this }
 		, m_soundSystem{ *this }
 	{
@@ -69,6 +62,7 @@ namespace orastus
 		, Milliseconds const & elapsed )
 	{
 		m_towerSystem.update( game, elapsed );
+		m_enemySystem.update( game, elapsed );
 		m_stateSystem.update( game, elapsed );
 		m_soundSystem.update( game, elapsed );
 	}
@@ -293,16 +287,12 @@ namespace orastus
 		doCreateComponent( StateComponent, STATE_COMPONENT_DESC );
 		doCreateComponent( TowerStateComponent, TOWER_STATE_COMPONENT_DESC );
 		doCreateComponent( SplashTowerStateComponent, SPLASH_TOWER_STATE_COMPONENT_DESC );
+		doCreateComponent( EnemyStateComponent, ENEMY_STATE_COMPONENT_DESC );
 		doCreateComponent( StatusComponent, STATUS_COMPONENT_DESC );
 		doCreateComponent( TimeoutComponent, TIMEOUT_COMPONENT_DESC );
-		doCreateComponent( EntityComponent, ENTITY_COMPONENT_DESC );
 		doCreateComponent( CellComponent, CELL_COMPONENT_DESC );
-		doCreateComponent( SpeedComponent, SPEED_COMPONENT_DESC );
-		doCreateComponent( LifeComponent, LIFE_COMPONENT_DESC );
-		doCreateComponent( PositionComponent, POSIION_COMPONENT_DESC );
 		doCreateComponent( GeometryComponent, GEOMETRY_COMPONENT_DESC );
 		doCreateComponent( PickableComponent, PICKABLE_COMPONENT_DESC );
-		doCreateComponent( WalkComponent, WALK_COMPONENT_DESC );
 		doCreateComponent( TrackComponent, TRACK_COMPONENT_DESC );
 		doCreateComponent( SoundSourceComponent, SOUND_SOURCE_COMPONENT_DESC );
 	}
