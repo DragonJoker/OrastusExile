@@ -2,8 +2,8 @@
 See licence file in root folder, MIT.txt
 */
 #pragma once
-#ifndef ___EFO_StateSystem_HPP___
-#define ___EFO_StateSystem_HPP___
+#ifndef ___EFO_TargetSystem_HPP___
+#define ___EFO_TargetSystem_HPP___
 
 #include "GameEngine/GameEnginePrerequisites.hpp"
 
@@ -11,9 +11,9 @@ namespace orastus
 {
 	/**
 	*\brief
-	*	The ECS system that updates the states.
+	*	The ECS system that updates the targets.
 	*/
-	class StateSystem
+	class TargetSystem
 	{
 	public:
 		/**@}*/
@@ -23,7 +23,7 @@ namespace orastus
 		*\param[in] count
 		*	The resource count.
 		*/
-		EFO_API StateSystem( Ecs & ecs );
+		EFO_API TargetSystem( Ecs & ecs );
 		/**
 		*\brief
 		*	Updates the states.

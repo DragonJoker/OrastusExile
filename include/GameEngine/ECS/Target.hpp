@@ -5,10 +5,22 @@ See licence file in root folder, MIT.txt
 #ifndef ___EFO_Target_HPP___
 #define ___EFO_Target_HPP___
 
-#include "GameEngine/GameEnginePrerequisites.hpp"
+#include "GameEngine/GridCell.hpp"
+#include "GameEngine/Ecs/Entity.hpp"
 
 namespace orastus
 {
+	struct TargetData
+	{
+		EFO_API TargetData( Entity entity
+			, castor3d::GeometrySPtr geometry
+			, GridCell cell );
+
+		Entity entity;
+		TargetStatus status;
+		castor3d::GeometrySPtr geometry;
+		GridCell cell;
+	};
 	/**
 	*\brief
 	*	The components used to describe an enemies target.
@@ -48,7 +60,6 @@ namespace orastus
 		*	The cell value.
 		*/
 		EFO_API void resetData( Entity const & entity
-			, castor3d::GeometrySPtr geometry
 			, GridCell cell );
 		/**
 		*\brief
@@ -60,10 +71,8 @@ namespace orastus
 
 	private:
 		Ecs & m_ecs;
+		Component const & m_target;
 		Component const & m_geometry;
-		Component const & m_state;
-		Component const & m_status;
-		Component const & m_cell;
 		Component const & m_capturedSound;
 	};
 }

@@ -4,8 +4,7 @@
 #include "GameEngine/ECS/Ecs.hpp"
 #include "GameEngine/ECS/Enemy.hpp"
 #include "GameEngine/ECS/SoundSource.hpp"
-#include "GameEngine/ECS/WalkData.hpp"
-#include "GameEngine/State/TargetState.hpp"
+#include "GameEngine/ECS/Target.hpp"
 
 #include <Castor3D/Scene/Geometry.hpp>
 #include <Castor3D/Scene/SceneNode.hpp>
@@ -79,9 +78,9 @@ namespace orastus
 
 			if ( result )
 			{
-				auto cell = ecs.getComponentData< GridCell >( result
-					, ecs.getComponent( Ecs::CellComponent ) ).getValue();
-				enemy.walkData->destination = game.convert( castor::Point2i{ cell.x, cell.y } );
+				auto & data = ecs.getComponentData< TargetData >( result
+					, ecs.getComponent( Ecs::TargetStateComponent ) ).getValue();
+				enemy.walkData->destination = game.convert( castor::Point2i{ data.cell.x, data.cell.y } );
 				enemy.status = EnemyStatus::eSelecting;
 				enemy.target = result;
 			}

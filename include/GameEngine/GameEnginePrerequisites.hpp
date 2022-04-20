@@ -25,6 +25,12 @@ See licence file in root folder, MIT.txt
 
 namespace orastus
 {
+	// General
+	using castor::xchar;
+	using castor::String;
+	using castor::StringStream;
+	using Clock = std::chrono::high_resolution_clock;
+	using Milliseconds = castor::Milliseconds;
 	/**
 	*\brief
 	*	Tower types enumeration.
@@ -55,7 +61,7 @@ namespace orastus
 	*\return
 	*	The name.
 	*/
-	EFO_API castor::String getName( TowerStatus state );
+	EFO_API String getName( TowerStatus state );
 	/**
 	*\brief
 	*	Enemy states enumeration.
@@ -93,14 +99,29 @@ namespace orastus
 	*\return
 	*	The name.
 	*/
-	EFO_API castor::String getName( EnemyStatus state );
-
-	// General
-	using castor::xchar;
-	using castor::String;
-	using castor::StringStream;
-	using Clock = std::chrono::high_resolution_clock;
-	using Milliseconds = castor::Milliseconds;
+	EFO_API String getName( EnemyStatus state );
+	/**
+	*\brief
+	*	Target states enumeration.
+	*/
+	enum class TargetStatus
+	{
+		//! The target is idle.
+		eIdle,
+		//! The target is being captured.
+		eCapturing,
+		//! The target is captured.
+		eCaptured,
+	};
+	/**
+	*\brief
+	*	Retrieves the name of the given enemy state.
+	*\param[in] state
+	*	The tower state.
+	*\return
+	*	The name.
+	*/
+	EFO_API String getName( TargetStatus state );
 
 	// State
 	class State;
@@ -133,6 +154,7 @@ namespace orastus
 	struct AttackData;
 	struct EnemyData;
 	struct SplashTowerData;
+	struct TargetData;
 	struct TowerData;
 	struct TrackData;
 	struct WalkData;

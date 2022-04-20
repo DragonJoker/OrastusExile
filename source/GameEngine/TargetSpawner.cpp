@@ -4,8 +4,7 @@
 #include "GameEngine/Sound.hpp"
 #include "GameEngine/ECS/Ecs.hpp"
 #include "GameEngine/ECS/SoundSource.hpp"
-#include "GameEngine/State/StateMachine.hpp"
-#include "GameEngine/State/TargetState.hpp"
+#include "GameEngine/ECS/Target.hpp"
 
 #include <Castor3D/Cache/SceneNodeCache.hpp>
 #include <Castor3D/Model/Mesh/Mesh.hpp>
@@ -54,12 +53,11 @@ namespace orastus
 			auto entity = m_targetsCache.front();
 			m_liveTargets.push_back( entity );
 			m_targetsCache.erase( m_targetsCache.begin() );
-			auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( entity
-				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
+			auto geometry = m_ecs.getComponentData< TargetData >( entity
+				, m_ecs.getComponent( Ecs::TargetStateComponent ) ).getValue().geometry;
 			Game::getTargetNode( geometry )->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y } )
 				+ castor::Point3f{ 0, m_game.getCellHeight() / 5.0f, 0 } );
 			m_ecs.resetTarget( entity
-				, geometry
 				, std::move( cell ) );
 		}
 	}
@@ -90,25 +88,19 @@ namespace orastus
 		}
 
 		m_liveTargets.push_back( target );
-		m_ecs.getComponentData< TargetState >( target
-			, m_ecs.getComponent( Ecs::StatusComponent ) ).setValue( TargetState::eIdle );
-		m_ecs.getComponentData< StateMachinePtr >( target
-			, m_ecs.getComponent( Ecs::StateComponent ) ).getValue()->restart();
-		auto cell = m_ecs.getComponentData< GridCell >( target
-			, m_ecs.getComponent( Ecs::CellComponent ) ).getValue();
-		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( target
-			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		Game::getTargetNode( geometry )->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y } )
+		auto & data = m_ecs.getComponentData< TargetData >( target
+			, m_ecs.getComponent( Ecs::TargetStateComponent ) ).getValue();
+		data.status = TargetStatus::eIdle;
+		Game::getTargetNode( data.geometry )->setPosition( m_game.convert( castor::Point2i{ data.cell.x, data.cell.y } )
 			+ castor::Point3f{ 0, m_game.getCellHeight() / 5.0f, 0 } );
 	}
 
 	void TargetSpawner::targetBeingCaptured( Entity target )
 	{
-		m_ecs.getComponentData< TargetState >( target
-			, m_ecs.getComponent( Ecs::StatusComponent ) ).setValue( TargetState::eCapturing );
-		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( target
-			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		auto node = Game::getTargetNode( geometry );
+		auto & data = m_ecs.getComponentData< TargetData >( target
+			, m_ecs.getComponent( Ecs::TargetStateComponent ) ).getValue();
+		data.status = TargetStatus::eCapturing;
+		auto node = Game::getTargetNode( data.geometry );
 		m_ecs.getComponentData< SoundSource const * >( target
 			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue()->play( node );
 	}
@@ -125,12 +117,11 @@ namespace orastus
 			--m_count;
 		}
 
-		m_ecs.getComponentData< TargetState >( target
-			, m_ecs.getComponent( Ecs::StatusComponent ) ).setValue( TargetState::eCaptured );
+		auto & data = m_ecs.getComponentData< TargetData >( target
+			, m_ecs.getComponent( Ecs::TargetStateComponent ) ).getValue();
+		data.status = TargetStatus::eCaptured;
 		m_targetsCache.push_back( target );
-		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( target
-			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		Game::getTargetNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
+		Game::getTargetNode( data.geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
 		return m_count == 0u;
 	}
 }

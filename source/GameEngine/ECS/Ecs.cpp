@@ -21,9 +21,8 @@ namespace orastus
 		String const TOWER_STATE_COMPONENT_DESC = cuT( "Tower State" );
 		String const SPLASH_TOWER_STATE_COMPONENT_DESC = cuT( "Splash Tower State" );
 		String const ENEMY_STATE_COMPONENT_DESC = cuT( "Enemy State" );
-		String const STATUS_COMPONENT_DESC = cuT( "Status" );
+		String const TARGET_STATE_COMPONENT_DESC = cuT( "Target State" );
 		String const TIMEOUT_COMPONENT_DESC = cuT( "Timeout" );
-		String const CELL_COMPONENT_DESC = cuT( "Cell" );
 		String const GEOMETRY_COMPONENT_DESC = cuT( "Geometry" );
 		String const PICKABLE_COMPONENT_DESC = cuT( "Pickable" );
 		String const TRACK_COMPONENT_DESC = cuT( "Track" );
@@ -34,9 +33,8 @@ namespace orastus
 	ComponentId const Ecs::TowerStateComponent = Ecs::hash( "twstate " );
 	ComponentId const Ecs::SplashTowerStateComponent = Ecs::hash( "stwstate" );
 	ComponentId const Ecs::EnemyStateComponent = Ecs::hash( "enmstate" );
-	ComponentId const Ecs::StatusComponent = Ecs::hash( "status  " );
+	ComponentId const Ecs::TargetStateComponent = Ecs::hash( "tgtstate" );
 	ComponentId const Ecs::TimeoutComponent = Ecs::hash( "timeout " );
-	ComponentId const Ecs::CellComponent = Ecs::hash( "cell    " );
 	ComponentId const Ecs::GeometryComponent = Ecs::hash( "geometry" );
 	ComponentId const Ecs::PickableComponent = Ecs::hash( "pickable" );
 	ComponentId const Ecs::TrackComponent = Ecs::hash( "track   " );
@@ -45,6 +43,7 @@ namespace orastus
 	Ecs::Ecs()
 		: m_towerSystem{ *this }
 		, m_enemySystem{ *this }
+		, m_targetSystem{ *this }
 		, m_stateSystem{ *this }
 		, m_soundSystem{ *this }
 	{
@@ -63,6 +62,7 @@ namespace orastus
 	{
 		m_towerSystem.update( game, elapsed );
 		m_enemySystem.update( game, elapsed );
+		m_targetSystem.update( game, elapsed );
 		m_stateSystem.update( game, elapsed );
 		m_soundSystem.update( game, elapsed );
 	}
@@ -188,11 +188,9 @@ namespace orastus
 	}
 
 	void Ecs::resetTarget( Entity entity
-		, castor3d::GeometrySPtr geometry
 		, GridCell cell )
 	{
 		m_targetSet->resetData( entity
-			, geometry
 			, std::move( cell ) );
 	}
 
@@ -288,9 +286,8 @@ namespace orastus
 		doCreateComponent( TowerStateComponent, TOWER_STATE_COMPONENT_DESC );
 		doCreateComponent( SplashTowerStateComponent, SPLASH_TOWER_STATE_COMPONENT_DESC );
 		doCreateComponent( EnemyStateComponent, ENEMY_STATE_COMPONENT_DESC );
-		doCreateComponent( StatusComponent, STATUS_COMPONENT_DESC );
+		doCreateComponent( TargetStateComponent, TARGET_STATE_COMPONENT_DESC );
 		doCreateComponent( TimeoutComponent, TIMEOUT_COMPONENT_DESC );
-		doCreateComponent( CellComponent, CELL_COMPONENT_DESC );
 		doCreateComponent( GeometryComponent, GEOMETRY_COMPONENT_DESC );
 		doCreateComponent( PickableComponent, PICKABLE_COMPONENT_DESC );
 		doCreateComponent( TrackComponent, TRACK_COMPONENT_DESC );

@@ -10,6 +10,7 @@ See licence file in root folder, MIT.txt
 #include "GameEngine/System/EnemySystem.hpp"
 #include "GameEngine/System/StateSystem.hpp"
 #include "GameEngine/System/SoundSystem.hpp"
+#include "GameEngine/System/TargetSystem.hpp"
 #include "GameEngine/System/TowerSystem.hpp"
 
 namespace orastus
@@ -255,13 +256,10 @@ namespace orastus
 		*	Resets an enemies target to initial state.
 		*\param[in] entity
 		*	The target entity.
-		*\param[in] geometry
-		*	The geometry value.
 		*\param[in] cell
 		*	The cell value.
 		*/
 		EFO_API void resetTarget( Entity entity
-			, castor3d::GeometrySPtr geometry
 			, GridCell cell );
 		/**
 		*\brief
@@ -460,9 +458,8 @@ namespace orastus
 		EFO_API static ComponentId const TowerStateComponent;
 		EFO_API static ComponentId const SplashTowerStateComponent;
 		EFO_API static ComponentId const EnemyStateComponent;
-		EFO_API static ComponentId const StatusComponent;
+		EFO_API static ComponentId const TargetStateComponent;
 		EFO_API static ComponentId const TimeoutComponent;
-		EFO_API static ComponentId const CellComponent;
 		EFO_API static ComponentId const GeometryComponent;
 		EFO_API static ComponentId const PickableComponent;
 		EFO_API static ComponentId const TrackComponent;
@@ -483,6 +480,7 @@ namespace orastus
 		// Systems.
 		TowerSystem m_towerSystem;
 		EnemySystem m_enemySystem;
+		TargetSystem m_targetSystem;
 		StateSystem m_stateSystem;
 		SoundSystem m_soundSystem;
 	};

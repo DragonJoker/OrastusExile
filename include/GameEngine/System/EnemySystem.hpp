@@ -20,8 +20,6 @@ namespace orastus
 		/**
 		*\brief
 		*	Constructor.
-		*\param[in] kind
-		*	The resource kind.
 		*\param[in] count
 		*	The resource count.
 		*/

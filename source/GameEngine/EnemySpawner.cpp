@@ -46,7 +46,7 @@ namespace orastus
 			for ( auto & enemy : enemies.second )
 			{
 				auto & data = m_ecs.getComponentData< EnemyData >( enemy
-					, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
+					, m_ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue();
 				Game::getEnemyNode( data.geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
 			}
 		}
