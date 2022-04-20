@@ -12,6 +12,7 @@ See licence file in root folder, MIT.txt
 #include "TargetSpawner.hpp"
 #include "ECS/Ecs.hpp"
 #include "ECS/SoundSource.hpp"
+#include "ECS/TowerCategory.hpp"
 
 #include <Castor3D/Scene/Camera.hpp>
 

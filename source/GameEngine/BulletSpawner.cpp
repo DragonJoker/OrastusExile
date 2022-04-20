@@ -55,7 +55,9 @@ namespace orastus
 		node->setPosition( sourceNode->getPosition() );
 		m_ecs.resetBullet( bullet
 			, &sound.createSource( *node, false )
-			, std::make_unique< TrackData >( target, source.bulletSpeed, source.damage ) );
+			, std::make_unique< TrackData >( target
+				, source.category->getBulletSpeed()
+				, source.category->getDamage() ) );
 	}
 
 	void BulletSpawner::fireBullet( TowerData const & source
@@ -68,7 +70,9 @@ namespace orastus
 		node->setPosition( sourceNode->getPosition() );
 		auto bullet = m_ecs.createBullet( geometry
 			, &sound.createSource( *node, false )
-			, std::make_unique< TrackData >( target, source.bulletSpeed, source.damage ) );
+			, std::make_unique< TrackData >( target
+				, source.category->getBulletSpeed()
+				, source.category->getDamage() ) );
 		m_liveBullets.insert( m_liveBullets.end(), bullet );
 		++m_totalSpawned;
 	}

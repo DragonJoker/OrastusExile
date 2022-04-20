@@ -88,7 +88,7 @@ namespace orastus
 			auto target = lookForEnemy( ecs
 				, enemies
 				, *node
-				, tower.range );
+				, tower.category->getRange() );
 			tower.attack->shot = false;
 
 			if ( !tower.anim )
@@ -120,7 +120,7 @@ namespace orastus
 					tower.attack->target = lookForEnemy( ecs
 						, ecs.getComponentDatas( ecs.getComponent( Ecs::EnemyStateComponent ) )
 						, *node
-						, tower.range );
+						, tower.category->getRange() );
 				}
 			}
 
@@ -134,7 +134,7 @@ namespace orastus
 						, tower.attack->target
 						, *node );
 
-					if ( updateTimeout( elapsed, tower, tower.cooldown ) )
+					if ( updateTimeout( elapsed, tower, tower.category->getCooldown() ) )
 					{
 						game.createBullet( tower, tower.attack->target );
 						tower.status = TowerStatus::eIdle;

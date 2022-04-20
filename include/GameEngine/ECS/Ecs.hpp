@@ -135,16 +135,8 @@ namespace orastus
 		/**
 		*\brief
 		*	Creates a tower.
-		*\param[in] type
-		*	The tower type.
-		*\param[in] cooldown
-		*	The cooldown value.
-		*\param[in] damage
-		*	The damage value.
-		*\param[in] range
-		*	The range value.
-		*\param[in] bulletSpeed
-		*	The bullet speed value.
+		*\param[in] category
+		*	The tower category.
 		*\param[in] geometry
 		*	The geometry value.
 		*\param[in] animation
@@ -156,50 +148,7 @@ namespace orastus
 		*\return
 		*	The entity for the created tower.
 		*/
-		EFO_API Entity createTower( TowerType type
-			, Milliseconds const & cooldown
-			, uint32_t damage
-			, float range
-			, float bulletSpeed
-			, castor3d::GeometrySPtr geometry
-			, AnimationDataPtr animation
-			, AttackDataPtr attack
-			, SoundSource const * shootSound );
-		/**
-		*\brief
-		*	Creates a tower with splash damage.
-		*\param[in] type
-		*	The tower type.
-		*\param[in] cooldown
-		*	The cooldown value.
-		*\param[in] damage
-		*	The damage value.
-		*\param[in] range
-		*	The range value.
-		*\param[in] bulletSpeed
-		*	The bullet speed value.
-		*\param[in] splashDamage
-		*	The splash damage value.
-		*\param[in] splashRange
-		*	The splash range value.
-		*\param[in] geometry
-		*	The geometry value.
-		*\param[in] animation
-		*	The animation value.
-		*\param[in] attack
-		*	The attack data.
-		*\param[in] shootSound
-		*	The shoot sound source.
-		*\return
-		*	The entity for the created tower.
-		*/
-		EFO_API Entity createTower( TowerType type
-			, Milliseconds const & cooldown
-			, uint32_t damage
-			, float range
-			, float bulletSpeed
-			, uint32_t splashDamage
-			, float splashRange
+		EFO_API Entity createTower( TowerCategoryPtr category
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack
@@ -299,13 +248,6 @@ namespace orastus
 		*	The entity.
 		*/
 		EFO_API void printTower( Entity const & entity )const;
-		/**
-		*\brief
-		*	Prints a splash tower.
-		*\param[in] entity
-		*	The entity.
-		*/
-		EFO_API void printSplashTower( Entity const & entity )const;
 		/**
 		*\brief
 		*	Prints an enemy.
@@ -454,7 +396,6 @@ namespace orastus
 
 	public:
 		EFO_API static ComponentId const TowerStateComponent;
-		EFO_API static ComponentId const SplashTowerStateComponent;
 		EFO_API static ComponentId const EnemyStateComponent;
 		EFO_API static ComponentId const TargetStateComponent;
 		EFO_API static ComponentId const BulletStateComponent;
@@ -471,7 +412,6 @@ namespace orastus
 		// Assemblages.
 		TargetPtr m_targetSet;
 		TowerPtr m_towerSet;
-		SplashTowerPtr m_splashTowerSet;
 		EnemyPtr m_enemySet;
 		BulletPtr m_bulletSet;
 		MapBlockPtr m_mapBlockSet;

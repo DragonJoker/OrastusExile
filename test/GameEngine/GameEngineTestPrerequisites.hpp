@@ -60,6 +60,15 @@ namespace Testing
 	};
 
 	template<>
+	struct Stringifier< orastus::TowerType >
+	{
+		static std::string get( orastus::TowerType const & value )
+		{
+			return orastus::getName( value );
+		}
+	};
+
+	template<>
 	struct Stringifier< orastus::Resource::Kind >
 	{
 		static std::string get( orastus::Resource::Kind const & value )

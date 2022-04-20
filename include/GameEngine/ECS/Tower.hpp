@@ -7,39 +7,28 @@ See licence file in root folder, MIT.txt
 
 #include "GameEngine/ECS/AnimationData.hpp"
 #include "GameEngine/ECS/AttackData.hpp"
+#include "GameEngine/ECS/TowerCategory.hpp"
 
 namespace orastus
 {
 	struct TowerData
 	{
 		EFO_API TowerData( Entity entity
-			, TowerType type
+			, TowerCategoryPtr category
 			, AttackDataPtr attack
 			, castor3d::GeometrySPtr geometry
-			, float range
-			, float bulletSpeed
-			, uint32_t damage
-			, Milliseconds cooldown
 			, AnimationDataPtr anim );
 		EFO_API TowerData( Entity entity
-			, TowerType type
+			, TowerCategoryPtr category
 			, AttackDataPtr attack
 			, castor3d::GeometrySPtr geometry
-			, float range
-			, float bulletSpeed
-			, uint32_t damage
-			, Milliseconds cooldown
 			, Milliseconds timeout );
 
 		Entity entity;
-		TowerType type;
+		TowerCategoryPtr category;
 		TowerStatus status;
 		AttackDataPtr attack;
 		castor3d::GeometrySPtr geometry;
-		float range;
-		float bulletSpeed;
-		uint32_t damage;
-		Milliseconds cooldown;
 		AnimationDataPtr anim;
 		Milliseconds timeout;
 	};
@@ -62,16 +51,8 @@ namespace orastus
 		*	Creates the component data for a tower.
 		*\param[in] entity
 		*	The entity for the tower.
-		*\param[in] type
-		*	The tower type.
-		*\param[in] cooldown
-		*	The cooldown value.
-		*\param[in] damage
-		*	The damage value.
-		*\param[in] range
-		*	The range value.
-		*\param[in] bulletSpeed
-		*	The bullet speed value.
+		*\param[in] category
+		*	The tower category.
 		*\param[in] geometry
 		*	The geometry value.
 		*\param[in] animation
@@ -82,11 +63,7 @@ namespace orastus
 		*	The shoot sound source.
 		*/
 		EFO_API void createData( Entity const & entity
-			, TowerType type
-			, Milliseconds const & cooldown
-			, uint32_t damage
-			, float range
-			, float bulletSpeed
+			, TowerCategoryPtr category
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack

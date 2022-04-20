@@ -7,7 +7,6 @@
 #include "GameEngine/ECS/Enemy.hpp"
 #include "GameEngine/ECS/MapBlock.hpp"
 #include "GameEngine/ECS/SoundSource.hpp"
-#include "GameEngine/ECS/SplashTower.hpp"
 #include "GameEngine/ECS/Target.hpp"
 #include "GameEngine/ECS/Tower.hpp"
 #include "GameEngine/ECS/TrackData.hpp"
@@ -18,7 +17,6 @@ namespace orastus
 	namespace
 	{
 		String const TOWER_STATE_COMPONENT_DESC = cuT( "Tower State" );
-		String const SPLASH_TOWER_STATE_COMPONENT_DESC = cuT( "Splash Tower State" );
 		String const ENEMY_STATE_COMPONENT_DESC = cuT( "Enemy State" );
 		String const TARGET_STATE_COMPONENT_DESC = cuT( "Target State" );
 		String const BULLET_STATE_COMPONENT_DESC = cuT( "Bullet State" );
@@ -28,8 +26,7 @@ namespace orastus
 		String const SOUND_SOURCE_COMPONENT_DESC = cuT( "SoundSource" );
 	}
 
-	ComponentId const Ecs::TowerStateComponent = Ecs::hash( "twstate " );
-	ComponentId const Ecs::SplashTowerStateComponent = Ecs::hash( "stwstate" );
+	ComponentId const Ecs::TowerStateComponent = Ecs::hash( "twrstate" );
 	ComponentId const Ecs::EnemyStateComponent = Ecs::hash( "enmstate" );
 	ComponentId const Ecs::TargetStateComponent = Ecs::hash( "tgtstate" );
 	ComponentId const Ecs::BulletStateComponent = Ecs::hash( "bltstate" );
@@ -92,11 +89,7 @@ namespace orastus
 		return entity;
 	}
 
-	Entity Ecs::createTower( TowerType type
-		, Milliseconds const & cooldown
-		, uint32_t damage
-		, float range
-		, float bulletSpeed
+	Entity Ecs::createTower( TowerCategoryPtr category
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
@@ -104,39 +97,7 @@ namespace orastus
 	{
 		auto entity = doCreateEntity( "Tower" );
 		m_towerSet->createData( entity
-			, type
-			, cooldown
-			, damage
-			, range
-			, bulletSpeed
-			, geometry
-			, std::move( animation )
-			, std::move( attack )
-			, shootSound );
-		return entity;
-	}
-
-	Entity Ecs::createTower( TowerType type
-		, Milliseconds const & cooldown
-		, uint32_t damage
-		, float range
-		, float bulletSpeed
-		, uint32_t splashDamage
-		, float splashRange
-		, castor3d::GeometrySPtr geometry
-		, AnimationDataPtr animation
-		, AttackDataPtr attack
-		, SoundSource const * shootSound )
-	{
-		auto entity = doCreateEntity( "SplashTower" );
-		m_splashTowerSet->createData( entity
-			, type
-			, cooldown
-			, damage
-			, range
-			, bulletSpeed
-			, splashDamage
-			, splashRange
+			, std::move( category )
 			, geometry
 			, std::move( animation )
 			, std::move( attack )
@@ -225,12 +186,6 @@ namespace orastus
 		std::cout << text << std::endl;
 	}
 
-	void Ecs::printSplashTower( Entity const & entity )const
-	{
-		auto text = m_splashTowerSet->toString( entity );
-		std::cout << text << std::endl;
-	}
-
 	void Ecs::printEnemy( Entity const & entity )const
 	{
 		auto text = m_enemySet->toString( entity );
@@ -279,7 +234,6 @@ namespace orastus
 	void Ecs::doRegisterComponents()
 	{
 		doCreateComponent( TowerStateComponent, TOWER_STATE_COMPONENT_DESC );
-		doCreateComponent( SplashTowerStateComponent, SPLASH_TOWER_STATE_COMPONENT_DESC );
 		doCreateComponent( EnemyStateComponent, ENEMY_STATE_COMPONENT_DESC );
 		doCreateComponent( TargetStateComponent, TARGET_STATE_COMPONENT_DESC );
 		doCreateComponent( BulletStateComponent, BULLET_STATE_COMPONENT_DESC );
@@ -293,7 +247,6 @@ namespace orastus
 	{
 		m_targetSet = std::make_unique< Target >( *this );
 		m_towerSet = std::make_unique< Tower >( *this );
-		m_splashTowerSet = std::make_unique< SplashTower >( *this );
 		m_enemySet = std::make_unique< Enemy >( *this );
 		m_bulletSet = std::make_unique< Bullet >( *this );
 		m_mapBlockSet = std::make_unique< MapBlock >( *this );

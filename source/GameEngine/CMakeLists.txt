@@ -55,9 +55,9 @@ set( ${PROJECT_NAME}_FOLDER_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Id.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/MapBlock.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/SoundSource.hpp
-	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/SplashTower.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Target.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Tower.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/TowerCategory.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/TrackData.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/WalkData.hpp
 )
@@ -72,9 +72,9 @@ set( ${PROJECT_NAME}_FOLDER_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Id.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/MapBlock.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/SoundSource.cpp
-	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/SplashTower.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Target.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Tower.cpp
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/TowerCategory.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/TrackData.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/WalkData.cpp
 )

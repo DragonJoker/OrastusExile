@@ -37,9 +37,20 @@ namespace orastus
 	*/
 	enum class TowerType
 	{
-		eShortRange,
-		eLongRange,
+		//! Direct damage tower.
+		eDirect,
+		//! Splash damage tower.
+		eSplash,
 	};
+	/**
+	*\brief
+	*	Retrieves the name of the given tower type.
+	*\param[in] type
+	*	The tower type.
+	*\return
+	*	The name.
+	*/
+	EFO_API String getName( TowerType type );
 	/**
 	*\brief
 	*	Tower states enumeration.
@@ -167,23 +178,23 @@ namespace orastus
 	class MapBlock;
 	class Target;
 	class Tower;
-	class SplashTower;
 	class Enemy;
 	class Bullet;
+
+	class SoundSource;
 	struct AnimationData;
 	struct AttackData;
 	struct BulletData;
 	struct EnemyData;
-	struct SplashTowerData;
 	struct TargetData;
 	struct TowerData;
 	struct TrackData;
 	struct WalkData;
-	class SoundSource;
+	struct TowerCategory;
+
 	using MapBlockPtr = std::shared_ptr< MapBlock >;
 	using TargetPtr = std::shared_ptr< Target >;
 	using TowerPtr = std::shared_ptr< Tower >;
-	using SplashTowerPtr = std::shared_ptr< SplashTower >;
 	using EnemyPtr = std::shared_ptr< Enemy >;
 	using BulletPtr = std::shared_ptr< Bullet >;
 	using AnimationDataPtr = std::unique_ptr< AnimationData >;
@@ -192,6 +203,7 @@ namespace orastus
 	using WalkDataPtr = std::unique_ptr< WalkData >;
 	using SoundSourcePtr = std::unique_ptr< SoundSource >;
 	using EntityList = std::vector< Entity >;
+	using TowerCategoryPtr = std::unique_ptr< TowerCategory >;
 
 	// Game
 	class Resource;

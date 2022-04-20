@@ -217,9 +217,9 @@ namespace orastus
 				, [this, &ecs, entity]()
 				{
 					auto & towerData = ecs.getComponentData< TowerData >( entity, ecs.getComponent( Ecs::TowerStateComponent ) ).getValue();
-					m_towerDamage.lock()->setCaption( castor::string::toString( towerData.damage ) );
-					m_towerSpeed.lock()->setCaption( castor::string::toString( towerData.cooldown ) );
-					m_towerRange.lock()->setCaption( castor::string::toString( towerData.range ) );
+					m_towerDamage.lock()->setCaption( castor::string::toString( towerData.category->getDamage() ) );
+					m_towerSpeed.lock()->setCaption( castor::string::toString( towerData.category->getCooldown() ) );
+					m_towerRange.lock()->setCaption( castor::string::toString( towerData.category->getRange() ) );
 				} ) );
 		}
 		else

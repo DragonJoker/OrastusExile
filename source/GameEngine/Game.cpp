@@ -579,11 +579,7 @@ namespace orastus
 			if ( tower )
 			{
 				m_towerBuildSound.play();
-				m_selectedCell->entity = m_ecs.createTower( TowerType::eShortRange
-					, 700_ms
-					, 3u
-					, 40.0f
-					, 240.0f
+				m_selectedCell->entity = m_ecs.createTower( std::make_unique< DirectTower >()
 					, tower
 					, nullptr
 					, std::make_unique< AttackData >( 0_ms )
@@ -611,11 +607,7 @@ namespace orastus
 			if ( tower )
 			{
 				m_towerBuildSound.play();
-				m_selectedCell->entity = m_ecs.createTower( TowerType::eLongRange
-					, 2000_ms
-					, 5u
-					, 100.0f
-					, 200.0f
+				m_selectedCell->entity = m_ecs.createTower( std::make_unique< SplashTower >()
 					, tower
 					, nullptr
 					, std::make_unique< AttackData >( 0_ms )
@@ -631,12 +623,12 @@ namespace orastus
 		auto node = Game::getTowerNode( source.geometry );
 		Sound * sound{};
 
-		switch ( source.type )
+		switch ( source.category->getType() )
 		{
-		case TowerType::eShortRange:
+		case TowerType::eDirect:
 			sound = &m_ballistaHitSound;
 			break;
-		case TowerType::eLongRange:
+		case TowerType::eSplash:
 			sound = &m_cannonHitSound;
 			break;
 		}
@@ -888,8 +880,7 @@ namespace orastus
 	{
 		bool result = false;
 
-		if ( m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::TowerStateComponent ) )
-			|| m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::SplashTowerStateComponent ) ) )
+		if ( m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::TowerStateComponent ) ) )
 		{
 			result = true;
 			doSelectTower( entity );

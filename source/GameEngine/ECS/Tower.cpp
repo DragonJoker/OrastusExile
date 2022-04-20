@@ -11,6 +11,20 @@ namespace orastus
 {
 	//*********************************************************************************************
 
+	String getName( TowerType type )
+	{
+		switch ( type )
+		{
+		case TowerType::eDirect:
+			return cuT( "Direct" );
+		case TowerType::eSplash:
+			return cuT( "Splash" );
+		default:
+			CU_Failure( "Unexpected tower type." );
+			return "Unknown";
+		}
+	}
+
 	String getName( TowerStatus state )
 	{
 		switch ( state )
@@ -30,26 +44,23 @@ namespace orastus
 	//*********************************************************************************************
 
 	TowerData::TowerData( Entity pentity
-		, TowerType ptype
+		, TowerCategoryPtr pcategory
 		, AttackDataPtr pattack
 		, castor3d::GeometrySPtr pgeometry
-		, float prange
-		, float pbulletSpeed
-		, uint32_t pdamage
-		, Milliseconds pcooldown
 		, AnimationDataPtr panim )
 		: entity{ pentity }
-		, type{ ptype }
+		, category{ std::move( pcategory ) }
 		, status{ TowerStatus::eIdle }
 		, attack{ std::move( pattack ) }
 		, geometry{ std::move( pgeometry ) }
-		, range{ prange }
-		, bulletSpeed{ pbulletSpeed }
-		, damage{ pdamage }
-		, cooldown{ pcooldown }
 		, anim{ std::move( panim ) }
 		, timeout{ 0_ms }
 	{
+		if ( !category )
+		{
+			throw std::runtime_error{ "No category" };
+		}
+
 		if ( !attack )
 		{
 			throw std::runtime_error{ "No attack data" };
@@ -69,25 +80,22 @@ namespace orastus
 	}
 
 	TowerData::TowerData( Entity pentity
-		, TowerType ptype
+		, TowerCategoryPtr pcategory
 		, AttackDataPtr pattack
 		, castor3d::GeometrySPtr pgeometry
-		, float prange
-		, float pbulletSpeed
-		, uint32_t pdamage
-		, Milliseconds pcooldown
 		, Milliseconds ptimeout )
 		: entity{ pentity }
-		, type{ ptype }
+		, category{ std::move( pcategory ) }
 		, status{ TowerStatus::eIdle }
 		, attack{ std::move( pattack ) }
 		, geometry{ std::move( pgeometry ) }
-		, range{ prange }
-		, bulletSpeed{ pbulletSpeed }
-		, damage{ pdamage }
-		, cooldown{ pcooldown }
 		, timeout{ ptimeout }
 	{
+		if ( !category )
+		{
+			throw std::runtime_error{ "No category" };
+		}
+
 		if ( !attack )
 		{
 			throw std::runtime_error{ "No attack data" };
@@ -118,11 +126,7 @@ namespace orastus
 	}
 
 	void Tower::createData( Entity const & entity
-		, TowerType type
-		, Milliseconds const & cooldown
-		, uint32_t damage
-		, float range
-		, float bulletSpeed
+		, TowerCategoryPtr category
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
@@ -133,13 +137,9 @@ namespace orastus
 			m_ecs.createComponentData( entity
 				, m_tower
 				, TowerData{ entity
-					, type
+					, std::move( category )
 					, std::move( attack )
 					, geometry
-					, range
-					, bulletSpeed
-					, damage
-					, cooldown
 					, std::move( animation ) } );
 		}
 		else
@@ -147,13 +147,9 @@ namespace orastus
 			m_ecs.createComponentData( entity
 				, m_tower
 				, TowerData{ entity
-					, type
+				, std::move( category )
 					, std::move( attack )
 					, geometry
-					, range
-					, bulletSpeed
-					, damage
-					, cooldown
 					, 0_ms } );
 		}
 
@@ -173,10 +169,10 @@ namespace orastus
 		auto stream = castor::makeStringStream();
 		auto & tower = m_ecs.getComponentData< TowerData >( entity, m_tower ).getValue();
 		stream << cuT( "Tower(" ) << entity.getId() << cuT( ")" );
-		stream << cuT( "\n  Cooldown: " ) << tower.cooldown.count() << " ms";
-		stream << cuT( "\n  Damage: " ) << tower.damage;
-		stream << cuT( "\n  Range: " ) << tower.range;
-		stream << cuT( "\n  BulletSpeed: " ) << tower.bulletSpeed;
+		stream << cuT( "\n  Cooldown: " ) << tower.category->getCooldown().count() << " ms";
+		stream << cuT( "\n  Damage: " ) << tower.category->getDamage();
+		stream << cuT( "\n  Range: " ) << tower.category->getRange();
+		stream << cuT( "\n  BulletSpeed: " ) << tower.category->getBulletSpeed();
 		stream << cuT( "\n  Geometry: " ) << tower.geometry->getName();
 		stream << cuT( "\n  Pickable: " ) << m_ecs.getComponentData< bool >( entity, m_pickable ).getValue();
 		stream << cuT( "\n  Attack: " ) << tower.attack->target.getId();
