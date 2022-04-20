@@ -51,18 +51,7 @@ namespace orastus
 			}
 		}
 
-		m_life.initialise( 1u
-			, []( uint32_t value, uint32_t level )
-			{
-				return value + std::max( level, uint32_t( value * 5.0 / 100.0 ) );
-			} );
-
-		m_bounty.initialise( 9u
-			, []( uint32_t value, uint32_t level )
-			{
-				return value + std::max( 2u, ( value * 4 ) / 100 );
-			} );
-
+		m_category = std::make_unique< BaseEnemy >();
 		m_totalsWaves = 0u;
 		m_totalEnemies = 0u;
 		m_timeSinceLastSpawn = std::chrono::milliseconds{};
@@ -133,8 +122,7 @@ namespace orastus
 		++m_totalsWaves;
 		m_timeBetweenTwoSpawns = 600_ms;
 		m_timeSinceLastSpawn = m_timeBetweenTwoSpawns;
-		m_life.upgrade();
-		m_bounty.upgrade();
+		m_category->upgrade();
 		auto index = getWave() % uint32_t( m_enemyMeshes.size() );
 		m_currentEnemies = m_enemyMeshes[index];
 		m_enemiesCache = &m_allEnemiesCache.emplace( m_currentEnemies.lock().get(), EntityList{} ).first->second;
@@ -161,8 +149,8 @@ namespace orastus
 			auto node = Game::getEnemyNode( geometry );
 			node->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y - 1 } )
 				+ castor::Point3f{ 0, m_game.getCellHeight() * 5.0f, 0 } );
-			m_liveEnemies.push_back( m_ecs.createEnemy( 40.0f
-				, m_life.getValue()
+			m_liveEnemies.push_back( m_ecs.createEnemy( m_category->getSpeed()
+				, m_category->getLife()
 				, geometry
 				, std::make_unique< WalkData >( path, m_game )
 				, &m_game.getEnemyKillSound().createSource( *node, false ) ) );
@@ -177,8 +165,8 @@ namespace orastus
 			Game::getEnemyNode( enemy.geometry )->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y - 1 } )
 				+ castor::Point3f{ 0, m_game.getCellHeight() * 5.0f, 0 } );
 			m_ecs.resetEnemy( entity
-				, 40.0f
-				, m_life.getValue()
+				, m_category->getSpeed()
+				, m_category->getLife()
 				, enemy.geometry
 				, std::make_unique< WalkData >( path, m_game ) );
 		}

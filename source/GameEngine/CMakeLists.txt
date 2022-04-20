@@ -50,6 +50,7 @@ set( ${PROJECT_NAME}_FOLDER_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Ecs.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Ecs.inl
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Enemy.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/EnemyCategory.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Entity.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/EntityComponentData.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Id.hpp
@@ -68,6 +69,7 @@ set( ${PROJECT_NAME}_FOLDER_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Component.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Ecs.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Enemy.cpp
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/EnemyCategory.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Entity.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Id.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/MapBlock.cpp

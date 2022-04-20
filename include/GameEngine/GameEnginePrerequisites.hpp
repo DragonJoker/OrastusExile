@@ -180,8 +180,8 @@ namespace orastus
 	class Tower;
 	class Enemy;
 	class Bullet;
-
 	class SoundSource;
+
 	struct AnimationData;
 	struct AttackData;
 	struct BulletData;
@@ -190,6 +190,7 @@ namespace orastus
 	struct TowerData;
 	struct TrackData;
 	struct WalkData;
+	struct EnemyCategory;
 	struct TowerCategory;
 
 	using MapBlockPtr = std::shared_ptr< MapBlock >;
@@ -203,6 +204,7 @@ namespace orastus
 	using WalkDataPtr = std::unique_ptr< WalkData >;
 	using SoundSourcePtr = std::unique_ptr< SoundSource >;
 	using EntityList = std::vector< Entity >;
+	using EnemyCategoryPtr = std::unique_ptr< EnemyCategory >;
 	using TowerCategoryPtr = std::unique_ptr< TowerCategory >;
 
 	// Game

@@ -5,7 +5,7 @@ See licence file in root folder, MIT.txt
 #ifndef ___EFO_EnemySpawner_HPP___
 #define ___EFO_EnemySpawner_HPP___
 
-#include "Ability.hpp"
+#include "GameEngine/Ecs/EnemyCategory.hpp"
 
 namespace orastus
 {
@@ -40,12 +40,16 @@ namespace orastus
 
 		uint32_t getEnemiesLife()const
 		{
-			return m_life.getValue();
+			return m_category
+				? m_category->getLife()
+				: 0u;
 		}
 
 		uint32_t getEnemiesBounty()const
 		{
-			return m_bounty.getValue();
+			return m_category
+				? m_category->getBounty()
+				: 0u;
 		}
 
 		uint32_t getKills()const
@@ -79,8 +83,7 @@ namespace orastus
 		EntityList * m_enemiesCache{};
 		EntityList m_liveEnemies;
 		castor3d::MeshResPtr m_currentEnemies;
-		Ability< uint32_t > m_life;
-		Ability< uint32_t > m_bounty;
+		EnemyCategoryPtr m_category;
 	};
 }
 
