@@ -188,7 +188,8 @@ namespace orastus
 		*\param[in] target
 		*	The target entity.
 		*/
-		EFO_API void createBullet( Entity source, Entity target );
+		EFO_API void createBullet( TowerData const & source
+			, Entity target );
 		/**
 		*\brief
 		*	Converts a cell position to 3D position.
@@ -409,7 +410,7 @@ namespace orastus
 			, castor3d::MeshResPtr mesh
 			, castor::Quaternion const & orientation );
 		void doAddTargets( GridCell & cell );
-		castor3d::GeometrySPtr doCreateBullet( Entity source );
+		castor3d::GeometrySPtr doCreateBullet( castor3d::SceneNode const & origin );
 		castor3d::GeometrySPtr doCreateTowerBase( castor::String const & name
 			, GridCell & cell
 			, castor3d::MeshResPtr mesh );

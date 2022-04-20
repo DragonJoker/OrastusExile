@@ -1,134 +1,187 @@
 #include "GameEngine/ECS/SplashTower.hpp"
 
+#include "GameEngine/Game.hpp"
 #include "GameEngine/ECS/Ecs.hpp"
-#include "GameEngine/ECS/AnimationData.hpp"
-#include "GameEngine/ECS/AttackData.hpp"
 #include "GameEngine/ECS/SoundSource.hpp"
-#include "GameEngine/State/TowerState.hpp"
-#include "GameEngine/State/StateMachine.hpp"
 
 #include <Castor3D/Scene/Geometry.hpp>
 #include <Castor3D/Scene/Animation/AnimatedObjectGroup.hpp>
 
 namespace orastus
 {
+	//*********************************************************************************************
+
+	SplashTowerData::SplashTowerData( Entity pentity
+		, TowerType ptype
+		, AttackDataPtr pattack
+		, castor3d::GeometrySPtr pgeometry
+		, float prange
+		, float pbulletSpeed
+		, uint32_t pdamage
+		, uint32_t psplashDamage
+		, float psplashRange
+		, Milliseconds pcooldown
+		, AnimationDataPtr panim )
+		: entity{ pentity }
+		, type{ ptype }
+		, status{ TowerStatus::eIdle }
+		, attack{ std::move( pattack ) }
+		, geometry{ std::move( pgeometry ) }
+		, range{ prange }
+		, bulletSpeed{ pbulletSpeed }
+		, damage{ pdamage }
+		, splashDamage{ psplashDamage }
+		, splashRange{ psplashRange }
+		, cooldown{ pcooldown }
+		, anim{ std::move( panim ) }
+		, timeout{ 0_ms }
+	{
+		if ( !attack )
+		{
+			throw std::runtime_error{ "No attack data" };
+		}
+
+		if ( !geometry )
+		{
+			throw std::runtime_error{ "No geometry" };
+		}
+
+		auto node = Game::getTowerNode( geometry );
+
+		if ( !node )
+		{
+			throw std::runtime_error{ "Geometry is not attached" };
+		}
+	}
+
+	SplashTowerData::SplashTowerData( Entity pentity
+		, TowerType ptype
+		, AttackDataPtr pattack
+		, castor3d::GeometrySPtr pgeometry
+		, float prange
+		, float pbulletSpeed
+		, uint32_t pdamage
+		, uint32_t psplashDamage
+		, float psplashRange
+		, Milliseconds pcooldown
+		, Milliseconds ptimeout )
+		: entity{ pentity }
+		, type{ ptype }
+		, status{ TowerStatus::eIdle }
+		, attack{ std::move( pattack ) }
+		, geometry{ std::move( pgeometry ) }
+		, range{ prange }
+		, bulletSpeed{ pbulletSpeed }
+		, damage{ pdamage }
+		, splashDamage{ psplashDamage }
+		, splashRange{ psplashRange }
+		, cooldown{ pcooldown }
+		, timeout{ ptimeout }
+	{
+		if ( !attack )
+		{
+			throw std::runtime_error{ "No attack data" };
+		}
+
+		if ( !geometry )
+		{
+			throw std::runtime_error{ "No geometry" };
+		}
+
+		auto node = Game::getTowerNode( geometry );
+
+		if ( !node )
+		{
+			throw std::runtime_error{ "Geometry is not attached" };
+		}
+	}
+
+	//*********************************************************************************************
+
 	SplashTower::SplashTower( Ecs & ecs )
 		: m_ecs{ ecs }
-		, m_cooldown{ m_ecs.getComponent( Ecs::CooldownComponent ) }
-		, m_timeout{ m_ecs.getComponent( Ecs::TimeoutComponent ) }
-		, m_damage{ m_ecs.getComponent( Ecs::DamageComponent ) }
-		, m_range{ m_ecs.getComponent( Ecs::RangeComponent ) }
-		, m_bulletSpeed{ m_ecs.getComponent( Ecs::SpeedComponent ) }
-		, m_requiredLevel{ m_ecs.getComponent( Ecs::LevelComponent ) }
-		, m_state{ m_ecs.getComponent( Ecs::StateComponent ) }
-		, m_splashDamage{ m_ecs.getComponent( Ecs::SplashDamageComponent ) }
-		, m_splashRange{ m_ecs.getComponent( Ecs::SplashRangeComponent ) }
-		, m_geometry{ m_ecs.getComponent( Ecs::GeometryComponent ) }
+		, m_splashTower{ m_ecs.getComponent( Ecs::SplashTowerStateComponent ) }
 		, m_pickable{ m_ecs.getComponent( Ecs::PickableComponent ) }
-		, m_animation{ m_ecs.getComponent( Ecs::AnimationComponent ) }
-		, m_attack{ m_ecs.getComponent( Ecs::AttackComponent ) }
-		, m_shootSound{ m_ecs.getComponent( Ecs::SoundSourceComponent ) }
-		, m_hitSound{ m_ecs.getComponent( Ecs::SoundComponent ) }
+		, m_soundSource{ m_ecs.getComponent( Ecs::SoundSourceComponent ) }
 	{
 	}
 
 	void SplashTower::createData( Entity const & entity
+		, TowerType type
 		, Milliseconds const & cooldown
 		, uint32_t damage
 		, float range
 		, float bulletSpeed
 		, uint32_t splashDamage
 		, float splashRange
-		, uint32_t requiredLevel
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
-		, SoundSource const * shootSound
-		, Sound * hitSound )
+		, SoundSource const * shootSound )
 	{
-		m_ecs.createComponentData( entity
-			, m_cooldown
-			, cooldown );
-		m_ecs.createComponentData( entity
-			, m_damage
-			, damage );
-		m_ecs.createComponentData( entity
-			, m_range
-			, range );
-		m_ecs.createComponentData( entity
-			, m_bulletSpeed
-			, bulletSpeed );
-		m_ecs.createComponentData( entity
-			, m_requiredLevel
-			, requiredLevel );
-		m_ecs.createComponentData( entity
-			, m_splashDamage
-			, splashDamage );
-		m_ecs.createComponentData( entity
-			, m_splashRange
-			, splashRange );
-		m_ecs.createComponentData( entity
-			, m_pickable
-			, true );
-		m_ecs.createComponentData( entity
-			, m_shootSound
-			, shootSound );
-
-		if ( hitSound )
-		{
-			m_ecs.createComponentData( entity
-				, m_hitSound
-				, hitSound );
-		}
-
 		if ( animation )
 		{
 			m_ecs.createComponentData( entity
-				, m_animation
-				, std::move( animation ) );
+				, m_splashTower
+				, SplashTowerData{ entity
+					, type
+					, std::move( attack )
+					, geometry
+					, range
+					, bulletSpeed
+					, damage
+					, splashDamage
+					, splashRange
+					, cooldown
+					, std::move( animation ) } );
 		}
 		else
 		{
 			m_ecs.createComponentData( entity
-				, m_timeout
-				, 0_ms );
+				, m_splashTower
+				, SplashTowerData{ entity
+					, type
+					, std::move( attack )
+					, geometry
+					, range
+					, bulletSpeed
+					, damage
+					, splashDamage
+					, splashRange
+					, cooldown
+					, 0_ms } );
 		}
 
 		m_ecs.createComponentData( entity
-			, m_attack
-			, std::move( attack ) );
-
-		if ( geometry )
-		{
-			m_ecs.createComponentData( entity
-				, m_geometry
-				, geometry );
-			m_ecs.createComponentData( entity
-				, m_state
-				, std::make_unique< StateMachine >( tower::createIdleState( m_ecs, entity ), true ) );
-		}
+			, m_pickable
+			, true );
+		m_ecs.createComponentData( entity
+			, m_soundSource
+			, shootSound );
 	}
 
 	String SplashTower::toString( Entity const & entity )
 	{
 		auto stream = castor::makeStringStream();
+		auto & tower = m_ecs.getComponentData< SplashTowerData >( entity, m_splashTower ).getValue();
 		stream << cuT( "SplashTower(" ) << entity.getId() << cuT( ")" );
-		stream << cuT( "\n  Cooldown: " ) << m_ecs.getComponentData< Milliseconds >( entity, m_cooldown ).getValue().count() << " ms";
-		stream << cuT( "\n  Damage: " ) << m_ecs.getComponentData< uint32_t >( entity, m_damage ).getValue();
-		stream << cuT( "\n  Range: " ) << m_ecs.getComponentData< float >( entity, m_range ).getValue();
-		stream << cuT( "\n  BulletSpeed: " ) << m_ecs.getComponentData< float >( entity, m_bulletSpeed ).getValue();
-		stream << cuT( "\n  Level: " ) << m_ecs.getComponentData< uint32_t >( entity, m_requiredLevel ).getValue();
-		stream << cuT( "\n  SplashDamage: " ) << m_ecs.getComponentData< uint32_t >( entity, m_splashDamage ).getValue();
-		stream << cuT( "\n  SplashRange: " ) << m_ecs.getComponentData< float >( entity, m_splashRange ).getValue();
-		stream << cuT( "\n  Geometry: " ) << m_ecs.getComponentData< castor3d::GeometrySPtr >( entity, m_geometry ).getValue()->getName();
+		stream << cuT( "\n  Cooldown: " ) << tower.cooldown.count() << " ms";
+		stream << cuT( "\n  Damage: " ) << tower.damage;
+		stream << cuT( "\n  Range: " ) << tower.range;
+		stream << cuT( "\n  BulletSpeed: " ) << tower.bulletSpeed;
+		stream << cuT( "\n  SplashDamage: " ) << tower.splashDamage;
+		stream << cuT( "\n  SplashRange: " ) << tower.splashRange;
+		stream << cuT( "\n  Geometry: " ) << tower.geometry->getName();
 		stream << cuT( "\n  Pickable: " ) << m_ecs.getComponentData< bool >( entity, m_pickable ).getValue();
-		stream << cuT( "\n  Attack: " ) << m_ecs.getComponentData< AttackDataPtr >( entity, m_attack ).getValue()->target.getId();
+		stream << cuT( "\n  Attack: " ) << tower.attack->target.getId();
 
-		if ( m_ecs.hasComponent( entity, m_animation ) )
+		if ( tower.anim )
 		{
-			stream << cuT( "\n  Animation: " ) << m_ecs.getComponentData< AnimationDataPtr >( entity, m_animation ).getValue()->animation->getName();
+			stream << cuT( "\n  Animation: " ) << tower.anim->animation->getName();
 		}
 
 		return stream.str();
 	}
+
+	//*********************************************************************************************
 }

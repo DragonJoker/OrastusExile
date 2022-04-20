@@ -209,14 +209,14 @@ namespace orastus
 				, Entity const & entity
 				, Milliseconds const & elapsed )
 			{
-				auto time = ecs.getComponentData< Milliseconds >( entity
-					, ecs.getComponent( Ecs::CooldownComponent ) ).getValue();
+				auto timeout = ecs.getComponentData< Milliseconds >( entity
+					, ecs.getComponent( Ecs::TimeoutComponent ) );
+				auto time = timeout.getValue();
 				auto result = time >= 2000_ms;
 
 				if ( !result )
 				{
-					ecs.getComponentData< Milliseconds >( entity
-						, ecs.getComponent( Ecs::CooldownComponent ) ).setValue( time + elapsed );
+					timeout.setValue( time + elapsed );
 				}
 				else
 				{

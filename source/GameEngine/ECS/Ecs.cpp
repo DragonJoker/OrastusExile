@@ -17,55 +17,42 @@ namespace orastus
 {
 	namespace
 	{
-		String const STATE_COMPONENT_DESC = cuT( "State component" );
-		String const STATUS_COMPONENT_DESC = cuT( "Status component" );
-		String const COOLDOWN_COMPONENT_DESC = cuT( "Cooldown" );
+		String const STATE_COMPONENT_DESC = cuT( "State" );
+		String const TOWER_STATE_COMPONENT_DESC = cuT( "Tower State" );
+		String const SPLASH_TOWER_STATE_COMPONENT_DESC = cuT( "Splash Tower State" );
+		String const STATUS_COMPONENT_DESC = cuT( "Status" );
 		String const TIMEOUT_COMPONENT_DESC = cuT( "Timeout" );
 		String const ENTITY_COMPONENT_DESC = cuT( "Entity" );
 		String const CELL_COMPONENT_DESC = cuT( "Cell" );
-		String const DAMAGE_COMPONENT_DESC = cuT( "Damage" );
-		String const RANGE_COMPONENT_DESC = cuT( "Range" );
-		String const SPLASH_DAMAGE_COMPONENT_DESC = cuT( "Splash damage" );
-		String const SPLASH_RANGE_COMPONENT_DESC = cuT( "Splash range" );
-		String const LEVEL_COMPONENT_DESC = cuT( "Level" );
 		String const SPEED_COMPONENT_DESC = cuT( "Speed" );
 		String const LIFE_COMPONENT_DESC = cuT( "Life" );
 		String const POSIION_COMPONENT_DESC = cuT( "Position" );
 		String const GEOMETRY_COMPONENT_DESC = cuT( "Geometry" );
 		String const PICKABLE_COMPONENT_DESC = cuT( "Pickable" );
-		String const ANIMATION_COMPONENT_DESC = cuT( "Animation" );
 		String const WALK_COMPONENT_DESC = cuT( "Walk" );
-		String const ATTACK_COMPONENT_DESC = cuT( "Attack" );
 		String const TRACK_COMPONENT_DESC = cuT( "Track" );
 		String const SOUND_SOURCE_COMPONENT_DESC = cuT( "SoundSource" );
-		String const SOUND_COMPONENT_DESC = cuT( "Sound" );
 	}
 
 	ComponentId const Ecs::StateComponent = Ecs::hash( "state   " );
+	ComponentId const Ecs::TowerStateComponent = Ecs::hash( "twstate " );
+	ComponentId const Ecs::SplashTowerStateComponent = Ecs::hash( "stwstate" );
 	ComponentId const Ecs::StatusComponent = Ecs::hash( "status  " );
-	ComponentId const Ecs::CooldownComponent = Ecs::hash( "cooldown" );
 	ComponentId const Ecs::TimeoutComponent = Ecs::hash( "timeout " );
 	ComponentId const Ecs::EntityComponent = Ecs::hash( "entity  " );
 	ComponentId const Ecs::CellComponent = Ecs::hash( "cell    " );
-	ComponentId const Ecs::DamageComponent = Ecs::hash( "damage  " );
-	ComponentId const Ecs::RangeComponent = Ecs::hash( "range   " );
-	ComponentId const Ecs::SplashDamageComponent = Ecs::hash( "splshdmg" );
-	ComponentId const Ecs::SplashRangeComponent = Ecs::hash( "splshrng" );
-	ComponentId const Ecs::LevelComponent = Ecs::hash( "rqurdlvl" );
 	ComponentId const Ecs::SpeedComponent = Ecs::hash( "speed   " );
 	ComponentId const Ecs::LifeComponent = Ecs::hash( "life    " );
 	ComponentId const Ecs::PositionComponent = Ecs::hash( "position" );
 	ComponentId const Ecs::GeometryComponent = Ecs::hash( "geometry" );
 	ComponentId const Ecs::PickableComponent = Ecs::hash( "pickable" );
-	ComponentId const Ecs::AnimationComponent = Ecs::hash( "animtion" );
 	ComponentId const Ecs::WalkComponent = Ecs::hash( "walk    " );
-	ComponentId const Ecs::AttackComponent = Ecs::hash( "attack  " );
 	ComponentId const Ecs::TrackComponent = Ecs::hash( "track   " );
 	ComponentId const Ecs::SoundSourceComponent = Ecs::hash( "soundsrc" );
-	ComponentId const Ecs::SoundComponent = Ecs::hash( "sound   " );
 
 	Ecs::Ecs()
-		: m_stateSystem{ *this }
+		: m_towerSystem{ *this }
+		, m_stateSystem{ *this }
 		, m_soundSystem{ *this }
 	{
 		doRegisterComponents();
@@ -81,6 +68,7 @@ namespace orastus
 	void Ecs::update( Game & game
 		, Milliseconds const & elapsed )
 	{
+		m_towerSystem.update( game, elapsed );
 		m_stateSystem.update( game, elapsed );
 		m_soundSystem.update( game, elapsed );
 	}
@@ -112,59 +100,55 @@ namespace orastus
 		return entity;
 	}
 
-	Entity Ecs::createTower( Milliseconds const & cooldown
+	Entity Ecs::createTower( TowerType type
+		, Milliseconds const & cooldown
 		, uint32_t damage
 		, float range
 		, float bulletSpeed
-		, uint32_t requiredLevel
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
-		, SoundSource const * shootSound
-		, Sound * hitSound )
+		, SoundSource const * shootSound )
 	{
 		auto entity = doCreateEntity( "Tower" );
 		m_towerSet->createData( entity
+			, type
 			, cooldown
 			, damage
 			, range
 			, bulletSpeed
-			, requiredLevel
 			, geometry
 			, std::move( animation )
 			, std::move( attack )
-			, shootSound
-			, hitSound );
+			, shootSound );
 		return entity;
 	}
 
-	Entity Ecs::createTower( Milliseconds const & cooldown
+	Entity Ecs::createTower( TowerType type
+		, Milliseconds const & cooldown
 		, uint32_t damage
 		, float range
 		, float bulletSpeed
 		, uint32_t splashDamage
 		, float splashRange
-		, uint32_t requiredLevel
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
-		, SoundSource const * shootSound
-		, Sound * hitSound )
+		, SoundSource const * shootSound )
 	{
 		auto entity = doCreateEntity( "SplashTower" );
 		m_splashTowerSet->createData( entity
+			, type
 			, cooldown
 			, damage
 			, range
 			, bulletSpeed
 			, splashDamage
 			, splashRange
-			, requiredLevel
 			, geometry
 			, std::move( animation )
 			, std::move( attack )
-			, shootSound
-			, hitSound );
+			, shootSound );
 		return entity;
 	}
 
@@ -307,27 +291,20 @@ namespace orastus
 	void Ecs::doRegisterComponents()
 	{
 		doCreateComponent( StateComponent, STATE_COMPONENT_DESC );
+		doCreateComponent( TowerStateComponent, TOWER_STATE_COMPONENT_DESC );
+		doCreateComponent( SplashTowerStateComponent, SPLASH_TOWER_STATE_COMPONENT_DESC );
 		doCreateComponent( StatusComponent, STATUS_COMPONENT_DESC );
-		doCreateComponent( CooldownComponent, COOLDOWN_COMPONENT_DESC );
 		doCreateComponent( TimeoutComponent, TIMEOUT_COMPONENT_DESC );
 		doCreateComponent( EntityComponent, ENTITY_COMPONENT_DESC );
 		doCreateComponent( CellComponent, CELL_COMPONENT_DESC );
-		doCreateComponent( DamageComponent, DAMAGE_COMPONENT_DESC );
-		doCreateComponent( SplashDamageComponent, SPLASH_DAMAGE_COMPONENT_DESC );
-		doCreateComponent( RangeComponent, RANGE_COMPONENT_DESC );
-		doCreateComponent( SplashRangeComponent, SPLASH_RANGE_COMPONENT_DESC );
-		doCreateComponent( LevelComponent, LEVEL_COMPONENT_DESC );
 		doCreateComponent( SpeedComponent, SPEED_COMPONENT_DESC );
 		doCreateComponent( LifeComponent, LIFE_COMPONENT_DESC );
 		doCreateComponent( PositionComponent, POSIION_COMPONENT_DESC );
 		doCreateComponent( GeometryComponent, GEOMETRY_COMPONENT_DESC );
 		doCreateComponent( PickableComponent, PICKABLE_COMPONENT_DESC );
-		doCreateComponent( AnimationComponent, ANIMATION_COMPONENT_DESC );
 		doCreateComponent( WalkComponent, WALK_COMPONENT_DESC );
-		doCreateComponent( AttackComponent, ATTACK_COMPONENT_DESC );
 		doCreateComponent( TrackComponent, TRACK_COMPONENT_DESC );
 		doCreateComponent( SoundSourceComponent, SOUND_SOURCE_COMPONENT_DESC );
-		doCreateComponent( SoundComponent, SOUND_COMPONENT_DESC );
 	}
 
 	void Ecs::doCreateAssemblages()

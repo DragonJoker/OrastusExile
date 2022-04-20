@@ -1,7 +1,7 @@
 /**
 See licence file in root folder, MIT.txt
 */
-#include "GameEngine/ECS/StateSystem.hpp"
+#include "GameEngine/System/StateSystem.hpp"
 
 #include "GameEngine/ECS/Ecs.hpp"
 #include "GameEngine/State/StateMachine.hpp"

@@ -25,6 +25,38 @@ See licence file in root folder, MIT.txt
 
 namespace orastus
 {
+	/**
+	*\brief
+	*	Tower types enumeration.
+	*/
+	enum class TowerType
+	{
+		eShortRange,
+		eLongRange,
+	};
+	/**
+	*\brief
+	*	Tower states enumeration.
+	*/
+	enum class TowerStatus
+	{
+		//! No executor for the tower.
+		eEmpty,
+		//! The tower is looking for an enemy to shoot at.
+		eIdle,
+		//! The tower is shooting an enemy.
+		eShooting,
+	};
+	/**
+	*\brief
+	*	Retrieves the name of the given tower state.
+	*\param[in] state
+	*	The tower state.
+	*\return
+	*	The name.
+	*/
+	EFO_API castor::String getName( TowerStatus state );
+
 	// General
 	using castor::xchar;
 	using castor::String;
@@ -61,6 +93,8 @@ namespace orastus
 	class Bullet;
 	struct AnimationData;
 	struct AttackData;
+	struct SplashTowerData;
+	struct TowerData;
 	struct TrackData;
 	struct WalkData;
 	class SoundSource;

@@ -17,10 +17,10 @@ namespace orastus
 		EFO_API ~BulletSpawner();
 
 		EFO_API void reset();
-		EFO_API void fireBullet( Entity source
+		EFO_API void fireBullet( TowerData const & source
 			, Entity target
 			, Sound & sound );
-		EFO_API void fireBullet( Entity source
+		EFO_API void fireBullet( TowerData const & source
 			, Entity target
 			, Sound & sound
 			, castor3d::GeometrySPtr geometry );

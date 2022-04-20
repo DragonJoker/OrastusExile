@@ -6,8 +6,10 @@ See licence file in root folder, MIT.txt
 #define ___EFO_Ecs_HPP___
 
 #include "EntityComponentData.hpp"
-#include "StateSystem.hpp"
-#include "SoundSystem.hpp"
+
+#include "GameEngine/System/StateSystem.hpp"
+#include "GameEngine/System/SoundSystem.hpp"
+#include "GameEngine/System/TowerSystem.hpp"
 
 namespace orastus
 {
@@ -131,6 +133,8 @@ namespace orastus
 		/**
 		*\brief
 		*	Creates a tower.
+		*\param[in] type
+		*	The tower type.
 		*\param[in] cooldown
 		*	The cooldown value.
 		*\param[in] damage
@@ -139,8 +143,6 @@ namespace orastus
 		*	The range value.
 		*\param[in] bulletSpeed
 		*	The bullet speed value.
-		*\param[in] requiredLevel
-		*	The required level value.
 		*\param[in] geometry
 		*	The geometry value.
 		*\param[in] animation
@@ -149,24 +151,23 @@ namespace orastus
 		*	The attack data.
 		*\param[in] shootSound
 		*	The shoot sound source.
-		*\param[in] hitSound
-		*	The hit sound.
 		*\return
 		*	The entity for the created tower.
 		*/
-		EFO_API Entity createTower( Milliseconds const & cooldown
+		EFO_API Entity createTower( TowerType type
+			, Milliseconds const & cooldown
 			, uint32_t damage
 			, float range
 			, float bulletSpeed
-			, uint32_t requiredLevel
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack
-			, SoundSource const * shootSound
-			, Sound * hitSound );
+			, SoundSource const * shootSound );
 		/**
 		*\brief
 		*	Creates a tower with splash damage.
+		*\param[in] type
+		*	The tower type.
 		*\param[in] cooldown
 		*	The cooldown value.
 		*\param[in] damage
@@ -179,8 +180,6 @@ namespace orastus
 		*	The splash damage value.
 		*\param[in] splashRange
 		*	The splash range value.
-		*\param[in] requiredLevel
-		*	The required level value.
 		*\param[in] geometry
 		*	The geometry value.
 		*\param[in] animation
@@ -189,23 +188,20 @@ namespace orastus
 		*	The attack data.
 		*\param[in] shootSound
 		*	The shoot sound source.
-		*\param[in] hitSound
-		*	The hit sound.
 		*\return
 		*	The entity for the created tower.
 		*/
-		EFO_API Entity createTower( Milliseconds const & cooldown
+		EFO_API Entity createTower( TowerType type
+			, Milliseconds const & cooldown
 			, uint32_t damage
 			, float range
 			, float bulletSpeed
 			, uint32_t splashDamage
 			, float splashRange
-			, uint32_t requiredLevel
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack
-			, SoundSource const * shootSound
-			, Sound * hitSound );
+			, SoundSource const * shootSound );
 		/**
 		*\brief
 		*	Creates an enemy.
@@ -460,27 +456,20 @@ namespace orastus
 
 	public:
 		EFO_API static ComponentId const StateComponent;
+		EFO_API static ComponentId const TowerStateComponent;
+		EFO_API static ComponentId const SplashTowerStateComponent;
 		EFO_API static ComponentId const StatusComponent;
-		EFO_API static ComponentId const CooldownComponent;
 		EFO_API static ComponentId const TimeoutComponent;
 		EFO_API static ComponentId const EntityComponent;
 		EFO_API static ComponentId const CellComponent;
-		EFO_API static ComponentId const DamageComponent;
-		EFO_API static ComponentId const RangeComponent;
-		EFO_API static ComponentId const SplashDamageComponent;
-		EFO_API static ComponentId const SplashRangeComponent;
-		EFO_API static ComponentId const LevelComponent;
 		EFO_API static ComponentId const SpeedComponent;
 		EFO_API static ComponentId const LifeComponent;
 		EFO_API static ComponentId const PositionComponent;
 		EFO_API static ComponentId const GeometryComponent;
 		EFO_API static ComponentId const PickableComponent;
-		EFO_API static ComponentId const AnimationComponent;
 		EFO_API static ComponentId const WalkComponent;
-		EFO_API static ComponentId const AttackComponent;
 		EFO_API static ComponentId const TrackComponent;
 		EFO_API static ComponentId const SoundSourceComponent;
-		EFO_API static ComponentId const SoundComponent;
 
 	private:
 		// Components and entities.
@@ -495,6 +484,7 @@ namespace orastus
 		BulletPtr m_bulletSet;
 		MapBlockPtr m_mapBlockSet;
 		// Systems.
+		TowerSystem m_towerSystem;
 		StateSystem m_stateSystem;
 		SoundSystem m_soundSystem;
 	};

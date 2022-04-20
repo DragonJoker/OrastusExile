@@ -4,10 +4,10 @@
 #include "GameEngine/Ecs/AnimationData.hpp"
 #include "GameEngine/Ecs/AttackData.hpp"
 #include "GameEngine/Ecs/SoundSource.hpp"
+#include "GameEngine/Ecs/Tower.hpp"
 #include "GameEngine/ECS/WalkData.hpp"
 #include "GameEngine/State/EnemyState.hpp"
 #include "GameEngine/State/StateMachine.hpp"
-#include "GameEngine/State/TowerState.hpp"
 
 #include <Castor3D/Engine.hpp>
 #include <Castor3D/Event/Frame/FrameListener.hpp>
@@ -592,19 +592,15 @@ namespace orastus
 			if ( tower )
 			{
 				m_towerBuildSound.play();
-				m_selectedCell->entity = m_ecs.createTower( 700_ms
+				m_selectedCell->entity = m_ecs.createTower( TowerType::eShortRange
+					, 700_ms
 					, 3u
 					, 40.0f
 					, 240.0f
-					, 1u
 					, tower
 					, nullptr
 					, std::make_unique< AttackData >( 0_ms )
-					, &m_ballistaShootSound.createSource( *tower->getParent(), false )
-					, &m_ballistaHitSound );
-				auto & stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
-					, m_ecs.getComponent( Ecs::StateComponent ) ).getValue();
-				stateMachine->addState( tower::createShootingState( m_ecs, m_selectedCell->entity ) );
+					, &m_ballistaShootSound.createSource( *tower->getParent(), false ) );
 				doSelectEntity( m_selectedCell->entity );
 			}
 		}
@@ -628,34 +624,38 @@ namespace orastus
 			if ( tower )
 			{
 				m_towerBuildSound.play();
-				m_selectedCell->entity = m_ecs.createTower( 2000_ms
+				m_selectedCell->entity = m_ecs.createTower( TowerType::eLongRange
+					, 2000_ms
 					, 5u
 					, 100.0f
 					, 200.0f
-					, 1u
 					, tower
 					, nullptr
 					, std::make_unique< AttackData >( 0_ms )
-					, &m_cannonShootSound.createSource( *tower->getParent(), false )
-					, &m_cannonHitSound );
-				auto & stateMachine = m_ecs.getComponentData< StateMachinePtr >( m_selectedCell->entity
-					, m_ecs.getComponent( Ecs::StateComponent ) ).getValue();
-				stateMachine->addState( tower::createShootingState( m_ecs, m_selectedCell->entity ) );
+					, &m_cannonShootSound.createSource( *tower->getParent(), false ) );
 				doSelectEntity( m_selectedCell->entity );
 			}
 		}
 	}
 
-	void Game::createBullet( Entity source
+	void Game::createBullet( TowerData const & source
 		, Entity target )
 	{
-		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( source
-			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		auto node = Game::getTowerNode( geometry );
-		m_ecs.getComponentData< SoundSource const * >( source
+		auto node = Game::getTowerNode( source.geometry );
+		Sound * sound{};
+
+		switch ( source.type )
+		{
+		case TowerType::eShortRange:
+			sound = &m_ballistaHitSound;
+			break;
+		case TowerType::eLongRange:
+			sound = &m_cannonHitSound;
+			break;
+		}
+
+		m_ecs.getComponentData< SoundSource const * >( source.entity
 			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue()->play( node );
-		auto sound = m_ecs.getComponentData< Sound * >( source
-			, m_ecs.getComponent( Ecs::SoundComponent ) ).getValue();
 
 		if ( m_bulletSpawner.hasFreeBullet() )
 		{
@@ -668,7 +668,7 @@ namespace orastus
 			m_bulletSpawner.fireBullet( source
 				, target
 				, *sound
-				, doCreateBullet( source ) );
+				, doCreateBullet( *node ) );
 		}
 	}
 
@@ -780,14 +780,12 @@ namespace orastus
 		}
 	}
 
-	castor3d::GeometrySPtr Game::doCreateBullet( Entity source )
+	castor3d::GeometrySPtr Game::doCreateBullet( castor3d::SceneNode const & origin )
 	{
-		auto origin = Game::getTowerNode( m_ecs.getComponentData< castor3d::GeometrySPtr >( source
-			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
 		String name = cuT( "Bullet_" ) + toString( m_bulletSpawner.getBulletsCount() );
 		auto node = m_scene.getSceneNodeCache().add( name ).lock();
 		auto geometry = m_scene.getGeometryCache().create( name, m_scene, *node, m_bulletMesh );
-		node->setPosition( origin->getDerivedPosition() );
+		node->setPosition( origin.getDerivedPosition() );
 		node->attachTo( *m_mapNode );
 
 		for ( auto submesh : *geometry->getMesh().lock() )
@@ -903,7 +901,8 @@ namespace orastus
 	{
 		bool result = false;
 
-		if ( m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::DamageComponent ) ) )
+		if ( m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::TowerStateComponent ) )
+			|| m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::SplashTowerStateComponent ) ) )
 		{
 			result = true;
 			doSelectTower( entity );

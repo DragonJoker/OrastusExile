@@ -2,6 +2,7 @@
 
 #include "GameEngine/Game.hpp"
 #include "GameEngine/Sound.hpp"
+#include "GameEngine/Ecs/Tower.hpp"
 
 #include <Castor3D/Engine.hpp>
 #include <Castor3D/Cache/OverlayCache.hpp>
@@ -215,9 +216,10 @@ namespace orastus
 			m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 				, [this, &ecs, entity]()
 				{
-					doUpdateText< uint32_t >( ecs, entity, Ecs::DamageComponent, m_towerDamage );
-					doUpdateText< Milliseconds >( ecs, entity, Ecs::CooldownComponent, m_towerSpeed );
-					doUpdateText< float >( ecs, entity, Ecs::RangeComponent, m_towerRange );
+					auto & towerData = ecs.getComponentData< TowerData >( entity, ecs.getComponent( Ecs::TowerStateComponent ) ).getValue();
+					m_towerDamage.lock()->setCaption( castor::string::toString( towerData.damage ) );
+					m_towerSpeed.lock()->setCaption( castor::string::toString( towerData.cooldown ) );
+					m_towerRange.lock()->setCaption( castor::string::toString( towerData.range ) );
 				} ) );
 		}
 		else

@@ -55,9 +55,7 @@ set( ${PROJECT_NAME}_FOLDER_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Id.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/MapBlock.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/SoundSource.hpp
-	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/SoundSystem.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/SplashTower.hpp
-	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/StateSystem.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Target.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/Tower.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/ECS/TrackData.hpp
@@ -74,9 +72,7 @@ set( ${PROJECT_NAME}_FOLDER_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Id.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/MapBlock.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/SoundSource.cpp
-	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/SoundSystem.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/SplashTower.cpp
-	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/StateSystem.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Target.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/Tower.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/ECS/TrackData.cpp
@@ -99,7 +95,6 @@ set( ${PROJECT_NAME}_SRC_FILES
 	${${PROJECT_NAME}_FOLDER_SRC_FILES}
 )
 set( ${PROJECT_NAME}_FOLDER_HDR_FILES
-	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/State/TowerState.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/State/BulletState.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/State/EnemyState.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/State/State.hpp
@@ -107,7 +102,6 @@ set( ${PROJECT_NAME}_FOLDER_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/State/TargetState.hpp
 )
 set( ${PROJECT_NAME}_FOLDER_SRC_FILES
-	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/State/TowerState.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/State/BulletState.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/State/EnemyState.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/State/State.cpp
@@ -119,6 +113,32 @@ source_group( "Header Files\\State"
 		${${PROJECT_NAME}_FOLDER_HDR_FILES}
 )
 source_group( "Source Files\\State"
+	FILES
+		${${PROJECT_NAME}_FOLDER_SRC_FILES}
+)
+set( ${PROJECT_NAME}_HDR_FILES
+	${${PROJECT_NAME}_HDR_FILES}
+	${${PROJECT_NAME}_FOLDER_HDR_FILES}
+)
+set( ${PROJECT_NAME}_SRC_FILES
+	${${PROJECT_NAME}_SRC_FILES}
+	${${PROJECT_NAME}_FOLDER_SRC_FILES}
+)
+set( ${PROJECT_NAME}_FOLDER_HDR_FILES
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/System/SoundSystem.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/System/StateSystem.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/System/TowerSystem.hpp
+)
+set( ${PROJECT_NAME}_FOLDER_SRC_FILES
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/System/SoundSystem.cpp
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/System/StateSystem.cpp
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/System/TowerSystem.cpp
+)
+source_group( "Header Files\\System"
+	FILES
+		${${PROJECT_NAME}_FOLDER_HDR_FILES}
+)
+source_group( "Source Files\\System"
 	FILES
 		${${PROJECT_NAME}_FOLDER_SRC_FILES}
 )

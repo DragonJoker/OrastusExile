@@ -1,7 +1,7 @@
 /**
 See licence file in root folder, MIT.txt
 */
-#include "GameEngine/ECS/SoundSystem.hpp"
+#include "GameEngine/System/SoundSystem.hpp"
 
 #include "GameEngine/Audio.hpp"
 #include "GameEngine/Game.hpp"

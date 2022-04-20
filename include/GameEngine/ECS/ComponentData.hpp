@@ -52,6 +52,14 @@ namespace orastus
 			return m_value;
 		}
 		/**
+		*\return
+		*	The component data's value.
+		*/
+		T & getValue()
+		{
+			return m_value;
+		}
+		/**
 		*\brief
 		*	Sets the component data's value.
 		*\param[in] value

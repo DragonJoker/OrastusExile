@@ -4,6 +4,7 @@
 #include "GameEngine/Sound.hpp"
 #include "GameEngine/ECS/Ecs.hpp"
 #include "GameEngine/ECS/SoundSource.hpp"
+#include "GameEngine/ECS/Tower.hpp"
 #include "GameEngine/ECS/TrackData.hpp"
 #include "GameEngine/ECS/WalkData.hpp"
 
@@ -41,7 +42,7 @@ namespace orastus
 		}
 	}
 	
-	void BulletSpawner::fireBullet( Entity source
+	void BulletSpawner::fireBullet( TowerData const & source
 		, Entity target
 		, Sound & sound )
 	{
@@ -49,38 +50,28 @@ namespace orastus
 		m_bulletsCache.erase( m_bulletsCache.begin() );
 		m_liveBullets.insert( m_liveBullets.end(), bullet );
 
-		auto speed = m_ecs.getComponentData< float >( source
-			, m_ecs.getComponent( Ecs::SpeedComponent ) ).getValue();
-		auto damage = m_ecs.getComponentData< uint32_t >( source
-			, m_ecs.getComponent( Ecs::DamageComponent ) ).getValue();
 		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( bullet
 			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		auto sourceNode = Game::getTowerNode( m_ecs.getComponentData< castor3d::GeometrySPtr >( source
-			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
+		auto sourceNode = Game::getTowerNode( source.geometry );
 		auto node = Game::getBulletNode( geometry );
 		node->setPosition( sourceNode->getPosition() );
 		m_ecs.resetBullet( bullet
 			, geometry
 			, &sound.createSource( *node, false )
-			, std::make_unique< TrackData >( target, speed, damage ) );
+			, std::make_unique< TrackData >( target, source.bulletSpeed, source.damage ) );
 	}
 
-	void BulletSpawner::fireBullet( Entity source
+	void BulletSpawner::fireBullet( TowerData const & source
 		, Entity target
 		, Sound & sound
 		, castor3d::GeometrySPtr geometry )
 	{
-		auto speed = m_ecs.getComponentData< float >( source
-			, m_ecs.getComponent( Ecs::SpeedComponent ) ).getValue();
-		auto damage = m_ecs.getComponentData< uint32_t >( source
-			, m_ecs.getComponent( Ecs::DamageComponent ) ).getValue();
-		auto sourceNode = Game::getTowerNode( m_ecs.getComponentData< castor3d::GeometrySPtr >( source
-			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue() );
+		auto sourceNode = Game::getTowerNode( source.geometry );
 		auto node = Game::getBulletNode( geometry );
 		node->setPosition( sourceNode->getPosition() );
 		auto bullet = m_ecs.createBullet( geometry
 			, &sound.createSource( *node, false )
-			, std::make_unique< TrackData >( target, speed, damage ) );
+			, std::make_unique< TrackData >( target, source.bulletSpeed, source.damage ) );
 		m_liveBullets.insert( m_liveBullets.end(), bullet );
 		++m_totalSpawned;
 	}

@@ -12,7 +12,7 @@ namespace orastus
 		: m_ecs{ ecs }
 		, m_speed{ m_ecs.getComponent( Ecs::SpeedComponent ) }
 		, m_life{ m_ecs.getComponent( Ecs::LifeComponent ) }
-		, m_cooldown{ m_ecs.getComponent( Ecs::CooldownComponent ) }
+		, m_timeout{ m_ecs.getComponent( Ecs::TimeoutComponent ) }
 		, m_target{ m_ecs.getComponent( Ecs::EntityComponent ) }
 		, m_geometry{ m_ecs.getComponent( Ecs::GeometryComponent ) }
 		, m_walk{ m_ecs.getComponent( Ecs::WalkComponent ) }
@@ -36,7 +36,7 @@ namespace orastus
 			, m_life
 			, life );
 		m_ecs.createComponentData( entity
-			, m_cooldown
+			, m_timeout
 			, 0_ms );
 		m_ecs.createComponentData( entity
 			, m_target
@@ -78,7 +78,7 @@ namespace orastus
 		m_ecs.getComponentData< uint32_t >( entity
 			, m_life ).setValue( life );
 		m_ecs.getComponentData< Milliseconds >( entity
-			, m_cooldown ).setValue( 0_ms );
+			, m_timeout ).setValue( 0_ms );
 		m_ecs.getComponentData< Entity >( entity
 			, m_target ).setValue( {} );
 		m_ecs.getComponentData< EnemyState >( entity

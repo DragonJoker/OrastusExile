@@ -79,7 +79,7 @@ namespace orastus
 		Ecs & m_ecs;
 		Component const & m_speed;
 		Component const & m_life;
-		Component const & m_cooldown;
+		Component const & m_timeout;
 		Component const & m_target;
 		Component const & m_geometry;
 		Component const & m_walk;

@@ -5,10 +5,44 @@ See licence file in root folder, MIT.txt
 #ifndef ___EFO_Tower_HPP___
 #define ___EFO_Tower_HPP___
 
-#include "GameEngine/GameEnginePrerequisites.hpp"
+#include "GameEngine/ECS/AnimationData.hpp"
+#include "GameEngine/ECS/AttackData.hpp"
 
 namespace orastus
 {
+	struct TowerData
+	{
+		EFO_API TowerData( Entity entity
+			, TowerType type
+			, AttackDataPtr attack
+			, castor3d::GeometrySPtr geometry
+			, float range
+			, float bulletSpeed
+			, uint32_t damage
+			, Milliseconds cooldown
+			, AnimationDataPtr anim );
+		EFO_API TowerData( Entity entity
+			, TowerType type
+			, AttackDataPtr attack
+			, castor3d::GeometrySPtr geometry
+			, float range
+			, float bulletSpeed
+			, uint32_t damage
+			, Milliseconds cooldown
+			, Milliseconds timeout );
+
+		Entity entity;
+		TowerType type;
+		TowerStatus status;
+		AttackDataPtr attack;
+		castor3d::GeometrySPtr geometry;
+		float range;
+		float bulletSpeed;
+		uint32_t damage;
+		Milliseconds cooldown;
+		AnimationDataPtr anim;
+		Milliseconds timeout;
+	};
 	/**
 	*\brief
 	*	The components used to describe a tower.
@@ -28,6 +62,8 @@ namespace orastus
 		*	Creates the component data for a tower.
 		*\param[in] entity
 		*	The entity for the tower.
+		*\param[in] type
+		*	The tower type.
 		*\param[in] cooldown
 		*	The cooldown value.
 		*\param[in] damage
@@ -36,8 +72,6 @@ namespace orastus
 		*	The range value.
 		*\param[in] bulletSpeed
 		*	The bullet speed value.
-		*\param[in] requiredLevel
-		*	The required level value.
 		*\param[in] geometry
 		*	The geometry value.
 		*\param[in] animation
@@ -46,20 +80,17 @@ namespace orastus
 		*	The attack data.
 		*\param[in] shootSound
 		*	The shoot sound source.
-		*\param[in] hitSound
-		*	The hit sound.
 		*/
 		EFO_API void createData( Entity const & entity
+			, TowerType type
 			, Milliseconds const & cooldown
 			, uint32_t damage
 			, float range
 			, float bulletSpeed
-			, uint32_t requiredLevel
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack
-			, SoundSource const * shootSound
-			, Sound * hitSound );
+			, SoundSource const * shootSound );
 		/**
 		*\brief
 		*	Returns a splash tower as a string.
@@ -70,19 +101,9 @@ namespace orastus
 
 	private:
 		Ecs & m_ecs;
-		Component const & m_cooldown;
-		Component const & m_timeout;
-		Component const & m_damage;
-		Component const & m_range;
-		Component const & m_bulletSpeed;
-		Component const & m_requiredLevel;
-		Component const & m_state;
-		Component const & m_geometry;
+		Component const & m_tower;
 		Component const & m_pickable;
-		Component const & m_animation;
-		Component const & m_attack;
-		Component const & m_shootSound;
-		Component const & m_hitSound;
+		Component const & m_soundSource;
 	};
 }
 
