@@ -7,6 +7,7 @@ See licence file in root folder, MIT.txt
 
 #include "EntityComponentData.hpp"
 
+#include "GameEngine/System/BulletSystem.hpp"
 #include "GameEngine/System/EnemySystem.hpp"
 #include "GameEngine/System/StateSystem.hpp"
 #include "GameEngine/System/SoundSystem.hpp"
@@ -283,7 +284,6 @@ namespace orastus
 		*	The track value.
 		*/
 		EFO_API void resetBullet( Entity entity
-			, castor3d::GeometrySPtr geometry
 			, SoundSource const * soundSource
 			, TrackDataPtr track );
 		/**
@@ -459,10 +459,10 @@ namespace orastus
 		EFO_API static ComponentId const SplashTowerStateComponent;
 		EFO_API static ComponentId const EnemyStateComponent;
 		EFO_API static ComponentId const TargetStateComponent;
+		EFO_API static ComponentId const BulletStateComponent;
 		EFO_API static ComponentId const TimeoutComponent;
 		EFO_API static ComponentId const GeometryComponent;
 		EFO_API static ComponentId const PickableComponent;
-		EFO_API static ComponentId const TrackComponent;
 		EFO_API static ComponentId const SoundSourceComponent;
 
 	private:
@@ -479,6 +479,7 @@ namespace orastus
 		MapBlockPtr m_mapBlockSet;
 		// Systems.
 		TowerSystem m_towerSystem;
+		BulletSystem m_bulletSystem;
 		EnemySystem m_enemySystem;
 		TargetSystem m_targetSystem;
 		StateSystem m_stateSystem;

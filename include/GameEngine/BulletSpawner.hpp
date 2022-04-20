@@ -24,7 +24,7 @@ namespace orastus
 			, Entity target
 			, Sound & sound
 			, castor3d::GeometrySPtr geometry );
-		EFO_API void killBullet( Entity bullet );
+		EFO_API void killBullet( BulletData const & bullet );
 
 		inline bool hasFreeBullet()const
 		{

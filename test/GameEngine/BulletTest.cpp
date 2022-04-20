@@ -3,9 +3,9 @@ See licence file in root folder, MIT.txt
 */
 #include "BulletTest.hpp"
 
+#include <GameEngine/ECS/Bullet.hpp>
 #include <GameEngine/ECS/Ecs.hpp>
 #include <GameEngine/ECS/SoundSource.hpp>
-#include <GameEngine/ECS/TrackData.hpp>
 
 namespace orastus
 {
@@ -33,8 +33,11 @@ namespace orastus
 			auto bullet = ecs.createBullet( nullptr
 				, {}
 				, std::make_unique< TrackData >( Entity{}, speed, damage ) );
-			CT_EQUAL( ecs.getComponentData< TrackDataPtr >( bullet, ecs.getComponent( Ecs::TrackComponent ) ).getValue()->speed, speed );
-			CT_EQUAL( ecs.getComponentData< TrackDataPtr >( bullet, ecs.getComponent( Ecs::TrackComponent ) ).getValue()->damage, damage );
+			auto & data = ecs.getComponentData< BulletData >( bullet
+				, ecs.getComponent( Ecs::BulletStateComponent ) ).getValue();
+			CT_EQUAL( data.status, BulletStatus::eFlying );
+			CT_EQUAL( data.track->speed, speed );
+			CT_EQUAL( data.track->damage, damage );
 		}
 	}
 }

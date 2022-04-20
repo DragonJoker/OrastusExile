@@ -136,21 +136,21 @@ namespace orastus
 		/**
 		*\brief
 		*	Kills a bullet.
-		*\param[in] entity
-		*	The bullet entity.
+		*\param[in] bullet
+		*	The bullet.
 		*/
-		EFO_API void killBullet( Entity entity );
+		EFO_API void killBullet( BulletData const & bullet );
 		/**
 		*\brief
 		*	Hits a target.
-		*\param[in] source
-		*	The hit source.
+		*\param[in] bullet
+		*	The bullet.
 		*\param[in] target
 		*	The hit target.
 		*\param[in] damage
 		*	The hit damage.
 		*/
-		EFO_API void hit( Entity source
+		EFO_API void hit( BulletData const & bullet
 			, Entity target
 			, uint32_t damage );
 		/**

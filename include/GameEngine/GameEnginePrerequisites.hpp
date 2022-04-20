@@ -122,6 +122,26 @@ namespace orastus
 	*	The name.
 	*/
 	EFO_API String getName( TargetStatus state );
+	/**
+	*\brief
+	*	Bullet states enumeration.
+	*/
+	enum class BulletStatus
+	{
+		//! The bullet is idle.
+		eIdle,
+		//! The bullet is flying to its target.
+		eFlying,
+	};
+	/**
+	*\brief
+	*	Retrieves the name of the given enemy state.
+	*\param[in] state
+	*	The tower state.
+	*\return
+	*	The name.
+	*/
+	EFO_API String getName( BulletStatus state );
 
 	// State
 	class State;
@@ -152,6 +172,7 @@ namespace orastus
 	class Bullet;
 	struct AnimationData;
 	struct AttackData;
+	struct BulletData;
 	struct EnemyData;
 	struct SplashTowerData;
 	struct TargetData;

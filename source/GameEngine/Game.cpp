@@ -1,6 +1,7 @@
 #include "GameEngine/Game.hpp"
 
 #include "GameEngine/Audio.hpp"
+#include "GameEngine/Ecs/Bullet.hpp"
 #include "GameEngine/Ecs/Enemy.hpp"
 #include "GameEngine/Ecs/SoundSource.hpp"
 #include "GameEngine/Ecs/Tower.hpp"
@@ -492,21 +493,19 @@ namespace orastus
 		m_enemySpawner.enemyEscaped( enemy );
 	}
 
-	void Game::killBullet( Entity entity )
+	void Game::killBullet( BulletData const & bullet )
 	{
-		m_bulletSpawner.killBullet( entity );
+		m_bulletSpawner.killBullet( bullet );
 	}
 
-	void Game::hit( Entity source
+	void Game::hit( BulletData const & bullet
 		, Entity target
 		, uint32_t damage )
 	{
-		auto geometry = m_ecs.getComponentData< castor3d::GeometrySPtr >( source
-			, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		auto node = Game::getBulletNode( geometry );
-		m_ecs.getComponentData< SoundSource const * >( source
+		auto node = Game::getBulletNode( bullet.geometry );
+		m_ecs.getComponentData< SoundSource const * >( bullet.entity
 			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue()->play( node );
-		m_bulletSpawner.killBullet( source );
+		m_bulletSpawner.killBullet( bullet );
 
 		auto & enemy = m_ecs.getComponentData< EnemyData >( target
 			, m_ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue();

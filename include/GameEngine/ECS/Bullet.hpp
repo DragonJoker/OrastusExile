@@ -5,10 +5,21 @@ See licence file in root folder, MIT.txt
 #ifndef ___EFO_Bullet_HPP___
 #define ___EFO_Bullet_HPP___
 
-#include "GameEngine/GameEnginePrerequisites.hpp"
+#include "GameEngine/ECS/TrackData.hpp"
 
 namespace orastus
 {
+	struct BulletData
+	{
+		EFO_API BulletData( Entity entity
+			, castor3d::GeometrySPtr geometry
+			, TrackDataPtr track );
+
+		Entity entity;
+		BulletStatus status;
+		castor3d::GeometrySPtr geometry;
+		TrackDataPtr track;
+	};
 	/**
 	*\brief
 	*	The components used to describe a bullet.
@@ -49,7 +60,6 @@ namespace orastus
 		*	The track value.
 		*/
 		EFO_API void resetData( Entity const & entity
-			, castor3d::GeometrySPtr geometry
 			, SoundSource const * soundSource
 			, TrackDataPtr track );
 		/**
@@ -62,9 +72,7 @@ namespace orastus
 
 	private:
 		Ecs & m_ecs;
-		Component const & m_geometry;
-		Component const & m_state;
-		Component const & m_track;
+		Component const & m_bullet;
 		Component const & m_hitSound;
 	};
 }

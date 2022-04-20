@@ -22,10 +22,10 @@ namespace orastus
 		String const SPLASH_TOWER_STATE_COMPONENT_DESC = cuT( "Splash Tower State" );
 		String const ENEMY_STATE_COMPONENT_DESC = cuT( "Enemy State" );
 		String const TARGET_STATE_COMPONENT_DESC = cuT( "Target State" );
+		String const BULLET_STATE_COMPONENT_DESC = cuT( "Bullet State" );
 		String const TIMEOUT_COMPONENT_DESC = cuT( "Timeout" );
 		String const GEOMETRY_COMPONENT_DESC = cuT( "Geometry" );
 		String const PICKABLE_COMPONENT_DESC = cuT( "Pickable" );
-		String const TRACK_COMPONENT_DESC = cuT( "Track" );
 		String const SOUND_SOURCE_COMPONENT_DESC = cuT( "SoundSource" );
 	}
 
@@ -34,14 +34,15 @@ namespace orastus
 	ComponentId const Ecs::SplashTowerStateComponent = Ecs::hash( "stwstate" );
 	ComponentId const Ecs::EnemyStateComponent = Ecs::hash( "enmstate" );
 	ComponentId const Ecs::TargetStateComponent = Ecs::hash( "tgtstate" );
+	ComponentId const Ecs::BulletStateComponent = Ecs::hash( "bltstate" );
 	ComponentId const Ecs::TimeoutComponent = Ecs::hash( "timeout " );
 	ComponentId const Ecs::GeometryComponent = Ecs::hash( "geometry" );
 	ComponentId const Ecs::PickableComponent = Ecs::hash( "pickable" );
-	ComponentId const Ecs::TrackComponent = Ecs::hash( "track   " );
 	ComponentId const Ecs::SoundSourceComponent = Ecs::hash( "soundsrc" );
 
 	Ecs::Ecs()
 		: m_towerSystem{ *this }
+		, m_bulletSystem{ *this }
 		, m_enemySystem{ *this }
 		, m_targetSystem{ *this }
 		, m_stateSystem{ *this }
@@ -61,6 +62,7 @@ namespace orastus
 		, Milliseconds const & elapsed )
 	{
 		m_towerSystem.update( game, elapsed );
+		m_bulletSystem.update( game, elapsed );
 		m_enemySystem.update( game, elapsed );
 		m_targetSystem.update( game, elapsed );
 		m_stateSystem.update( game, elapsed );
@@ -207,12 +209,10 @@ namespace orastus
 	}
 
 	void Ecs::resetBullet( Entity entity
-		, castor3d::GeometrySPtr geometry
 		, SoundSource const * soundSource
 		, TrackDataPtr track )
 	{
 		m_bulletSet->resetData( entity
-			, geometry
 			, soundSource
 			, std::move( track ) );
 	}
@@ -287,10 +287,10 @@ namespace orastus
 		doCreateComponent( SplashTowerStateComponent, SPLASH_TOWER_STATE_COMPONENT_DESC );
 		doCreateComponent( EnemyStateComponent, ENEMY_STATE_COMPONENT_DESC );
 		doCreateComponent( TargetStateComponent, TARGET_STATE_COMPONENT_DESC );
+		doCreateComponent( BulletStateComponent, BULLET_STATE_COMPONENT_DESC );
 		doCreateComponent( TimeoutComponent, TIMEOUT_COMPONENT_DESC );
 		doCreateComponent( GeometryComponent, GEOMETRY_COMPONENT_DESC );
 		doCreateComponent( PickableComponent, PICKABLE_COMPONENT_DESC );
-		doCreateComponent( TrackComponent, TRACK_COMPONENT_DESC );
 		doCreateComponent( SoundSourceComponent, SOUND_SOURCE_COMPONENT_DESC );
 	}
 

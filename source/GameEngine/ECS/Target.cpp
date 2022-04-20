@@ -35,7 +35,6 @@ namespace orastus
 	Target::Target( Ecs & ecs )
 		: m_ecs{ ecs }
 		, m_target{ m_ecs.getComponent( Ecs::TargetStateComponent ) }
-		, m_geometry{ m_ecs.getComponent( Ecs::GeometryComponent ) }
 		, m_capturedSound{ m_ecs.getComponent( Ecs::SoundSourceComponent ) }
 	{
 	}
@@ -53,9 +52,6 @@ namespace orastus
 		m_ecs.createComponentData( entity
 			, m_capturedSound
 			, targetCapturedSound );
-		m_ecs.createComponentData( entity
-			, m_geometry
-			, geometry );
 	}
 
 	void Target::resetData( Entity const & entity
