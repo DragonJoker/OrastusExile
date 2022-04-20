@@ -349,6 +349,20 @@ namespace orastus
 				case 'S':
 					doStopTimer( TimerID::eDown );
 					break;
+				case '1':
+					m_listener->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+						, [this]()
+						{
+							m_game.createShortRangeTower();
+						} ) );
+					break;
+				case '2':
+					m_listener->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+						, [this]()
+						{
+							m_game.createLongRangeTower();
+						} ) );
+					break;
 				}
 			}
 

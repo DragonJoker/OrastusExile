@@ -576,8 +576,9 @@ namespace orastus
 
 	void Game::createShortRangeTower()
 	{
-		CU_Require( m_selectedCell && *m_selectedCell );
-		if ( m_selectedCell->state == GridCell::State::eEmpty )
+		if ( m_selectedCell
+			&& *m_selectedCell
+			&& m_selectedCell->state == GridCell::State::eEmpty )
 		{
 			String name = cuT( "ShortRangeTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
 			doCreateTowerBase( name + "Base"
@@ -611,8 +612,9 @@ namespace orastus
 
 	void Game::createLongRangeTower()
 	{
-		CU_Require( m_selectedCell && *m_selectedCell );
-		if ( m_selectedCell->state == GridCell::State::eEmpty )
+		if ( m_selectedCell
+			&& *m_selectedCell
+			&& m_selectedCell->state == GridCell::State::eEmpty )
 		{
 			String name = cuT( "LongRangeTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
 			doCreateTowerBase( name + "Base"

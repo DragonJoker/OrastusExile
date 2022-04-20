@@ -20,8 +20,16 @@ namespace orastus
 
 		for ( auto & data : states )
 		{
-			static_cast< ComponentData< StateMachinePtr > & >( *data.data ).getValue()->update( game
-				, elapsed );
+			if ( data.data )
+			{
+				auto & machine = static_cast< ComponentData< StateMachinePtr > & >( *data.data ).getValue();
+
+				if ( machine )
+				{
+					machine->update( game
+						, elapsed );
+				}
+			}
 		}
 	}
 }
