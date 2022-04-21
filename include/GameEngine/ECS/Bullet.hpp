@@ -12,10 +12,12 @@ namespace orastus
 	struct BulletData
 	{
 		EFO_API BulletData( Entity entity
+			, AmmoType type
 			, castor3d::GeometrySPtr geometry
 			, TrackDataPtr track );
 
 		Entity entity;
+		AmmoType type;
 		BulletStatus status;
 		castor3d::GeometrySPtr geometry;
 		TrackDataPtr track;
@@ -39,12 +41,15 @@ namespace orastus
 		*	Creates the component data for a bullet.
 		*\param[in] entity
 		*	The entity for the bullet.
+		*\param[in] type
+		*	The ammunition type.
 		*\param[in] geometry
 		*	The geometry value.
 		*\param[in] track
 		*	The track value.
 		*/
 		EFO_API void createData( Entity const & entity
+			, AmmoType type
 			, castor3d::GeometrySPtr geometry
 			, SoundSource const * soundSource
 			, TrackDataPtr track );

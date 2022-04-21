@@ -27,16 +27,19 @@ namespace orastus
 
 	void BulletSpawner::reset()
 	{
-		m_bulletsCache.insert( m_bulletsCache.end()
-			, m_liveBullets.begin()
-			, m_liveBullets.end() );
-		m_liveBullets.clear();
-
-		for ( auto & bullet : m_bulletsCache )
+		for ( size_t i = 0; i < size_t( AmmoType::eCount ); ++i )
 		{
-			auto geometry = m_ecs.getComponentData< BulletData >( bullet
-				, m_ecs.getComponent( Ecs::BulletStateComponent ) ).getValue().geometry;
-			Game::getBulletNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
+			m_bulletsCaches[i].insert( m_bulletsCaches[i].end()
+				, m_liveBullets[i].begin()
+				, m_liveBullets[i].end() );
+			m_liveBullets[i].clear();
+
+			for ( auto & bullet : m_bulletsCaches[i] )
+			{
+				auto geometry = m_ecs.getComponentData< BulletData >( bullet
+					, m_ecs.getComponent( Ecs::BulletStateComponent ) ).getValue().geometry;
+				Game::getBulletNode( geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
+			}
 		}
 	}
 	
@@ -44,9 +47,11 @@ namespace orastus
 		, Entity target
 		, Sound & sound )
 	{
-		auto bullet = *m_bulletsCache.begin();
-		m_bulletsCache.erase( m_bulletsCache.begin() );
-		m_liveBullets.insert( m_liveBullets.end(), bullet );
+		auto & bulletsCache = m_bulletsCaches[size_t( source.category->getAmmoType() )];
+		auto & liveBullets = m_liveBullets[size_t( source.category->getAmmoType() )];
+		auto bullet = *bulletsCache.begin();
+		bulletsCache.erase( bulletsCache.begin() );
+		liveBullets.insert( liveBullets.end(), bullet );
 
 		auto geometry = m_ecs.getComponentData< BulletData >( bullet
 			, m_ecs.getComponent( Ecs::BulletStateComponent ) ).getValue().geometry;
@@ -65,30 +70,34 @@ namespace orastus
 		, Sound & sound
 		, castor3d::GeometrySPtr geometry )
 	{
+		auto & liveBullets = m_liveBullets[size_t( source.category->getAmmoType() )];
 		auto sourceNode = Game::getTowerNode( source.geometry );
 		auto node = Game::getBulletNode( geometry );
 		node->setPosition( sourceNode->getPosition() );
-		auto bullet = m_ecs.createBullet( geometry
+		auto bullet = m_ecs.createBullet( source.category->getAmmoType()
+			, geometry
 			, &sound.createSource( *node, false )
 			, std::make_unique< TrackData >( target
 				, source.category->getBulletSpeed()
 				, source.category->getDamage() ) );
-		m_liveBullets.insert( m_liveBullets.end(), bullet );
+		liveBullets.insert( liveBullets.end(), bullet );
 		++m_totalSpawned;
 	}
 
 	void BulletSpawner::killBullet( BulletData const & bullet )
 	{
-		auto it = std::find( std::begin( m_liveBullets )
-			, std::end( m_liveBullets )
+		auto & bulletsCache = m_bulletsCaches[size_t( bullet.type )];
+		auto & liveBullets = m_liveBullets[size_t( bullet.type )];
+		auto it = std::find( std::begin( liveBullets )
+			, std::end( liveBullets )
 			, bullet.entity );
 
-		if ( it != std::end( m_liveBullets ) )
+		if ( it != std::end( liveBullets ) )
 		{
-			m_liveBullets.erase( it );
+			liveBullets.erase( it );
 		}
 
-		m_bulletsCache.push_back( bullet.entity );
+		bulletsCache.push_back( bullet.entity );
 		Game::getBulletNode( bullet.geometry )->setPosition( castor::Point3f{ 0, -1000, 0 } );
 	}
 }

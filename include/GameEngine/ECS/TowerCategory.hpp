@@ -29,12 +29,14 @@ namespace orastus
 			, uint32_t damage
 			, Milliseconds cooldown
 			, float range
-			, float bulletSpeed )
+			, float bulletSpeed
+			, AmmoType ammoType )
 			: m_type{ type }
 			, m_damage{ damage }
 			, m_cooldown{ cooldown }
 			, m_range{ range }
 			, m_bulletSpeed{ bulletSpeed }
+			, m_ammoType{ ammoType }
 		{
 		}
 
@@ -65,12 +67,18 @@ namespace orastus
 			return m_type;
 		}
 
+		AmmoType getAmmoType()const
+		{
+			return m_ammoType;
+		}
+
 	protected:
 		TowerType m_type;
 		uint32_t m_damage;
 		Milliseconds m_cooldown;
 		float m_range;
 		float m_bulletSpeed;
+		AmmoType m_ammoType;
 	};
 
 	struct DirectTower
@@ -82,6 +90,7 @@ namespace orastus
 		static constexpr Milliseconds Cooldown = 700_ms;
 		static constexpr float Range = 40.0f;
 		static constexpr float BulletSpeed = 240.0f;
+		static constexpr AmmoType Ammo = AmmoType::eDirect;
 	};
 
 	struct SplashTower
@@ -93,6 +102,7 @@ namespace orastus
 		static constexpr Milliseconds Cooldown = 2000_ms;
 		static constexpr float Range = 100.0f;
 		static constexpr float BulletSpeed = 200.0f;
+		static constexpr AmmoType Ammo = AmmoType::eSplash;
 	};
 }
 

@@ -213,12 +213,15 @@ namespace orastus
 		/**
 		*\brief
 		*	Creates a bullet.
+		*\param[in] type
+		*	The ammunition type.
 		*\param[in] geometry
 		*	The geometry value.
 		*\param[in] track
 		*	The track value.
 		*/
-		EFO_API Entity createBullet( castor3d::GeometrySPtr geometry
+		EFO_API Entity createBullet( AmmoType type
+			, castor3d::GeometrySPtr geometry
 			, SoundSource const * soundSource
 			, TrackDataPtr track );
 		/**

@@ -35,14 +35,14 @@ mesh "Ballista"
 	}
 }
 
-mesh "Bullet"
+mesh "Arrow"
 {
-	type "cone" -faces=10 -radius=1 -height=1
-	default_material "Bullet"
+	type "cone" -faces=10 -radius=1 -height=16
+	default_material "Arrow"
 }
 
-mesh "Boulder"
+mesh "CannonBall"
 {
-	type "sphere" -subdiv=25 -radius=2
-	default_material "Boulder"
+	type "sphere" -subdiv=25 -radius=4
+	default_material "CannonBall"
 }

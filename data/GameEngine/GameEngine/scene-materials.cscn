@@ -26,21 +26,23 @@ sampler "Linear"
 
 // Materials
 
-material "Bullet"
+material "Arrow"
 {
 	pass
 	{
-		albedo 0.5 0.0 0.5
-		specular 0.5 0.0 0.5
+		albedo 0.976471 0.713726 0.450980
+		specular 0.976471 0.713726 0.450980
+		glossiness 0.25
 	}
 }
 
-material "Boulder"
+material "CannonBall"
 {
 	pass
 	{
-		albedo 0.5 0.5 0.0
-		specular 0.5 0.5 0.0
+		albedo 0.5 0.5 0.5
+		specular 0.5 0.5 0.5
+		glossiness 0.25
 	}
 }
 

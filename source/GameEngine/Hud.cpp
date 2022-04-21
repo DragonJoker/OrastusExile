@@ -169,17 +169,17 @@ namespace orastus
 	void Hud::showBuild()
 	{
 		auto userInput = m_scene.getEngine()->getUserInputListener();
-		userInput->registerClickAction( cuT( "Build/ShortRange/Button" )
+		userInput->registerClickAction( cuT( "Build/Direct/Button" )
 			, [this]()
 			{
 				m_buttonSound.play();
-				m_game.createShortRangeTower();
+				m_game.createDirectTower();
 			} );
 		userInput->registerClickAction( cuT( "Build/Splash/Button" )
 			, [this]()
 			{
 				m_buttonSound.play();
-				m_game.createLongRangeTower();
+				m_game.createSplashTower();
 			} );
 		userInput->registerClickAction( cuT( "HUDBuild" )
 			, []()
@@ -203,7 +203,7 @@ namespace orastus
 				cache.find( cuT( "HUDBuild" ) ).lock()->setVisible( false );
 			} ) );
 		auto userInput = m_scene.getEngine()->getUserInputListener();
-		userInput->unregisterClickAction( cuT( "Build/ShortRange/Button" ) );
+		userInput->unregisterClickAction( cuT( "Build/Direct/Button" ) );
 		userInput->unregisterClickAction( cuT( "Build/Splash/Button" ) );
 		userInput->unregisterClickAction( cuT( "HUDBuild" ) );
 	}

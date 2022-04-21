@@ -61,7 +61,7 @@ material "HUDBuild"
 	}
 }
 
-material "HUDThumbShortRange"
+material "HUDThumbDirect"
 {
 	pass
 	{
@@ -71,7 +71,7 @@ material "HUDThumbShortRange"
 	{
 		texture_unit
 		{
-			image "Textures/ThumbShortRange.png"
+			image "Textures/ThumbDirect.png"
 			sampler	"Linear"
 			albedo_mask 0x00FFFFFF
 			opacity_mask 0xFF000000
@@ -79,7 +79,7 @@ material "HUDThumbShortRange"
 	}
 }
 
-material "HUDThumbShortRangeHighlight"
+material "HUDThumbDirectHighlight"
 {
 	pass
 	{
@@ -89,7 +89,7 @@ material "HUDThumbShortRangeHighlight"
 	{
 		texture_unit
 		{
-			image "Textures/ThumbShortRange.png"
+			image "Textures/ThumbDirect.png"
 			sampler	"Linear"
 			albedo_mask 0x00FFFFFF
 			opacity_mask 0xFF000000
@@ -97,7 +97,7 @@ material "HUDThumbShortRangeHighlight"
 	}
 }
 
-material "HUDThumbShortRangePush"
+material "HUDThumbDirectPush"
 {
 	pass
 	{
@@ -107,7 +107,7 @@ material "HUDThumbShortRangePush"
 	{
 		texture_unit
 		{
-			image "Textures/ThumbShortRange.png"
+			image "Textures/ThumbDirect.png"
 			sampler	"Linear"
 			albedo_mask 0x00FFFFFF
 			opacity_mask 0xFF000000

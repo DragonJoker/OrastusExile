@@ -51,7 +51,7 @@ panel_overlay "GameEndPanel"
 				material "White"
 				font "ResourcesFont"
 				horizontal_align center
-				text "Niveau :"
+				text "Level :"
 			}
 
 			text_overlay "ResultLevelValue"
@@ -99,7 +99,7 @@ panel_overlay "GameEndPanel"
 			material "White"
 			font "ResourcesFont"
 			horizontal_align center
-			text "Appuyez sur Entrée pour recommencer..."
+			text "Press Return to restart..."
 		}
 	}
 }
@@ -128,25 +128,7 @@ panel_overlay "TitlePanel"
 		material "White"
 		font "ResourcesFont"
 		horizontal_align center
-		text "Appuyez sur Entrée pour commencer..."
-	}
-
-	text_overlay "TitleHelpLine1"
-	{
-		size 1.0 0.030
-		position 0 0.905
-		material "White"
-		font "ResourcesValueFont"
-		text "Bouton gauche de la souris sur une case pour la sélectionner."
-	}
-
-	text_overlay "TitleHelpLine2"
-	{
-		size 1.0 0.030
-		position 0 0.935
-		material "White"
-		font "ResourcesValueFont"
-		text "Bouton droit de la souris pour afficher les options de la case précédemment sélectionnée."
+		text "Press Return to start..."
 	}
 }
 
@@ -182,7 +164,7 @@ panel_overlay "HUDResources"
 			pxl_position 38 5
 			material "White"
 			font "ResourcesFont"
-			text "Vies"
+			text "Lives"
 		}
 
 		text_overlay "LivesValue"
@@ -208,7 +190,7 @@ panel_overlay "HUDResources"
 			pxl_position 38 5
 			material "White"
 			font "ResourcesFont"
-			text "Minerai"
+			text "Ore"
 		}
 
 		text_overlay "OreValue"
@@ -255,7 +237,7 @@ panel_overlay "HUDScore"
 			pxl_position 38 5
 			material "White"
 			font "ResourcesFont"
-			text "Niveau"
+			text "Level"
 		}
 
 		text_overlay "LevelValue"
@@ -309,7 +291,7 @@ panel_overlay "HUDDetails"
 		material "White"
 		font "ResourcesFont"
 		horizontal_align center
-		text "Ennemis"
+		text "Enemies"
 	}
 
 	panel_overlay "MonsterLife"
@@ -324,7 +306,7 @@ panel_overlay "HUDDetails"
 			pxl_position 0 0
 			material "White"
 			font "ResourcesValueFont"
-			text "Vie"
+			text "Health"
 		}
 
 		text_overlay "MonsterLifeValue"
@@ -350,7 +332,7 @@ panel_overlay "HUDDetails"
 			pxl_position 0 0
 			material "White"
 			font "ResourcesValueFont"
-			text "Prime"
+			text "Bounty"
 		}
 
 		text_overlay "MonsterBountyValue"
@@ -371,7 +353,7 @@ panel_overlay "HUDDetails"
 		material "White"
 		font "ResourcesFont"
 		horizontal_align center
-		text "Tourelle"
+		text "Turret"
 	}
 
 	panel_overlay "TowerDamage"
@@ -386,7 +368,7 @@ panel_overlay "HUDDetails"
 			pxl_position 0 0
 			material "White"
 			font "ResourcesValueFont"
-			text "Dégâts"
+			text "Damage"
 		}
 
 		text_overlay "TowerDamageValue"
@@ -412,7 +394,7 @@ panel_overlay "HUDDetails"
 			pxl_position 0 0
 			material "White"
 			font "ResourcesValueFont"
-			text "Vitesse"
+			text "Cooldown"
 		}
 
 		text_overlay "TowerSpeedValue"
@@ -438,7 +420,7 @@ panel_overlay "HUDDetails"
 			pxl_position 0 0
 			material "White"
 			font "ResourcesValueFont"
-			text "Portée"
+			text "Range"
 		}
 
 		text_overlay "TowerRangeValue"
@@ -488,15 +470,15 @@ gui
 		}
 	}
 
-	theme "Build/ShortRange"
+	theme "Build/Direct"
 	{
 		default_font "ResourcesValueFont"
 		button_style
 		{
-			background_material "HUDThumbShortRange"
+			background_material "HUDThumbDirect"
 			border_material "HUDButtonBorder"
-			highlighted_background_material "HUDThumbShortRangeHighlight"
-			pushed_background_material "HUDThumbShortRangePush"
+			highlighted_background_material "HUDThumbDirectHighlight"
+			pushed_background_material "HUDThumbDirectPush"
 		}
 	}
 
@@ -524,28 +506,28 @@ gui
 			pixel_size 125 15
 			pixel_position 40 45
 			horizontal_align center
-			caption "Construction"
+			caption "Build"
 		}
 
-		static "Build/ShortRange"
+		static "Build/Direct"
 		{
 			theme "Build/Back"
 			pixel_size 125 30
 			pixel_position 40 70
 
-			button "Build/ShortRange/Button"
+			button "Build/Direct/Button"
 			{
-				theme "Build/ShortRange"
+				theme "Build/Direct"
 				pixel_size 30 30
 				pixel_position 0 0
 			}
 
-			static "Build/ShortRange/Desc"
+			static "Build/Direct/Desc"
 			{
 				theme "Build/Text"
 				pixel_size 90 30
 				pixel_position 35 10
-				caption "Short Range"
+				caption "Ballista"
 			}
 		}
 
@@ -567,7 +549,7 @@ gui
 				theme "Build/Text"
 				pixel_size 90 30
 				pixel_position 35 10
-				caption "Splash"
+				caption "Cannon"
 			}
 		}
 	}
@@ -586,7 +568,7 @@ panel_overlay "HUDPause"
 		material "White"
 		font "TitleFont"
 		horizontal_align center
-		text "...En Pause..."
+		text "...Paused..."
 	}
 
 	text_overlay "PauseEnd"
@@ -596,7 +578,7 @@ panel_overlay "HUDPause"
 		material "White"
 		font "ResourcesFont"
 		horizontal_align center
-		text "Appuyez sur Espace pour reprendre la partie..."
+		text "Press Space to continue..."
 	}
 }
 
@@ -612,7 +594,7 @@ panel_overlay "HelpPanel"
 		position 0 0.1
 		material "White"
 		font "TitleFont"
-		text "Aide"
+		text "Help"
 		horizontal_align center
 	}
 
@@ -622,7 +604,7 @@ panel_overlay "HelpPanel"
 		position 0.1 0.2
 		material "White"
 		font "ResourcesFont"
-		text "Bouton gauche de la souris sur une case pour la sélectionner.\n\nBarre d'espace: Met le jeu en pause, reprend la partie (depuis la pause\net depuis l'aide).\n\nTouche 1: Améliorer les dégâts de la tour actuellement sélectionnée.\n\nTouche 2: Améliorer la portée de la tour actuellement sélectionnée.\n\nTouche 3: Améliorer la vitesse de la tour actuellement sélectionnée.\n\nTouche F1: Affiche l'aide."
+		text "Left mouse button to select a tile.\n\nEscape bar: Pauses the game, continues the game (from pause\nand from help).\n\nKey 1: Build a direct damage tower.\n\nKey 2: Build a splash damage tower.\n\nKey F1: Displays this help."
 		text_wrapping break_words
 		line_spacing_mode max_font_height
 	}

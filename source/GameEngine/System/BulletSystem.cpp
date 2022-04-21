@@ -57,9 +57,19 @@ namespace orastus
 					}
 					else if ( distanceToDst < distance )
 					{
-						game.hit( bullet
-							, trackData->target
-							, trackData->damage );
+						if ( bullet.type == AmmoType::eSplash )
+						{
+							game.areaDamage( bullet
+								, trackData->target
+								, trackData->damage );
+						}
+						else
+						{
+							game.hit( bullet
+								, trackData->target
+								, trackData->damage );
+						}
+
 						bullet.status = BulletStatus::eIdle;
 					}
 				}

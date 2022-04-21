@@ -353,14 +353,14 @@ namespace orastus
 					m_listener->postEvent( makeCpuFunctorEvent( EventType::ePreRender
 						, [this]()
 						{
-							m_game.createShortRangeTower();
+							m_game.createDirectTower();
 						} ) );
 					break;
 				case '2':
 					m_listener->postEvent( makeCpuFunctorEvent( EventType::ePreRender
 						, [this]()
 						{
-							m_game.createLongRangeTower();
+							m_game.createSplashTower();
 						} ) );
 					break;
 				}

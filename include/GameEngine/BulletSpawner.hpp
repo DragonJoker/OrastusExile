@@ -26,9 +26,9 @@ namespace orastus
 			, castor3d::GeometrySPtr geometry );
 		EFO_API void killBullet( BulletData const & bullet );
 
-		inline bool hasFreeBullet()const
+		inline bool hasFreeBullet( AmmoType ammo )const
 		{
-			return !m_bulletsCache.empty();
+			return !m_bulletsCaches[size_t( ammo )].empty();
 		}
 
 		inline uint32_t getBulletsCount()const
@@ -40,8 +40,8 @@ namespace orastus
 		Ecs & m_ecs;
 		Game & m_game;
 		uint32_t m_totalSpawned{ 0u };
-		EntityList m_bulletsCache;
-		EntityList m_liveBullets;
+		std::array< EntityList, size_t( AmmoType::eCount ) > m_bulletsCaches;
+		std::array< EntityList, size_t( AmmoType::eCount ) > m_liveBullets;
 	};
 }
 

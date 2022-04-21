@@ -156,6 +156,19 @@ namespace orastus
 			, uint32_t damage );
 		/**
 		*\brief
+		*	Area damage around a target.
+		*\param[in] bullet
+		*	The bullet.
+		*\param[in] target
+		*	The hit target.
+		*\param[in] damage
+		*	The hit damage.
+		*/
+		EFO_API void areaDamage( BulletData const & bullet
+			, Entity target
+			, uint32_t damage );
+		/**
+		*\brief
 		*	Select an available target to capture.
 		*\return
 		*	The target entity.
@@ -173,14 +186,14 @@ namespace orastus
 			, castor3d::MeshResPtr mesh );
 		/**
 		*\brief
-		*	Creates a short range tower.
+		*	Creates a direct tower.
 		*/
-		EFO_API void createShortRangeTower();
+		EFO_API void createDirectTower();
 		/**
 		*\brief
-		*	Creates a long range tower.
+		*	Creates a splash tower.
 		*/
-		EFO_API void createLongRangeTower();
+		EFO_API void createSplashTower();
 		/**
 		*\brief
 		*	Creates a bullet.
@@ -411,7 +424,9 @@ namespace orastus
 			, castor3d::MeshResPtr mesh
 			, castor::Quaternion const & orientation );
 		void doAddTargets( GridCell & cell );
-		castor3d::GeometrySPtr doCreateBullet( castor3d::SceneNode const & origin );
+		castor3d::MeshResPtr doGetAmmoMesh( AmmoType type );
+		castor3d::GeometrySPtr doCreateAmmo( castor3d::SceneNode const & origin
+			, AmmoType type );
 		castor3d::GeometrySPtr doCreateTowerBase( castor::String const & name
 			, GridCell & cell
 			, castor3d::MeshResPtr mesh );
@@ -443,10 +458,10 @@ namespace orastus
 		castor3d::MeshResPtr m_pathTurnTileMesh;
 		castor3d::MeshResPtr m_pathAreaTileMesh;
 		castor3d::MeshResPtr m_towerBaseMesh;
-		castor3d::MeshResPtr m_shortRangeTowerMesh;
-		castor3d::MeshResPtr m_longRangeTowerMesh;
-		castor3d::MeshResPtr m_bulletMesh;
-		castor3d::MaterialSPtr m_bulletMaterial;
+		castor3d::MeshResPtr m_directTowerMesh;
+		castor3d::MeshResPtr m_splashTowerMesh;
+		castor3d::MeshResPtr m_arrowMesh;
+		castor3d::MeshResPtr m_cannonBallMesh;
 		std::vector< Sound * > m_targetCapturedSounds;
 		Sound & m_ballistaShootSound;
 		Sound & m_cannonShootSound;

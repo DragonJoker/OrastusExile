@@ -53,6 +53,27 @@ namespace orastus
 	EFO_API String getName( TowerType type );
 	/**
 	*\brief
+	*	Ammunition types enumeration.
+	*/
+	enum class AmmoType
+	{
+		//! Direct damage.
+		eDirect,
+		//! Splash damage.
+		eSplash,
+		CU_ScopedEnumBounds( eDirect ),
+	};
+	/**
+	*\brief
+	*	Retrieves the name of the given ammunition type.
+	*\param[in] type
+	*	The ammunition type.
+	*\return
+	*	The name.
+	*/
+	EFO_API String getName( AmmoType type );
+	/**
+	*\brief
 	*	Tower states enumeration.
 	*/
 	enum class TowerStatus

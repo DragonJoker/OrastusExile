@@ -153,12 +153,14 @@ namespace orastus
 			, std::move( cell ) );
 	}
 
-	Entity Ecs::createBullet( castor3d::GeometrySPtr geometry
+	Entity Ecs::createBullet( AmmoType type
+		, castor3d::GeometrySPtr geometry
 		, SoundSource const * soundSource
 		, TrackDataPtr track )
 	{
 		auto entity = doCreateEntity( "Bullet" );
 		m_bulletSet->createData( entity
+			, type
 			, geometry
 			, soundSource
 			, std::move( track ) );

@@ -9,7 +9,8 @@ namespace orastus
 			, Damage
 			, Cooldown
 			, Range
-			, BulletSpeed }
+			, BulletSpeed
+			, Ammo }
 	{
 	}
 
@@ -20,7 +21,8 @@ namespace orastus
 			, Damage
 			, Cooldown
 			, Range
-			, BulletSpeed }
+			, BulletSpeed
+			, Ammo }
 	{
 	}
 

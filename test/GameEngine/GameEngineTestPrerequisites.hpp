@@ -24,6 +24,15 @@ namespace Testing
 	};
 
 	template<>
+	struct Stringifier< orastus::AmmoType >
+	{
+		static std::string get( orastus::AmmoType const & value )
+		{
+			return orastus::getName( value );
+		}
+	};
+
+	template<>
 	struct Stringifier< orastus::BulletStatus >
 	{
 		static std::string get( orastus::BulletStatus const & value )

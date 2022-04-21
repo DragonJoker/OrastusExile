@@ -283,10 +283,10 @@ namespace orastus
 		, m_pathTurnTileMesh{ m_scene.getMeshCache().find( cuT( "PathTurnTile" ) ) }
 		, m_pathAreaTileMesh{ m_scene.getMeshCache().find( cuT( "PathAreaTile" ) ) }
 		, m_towerBaseMesh{ m_scene.getMeshCache().find( cuT( "TowerBase" ) ).lock() }
-		, m_shortRangeTowerMesh{ m_scene.getMeshCache().find( cuT( "Ballista" ) ).lock() }
-		, m_longRangeTowerMesh{ m_scene.getMeshCache().find( cuT( "Cannon" ) ).lock() }
-		, m_bulletMesh{ m_scene.getMeshCache().find( cuT( "Bullet" ) ).lock() }
-		, m_bulletMaterial{ m_scene.getMaterialView().find( cuT( "Bullet" ) ).lock() }
+		, m_directTowerMesh{ m_scene.getMeshCache().find( cuT( "Ballista" ) ).lock() }
+		, m_splashTowerMesh{ m_scene.getMeshCache().find( cuT( "Cannon" ) ).lock() }
+		, m_arrowMesh{ m_scene.getMeshCache().find( cuT( "Arrow" ) ).lock() }
+		, m_cannonBallMesh{ m_scene.getMeshCache().find( cuT( "CannonBall" ) ).lock() }
 		, m_targetCapturedSounds{ &addSound( dataFolder / "Sounds" / "cow-1.wav", 10u )
 			, &addSound( dataFolder / "Sounds" / "cow-2.wav", 10u )
 			, &addSound( dataFolder / "Sounds" / "cow-3.wav", 10u )
@@ -516,6 +516,40 @@ namespace orastus
 		}
 	}
 
+	void Game::areaDamage( BulletData const & bullet
+		, Entity target
+		, uint32_t damage )
+	{
+		auto node = Game::getBulletNode( bullet.geometry );
+		auto position = node->getDerivedPosition();
+		m_ecs.getComponentData< SoundSource const * >( bullet.entity
+			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue()->play( node );
+		m_bulletSpawner.killBullet( bullet );
+		auto area = 32.0f;
+		auto & enemies = m_ecs.getComponentDatas( m_ecs.getComponent( Ecs::EnemyStateComponent ) );
+
+		for ( auto & enemy : enemies )
+		{
+			if ( enemy.data )
+			{
+				auto & data = componentCast< EnemyData >( *enemy.data ).getValue();
+				auto distance = castor::point::distance( getEnemyNode( data.geometry )->getDerivedPosition(), position );
+				auto enemyRatio = distance / area;
+
+				if ( enemyRatio <= 1.0 )
+				{
+					data.life -= std::min( data.life
+						, uint32_t( float( damage ) * ( 1.0f - enemyRatio ) ) );
+
+					if ( !data.life )
+					{
+						killEnemy( enemy.entity );
+					}
+				}
+			}
+		}
+	}
+
 	Entity Game::selectTarget()
 	{
 		return m_targetSpawner.selectTarget();
@@ -561,20 +595,20 @@ namespace orastus
 		return result;
 	}
 
-	void Game::createShortRangeTower()
+	void Game::createDirectTower()
 	{
 		if ( m_selectedCell
 			&& *m_selectedCell
 			&& m_selectedCell->state == GridCell::State::eEmpty )
 		{
-			String name = cuT( "ShortRangeTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
+			String name = cuT( "DirectTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
 			doCreateTowerBase( name + "Base"
 				, *m_selectedCell
 				, m_towerBaseMesh );
 			auto tower = doCreateTower( name
 				, *m_selectedCell
 				, *m_towerBaseMesh.lock()
-				, m_shortRangeTowerMesh );
+				, m_directTowerMesh );
 
 			if ( tower )
 			{
@@ -589,20 +623,20 @@ namespace orastus
 		}
 	}
 
-	void Game::createLongRangeTower()
+	void Game::createSplashTower()
 	{
 		if ( m_selectedCell
 			&& *m_selectedCell
 			&& m_selectedCell->state == GridCell::State::eEmpty )
 		{
-			String name = cuT( "LongRangeTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
+			String name = cuT( "SplashTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
 			doCreateTowerBase( name + "Base"
 				, *m_selectedCell
 				, m_towerBaseMesh );
 			auto tower = doCreateTower( name
 				, *m_selectedCell
 				, *m_towerBaseMesh.lock()
-				, m_longRangeTowerMesh );
+				, m_splashTowerMesh );
 
 			if ( tower )
 			{
@@ -636,7 +670,7 @@ namespace orastus
 		m_ecs.getComponentData< SoundSource const * >( source.entity
 			, m_ecs.getComponent( Ecs::SoundSourceComponent ) ).getValue()->play( node );
 
-		if ( m_bulletSpawner.hasFreeBullet() )
+		if ( m_bulletSpawner.hasFreeBullet( source.category->getAmmoType() ) )
 		{
 			m_bulletSpawner.fireBullet( source
 				, target
@@ -647,7 +681,7 @@ namespace orastus
 			m_bulletSpawner.fireBullet( source
 				, target
 				, *sound
-				, doCreateBullet( *node ) );
+				, doCreateAmmo( *node, source.category->getAmmoType() ) );
 		}
 	}
 
@@ -759,19 +793,30 @@ namespace orastus
 		}
 	}
 
-	castor3d::GeometrySPtr Game::doCreateBullet( castor3d::SceneNode const & origin )
+	castor3d::MeshResPtr Game::doGetAmmoMesh( AmmoType type )
 	{
-		String name = cuT( "Bullet_" ) + toString( m_bulletSpawner.getBulletsCount() );
+		switch ( type )
+		{
+		case orastus::AmmoType::eDirect:
+			return m_arrowMesh;
+		case orastus::AmmoType::eSplash:
+			return m_cannonBallMesh;
+		default:
+			return castor3d::MeshResPtr{};
+		}
+	}
+
+	castor3d::GeometrySPtr Game::doCreateAmmo( castor3d::SceneNode const & origin
+		, AmmoType type )
+	{
+		String name = getName( type ) + cuT( "Ammo_" ) + toString( m_bulletSpawner.getBulletsCount() );
 		auto node = m_scene.getSceneNodeCache().add( name ).lock();
-		auto geometry = m_scene.getGeometryCache().create( name, m_scene, *node, m_bulletMesh );
+		auto geometry = m_scene.getGeometryCache().create( name
+			, m_scene
+			, *node
+			, doGetAmmoMesh( type ) );
 		node->setPosition( origin.getDerivedPosition() );
 		node->attachTo( *m_mapNode );
-
-		for ( auto submesh : *geometry->getMesh().lock() )
-		{
-			geometry->setMaterial( *submesh, m_bulletMaterial.get() );
-		}
-
 		m_scene.getGeometryCache().add( geometry );
 		return geometry;
 	}

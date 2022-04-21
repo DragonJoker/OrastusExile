@@ -30,11 +30,13 @@ namespace orastus
 			Ecs ecs;
 			float speed{ 100.0f };
 			uint32_t damage{ 1000u };
-			auto bullet = ecs.createBullet( nullptr
+			auto bullet = ecs.createBullet( AmmoType::eSplash
+				, nullptr
 				, {}
 				, std::make_unique< TrackData >( Entity{}, speed, damage ) );
 			auto & data = ecs.getComponentData< BulletData >( bullet
 				, ecs.getComponent( Ecs::BulletStateComponent ) ).getValue();
+			CT_EQUAL( data.type, AmmoType::eSplash );
 			CT_EQUAL( data.status, BulletStatus::eFlying );
 			CT_EQUAL( data.track->speed, speed );
 			CT_EQUAL( data.track->damage, damage );

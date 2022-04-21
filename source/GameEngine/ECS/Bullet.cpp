@@ -11,10 +11,28 @@ namespace orastus
 {
 	//*********************************************************************************************
 
+	String getName( AmmoType type )
+	{
+		switch ( type )
+		{
+		case AmmoType::eDirect:
+			return cuT( "Direct" );
+		case AmmoType::eSplash:
+			return cuT( "Splash" );
+		default:
+			CU_Failure( "Unexpected ammo type." );
+			return "Unknown";
+		}
+	}
+
+	//*********************************************************************************************
+
 	BulletData::BulletData( Entity pentity
+		, AmmoType ptype
 		, castor3d::GeometrySPtr pgeometry
 		, TrackDataPtr ptrack )
 		: entity{ pentity }
+		, type{ ptype }
 		, status{ BulletStatus::eFlying }
 		, geometry{ std::move( pgeometry ) }
 		, track{ std::move( ptrack ) }
@@ -47,6 +65,7 @@ namespace orastus
 	}
 
 	void Bullet::createData( Entity const & entity
+		, AmmoType type
 		, castor3d::GeometrySPtr geometry
 		, SoundSource const * soundSource
 		, TrackDataPtr track )
@@ -54,6 +73,7 @@ namespace orastus
 		m_ecs.createComponentData( entity
 			, m_bullet
 			, BulletData{ entity
+				, type
 				, geometry
 				, std::move( track ) } );
 		m_ecs.createComponentData( entity
