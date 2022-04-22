@@ -84,8 +84,8 @@ namespace orastus
 		Game & m_game;
 		castor3d::Scene const & m_scene;
 		castor3d::TextOverlayWPtr m_lives;
-		castor3d::TextOverlayWPtr m_ore;
-		castor3d::TextOverlayWPtr m_level;
+		castor3d::TextOverlayWPtr m_gold;
+		castor3d::TextOverlayWPtr m_wave;
 		castor3d::TextOverlayWPtr m_kills;
 		castor3d::TextOverlayWPtr m_enemyLife;
 		castor3d::TextOverlayWPtr m_enemyBounty;

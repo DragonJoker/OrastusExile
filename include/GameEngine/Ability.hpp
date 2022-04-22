@@ -16,19 +16,19 @@ namespace orastus
 	{
 		using ValueIncrementFunction = std::function< T( T const &, uint32_t ) >;
 
-		Ability( T const & value
-			, ValueIncrementFunction const & valueIncrement )
-			: m_value{ value}
-			, m_valueIncrement{ valueIncrement }
+		Ability( T value
+			, ValueIncrementFunction valueIncrement )
+			: m_value{ std::move( value ) }
+			, m_valueIncrement{ std::move( valueIncrement ) }
 		{
 		}
 
-		void initialise( T const & value
-			, ValueIncrementFunction const & valueIncrement )
+		void initialise( T value
+			, ValueIncrementFunction valueIncrement )
 		{
 			m_level = 0;
-			m_value = value;
-			m_valueIncrement = valueIncrement;
+			m_value = std::move( value );
+			m_valueIncrement = std::move( valueIncrement );
 		}
 
 		void upgrade()

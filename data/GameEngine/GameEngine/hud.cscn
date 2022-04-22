@@ -38,23 +38,23 @@ panel_overlay "GameEndPanel"
 			text "Game Over !"
 		}
 
-		panel_overlay "ResultLevel"
+		panel_overlay "ResultWave"
 		{
 			size 0.5 0.060
 			position 0.25 0.5
 			material "HUDBackground"
 
-			text_overlay "ResultLevelTitle"
+			text_overlay "ResultWaveTitle"
 			{
 				size 0.5 1.0
 				position 0 0
 				material "White"
 				font "ResourcesFont"
 				horizontal_align center
-				text "Level :"
+				text "Wave :"
 			}
 
-			text_overlay "ResultLevelValue"
+			text_overlay "ResultWaveValue"
 			{
 				size 0.5 1.0
 				position 0.5 0
@@ -178,22 +178,22 @@ panel_overlay "HUDResources"
 		}
 	}
 
-	panel_overlay "OrePanel"
+	panel_overlay "GoldPanel"
 	{
 		pxl_size 190 40
 		pxl_position 15 130
 		material "ResourcePanel"
 
-		text_overlay "OreTitle"
+		text_overlay "GoldTitle"
 		{
 			pxl_size 95 40
 			pxl_position 38 5
 			material "White"
 			font "ResourcesFont"
-			text "Ore"
+			text "Gold"
 		}
 
-		text_overlay "OreValue"
+		text_overlay "GoldValue"
 		{
 			pxl_size 70 40
 			pxl_position 100 -5
@@ -225,22 +225,22 @@ panel_overlay "HUDScore"
 		material "HUDBackgroundBottom"
 	}
 
-	panel_overlay "LevelPanel"
+	panel_overlay "WavePanel"
 	{
 		pxl_size 190 40
 		pxl_position 15 70
 		material "ResourcePanel"
 
-		text_overlay "LevelTitle"
+		text_overlay "WaveTitle"
 		{
 			pxl_size 114 40
 			pxl_position 38 5
 			material "White"
 			font "ResourcesFont"
-			text "Level"
+			text "Wave"
 		}
 
-		text_overlay "LevelValue"
+		text_overlay "WaveValue"
 		{
 			pxl_size 40 40
 			pxl_position 130 -5

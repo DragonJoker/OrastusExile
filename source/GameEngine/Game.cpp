@@ -27,6 +27,11 @@ namespace orastus
 
 	namespace game
 	{
+		int32_t constexpr targetXMin = -2;
+		int32_t constexpr targetXMax = 2;
+		int32_t constexpr targetYMin = -1;
+		int32_t constexpr targetYMax = 3;
+
 		enum class Direction
 		{
 			North,
@@ -143,11 +148,6 @@ namespace orastus
 
 			from = &prv;
 		}
-
-		int32_t constexpr targetXMin = -2;
-		int32_t constexpr targetXMax = 2;
-		int32_t constexpr targetYMin = -1;
-		int32_t constexpr targetYMax = 3;
 
 		void prepareTargetsArea( GridPathNode const & cur
 			, castor3d::Scene & scene

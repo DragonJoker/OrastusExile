@@ -53,8 +53,8 @@ namespace orastus
 		: m_game{ game }
 		, m_scene{ scene }
 		, m_lives{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "LivesValue" ) ) }
-		, m_ore{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "OreValue" ) ) }
-		, m_level{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "LevelValue" ) ) }
+		, m_gold{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "GoldValue" ) ) }
+		, m_wave{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "WaveValue" ) ) }
 		, m_kills{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "KillsValue" ) ) }
 		, m_enemyLife{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "MonsterLifeValue" ) ) }
 		, m_enemyBounty{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "MonsterBountyValue" ) ) }
@@ -161,7 +161,7 @@ namespace orastus
 				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( true );
 				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
 
-				getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "ResultLevelValue" ) )->setCaption( castor::string::toString( m_game.getWave() ) );
+				getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "ResultWaveValue" ) )->setCaption( castor::string::toString( m_game.getWave() ) );
 				getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "ResultKillsValue" ) )->setCaption( castor::string::toString( m_game.getKills() ) );
 			} ) );
 	}
@@ -250,7 +250,7 @@ namespace orastus
 		//	text->setCaption( StringStream() << m_game.getOre() );
 		//}
 
-		text = m_level.lock();
+		text = m_wave.lock();
 
 		if ( text )
 		{
