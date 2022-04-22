@@ -123,6 +123,8 @@ namespace orastus
 		/**
 		*\brief
 		*	Creates a map block.
+		*\param[in] cell
+		*	The block cell.
 		*\param[in] geometry
 		*	The geometry value.
 		*\param[in] pickable
@@ -130,13 +132,16 @@ namespace orastus
 		*\return
 		*	The entity for the created block.
 		*/
-		EFO_API Entity createMapBlock( castor3d::GeometrySPtr geometry
+		EFO_API Entity createMapBlock( GridCell & cell
+			, castor3d::GeometrySPtr geometry
 			, bool pickable );
 		/**
 		*\brief
 		*	Creates a tower.
 		*\param[in] category
 		*	The tower category.
+		*\param[in] cell
+		*	The tower cell.
 		*\param[in] geometry
 		*	The geometry value.
 		*\param[in] animation
@@ -149,6 +154,7 @@ namespace orastus
 		*	The entity for the created tower.
 		*/
 		EFO_API Entity createTower( TowerCategoryPtr category
+			, GridCell & cell
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack
@@ -406,6 +412,7 @@ namespace orastus
 		EFO_API static ComponentId const GeometryComponent;
 		EFO_API static ComponentId const PickableComponent;
 		EFO_API static ComponentId const SoundSourceComponent;
+		EFO_API static ComponentId const CellComponent;
 
 	private:
 		// Components and entities.

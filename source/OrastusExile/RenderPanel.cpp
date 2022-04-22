@@ -418,13 +418,13 @@ namespace orastus
 								if ( picked != geometry )
 								{
 									m_selectedGeometry = picked;
-									m_selectedTower = m_game.select( picked );
+									m_selectedTower = m_game.getPlayer().select( picked );
 								}
 							}
 							else
 							{
 								m_selectedGeometry.reset();
-								m_game.unselect();
+								m_game.getPlayer().unselect();
 							}
 						} ) );
 				}

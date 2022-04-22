@@ -24,6 +24,7 @@ namespace orastus
 		String const GEOMETRY_COMPONENT_DESC = cuT( "Geometry" );
 		String const PICKABLE_COMPONENT_DESC = cuT( "Pickable" );
 		String const SOUND_SOURCE_COMPONENT_DESC = cuT( "SoundSource" );
+		String const CELL_COMPONENT_DESC = cuT( "Cell" );
 	}
 
 	ComponentId const Ecs::TowerStateComponent = Ecs::hash( "twrstate" );
@@ -34,6 +35,7 @@ namespace orastus
 	ComponentId const Ecs::GeometryComponent = Ecs::hash( "geometry" );
 	ComponentId const Ecs::PickableComponent = Ecs::hash( "pickable" );
 	ComponentId const Ecs::SoundSourceComponent = Ecs::hash( "soundsrc" );
+	ComponentId const Ecs::CellComponent = Ecs::hash( "cell    " );
 
 	Ecs::Ecs()
 		: m_towerSystem{ *this }
@@ -79,17 +81,20 @@ namespace orastus
 		return *it;
 	}
 
-	Entity Ecs::createMapBlock( castor3d::GeometrySPtr geometry
+	Entity Ecs::createMapBlock( GridCell & cell
+		, castor3d::GeometrySPtr geometry
 		, bool pickable )
 	{
 		auto entity = doCreateEntity( "MapBlock" );
 		m_mapBlockSet->createData( entity
+			, cell
 			, geometry
 			, pickable );
 		return entity;
 	}
 
 	Entity Ecs::createTower( TowerCategoryPtr category
+		, GridCell & cell
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
@@ -98,6 +103,7 @@ namespace orastus
 		auto entity = doCreateEntity( "Tower" );
 		m_towerSet->createData( entity
 			, std::move( category )
+			, cell
 			, geometry
 			, std::move( animation )
 			, std::move( attack )
@@ -243,6 +249,7 @@ namespace orastus
 		doCreateComponent( GeometryComponent, GEOMETRY_COMPONENT_DESC );
 		doCreateComponent( PickableComponent, PICKABLE_COMPONENT_DESC );
 		doCreateComponent( SoundSourceComponent, SOUND_SOURCE_COMPONENT_DESC );
+		doCreateComponent( CellComponent, CELL_COMPONENT_DESC );
 	}
 
 	void Ecs::doCreateAssemblages()

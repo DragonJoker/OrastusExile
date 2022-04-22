@@ -6,6 +6,7 @@ namespace orastus
 
 	DirectTower::DirectTower()
 		: TowerCategory{ TowerType::eDirect
+			, GoldCost
 			, Damage
 			, Cooldown
 			, Range
@@ -18,6 +19,7 @@ namespace orastus
 
 	SplashTower::SplashTower()
 		: TowerCategory{ TowerType::eSplash
+			, GoldCost
 			, Damage
 			, Cooldown
 			, Range

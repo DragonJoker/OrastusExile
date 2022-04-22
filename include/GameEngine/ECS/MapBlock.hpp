@@ -34,6 +34,7 @@ namespace orastus
 		*	\p true to make the entity pickable.
 		*/
 		EFO_API void createData( Entity const & entity
+			, GridCell & cell
 			, castor3d::GeometrySPtr geometry
 			, bool pickable );
 		/**
@@ -46,6 +47,7 @@ namespace orastus
 
 	private:
 		Ecs & m_ecs;
+		Component const & m_cell;
 		Component const & m_geometry;
 		Component const & m_pickable;
 	};

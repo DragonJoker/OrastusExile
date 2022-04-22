@@ -53,6 +53,8 @@ namespace orastus
 		*	The entity for the tower.
 		*\param[in] category
 		*	The tower category.
+		*\param[in] cell
+		*	The tower cell.
 		*\param[in] geometry
 		*	The geometry value.
 		*\param[in] animation
@@ -64,6 +66,7 @@ namespace orastus
 		*/
 		EFO_API void createData( Entity const & entity
 			, TowerCategoryPtr category
+			, GridCell & cell
 			, castor3d::GeometrySPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack
@@ -79,6 +82,7 @@ namespace orastus
 	private:
 		Ecs & m_ecs;
 		Component const & m_tower;
+		Component const & m_cell;
 		Component const & m_geometry;
 		Component const & m_pickable;
 		Component const & m_soundSource;

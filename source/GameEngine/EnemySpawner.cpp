@@ -65,7 +65,7 @@ namespace orastus
 		if ( m_liveEnemies.empty()
 			&& !m_count )
 		{
-			//m_game.gain( m_spawner.getWave() * 2 );
+			m_game.getPlayer().earnGold( getWave() * 10 );
 #if !defined( NDEBUG )
 			doStartWave( 2u );
 #else
@@ -88,6 +88,7 @@ namespace orastus
 		if ( it != std::end( m_liveEnemies ) )
 		{
 			m_liveEnemies.erase( it );
+			m_game.getPlayer().earnGold( m_category->getBounty() );
 			++m_kills;
 		}
 

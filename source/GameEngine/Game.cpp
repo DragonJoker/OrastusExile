@@ -31,6 +31,11 @@ namespace orastus
 		int32_t constexpr targetXMax = 2;
 		int32_t constexpr targetYMin = -1;
 		int32_t constexpr targetYMax = 3;
+#if !defined( NDEBUG ) || Cheat
+		uint32_t constexpr InitialGold = 75000u;
+#else
+		uint32_t constexpr InitialGold = 750u;
+#endif
 
 		enum class Direction
 		{
@@ -209,48 +214,6 @@ namespace orastus
 
 		return animGroup;
 	}
-	//*********************************************************************************************
-
-	void Game::SelectedEntity::select( Entity const & pentity
-		, castor3d::GeometrySPtr pgeometry )
-	{
-		unselect();
-
-		if ( pentity && pgeometry )
-		{
-			entity = pentity;
-			geometry = pgeometry;
-			materials.clear();
-			auto & cache = geometry->getScene()->getEngine()->getMaterialCache();
-
-			for ( auto submesh : *geometry->getMesh().lock() )
-			{
-				auto oldMat = geometry->getMaterial( *submesh );
-				auto newMat = cache.find( oldMat->getName() + cuT( "_sel" ) ).lock();
-				CU_Require( newMat );
-				geometry->setMaterial( *submesh, newMat.get() );
-				materials.push_back( oldMat );
-			}
-		}
-	}
-
-	void Game::SelectedEntity::unselect()
-	{
-		if ( entity && geometry )
-		{
-			uint32_t index{ 0u };
-			auto mesh = geometry->getMesh().lock();
-
-			for ( auto material : materials )
-			{
-				geometry->setMaterial( *mesh->getSubmesh( index++ ), material );
-			}
-
-			materials.clear();
-			geometry.reset();
-			entity = Entity{};
-		}
-	}
 
 	//*********************************************************************************************
 
@@ -261,6 +224,7 @@ namespace orastus
 		, m_scene{ scene }
 		, m_camera{ camera }
 		, m_hud{ *this, dataFolder, scene }
+		, m_player{ *this, m_ecs, m_hud, game::InitialGold }
 		, m_path{ { 19, 0 }
 			, { 19, 3 }
 			, { 11, 3 }
@@ -383,6 +347,7 @@ namespace orastus
 		m_state = State::eStarted;
 		m_hud.start();
 		m_saved = Clock::now();
+		m_gold = game::InitialGold;
 	}
 
 	void Game::pause()
@@ -415,43 +380,6 @@ namespace orastus
 			m_hud.update();
 			m_saved = Clock::now();
 		}
-	}
-
-	Entity Game::select( castor3d::GeometrySPtr geometry )
-	{
-		Entity result;
-		auto entity = m_ecs.findEntity( m_ecs.getComponent( Ecs::GeometryComponent ), geometry );
-		m_selectedCell = &doFindCell( entity );
-		entity = m_selectedCell->entity;
-
-		if ( m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::PickableComponent ) )
-			&& m_ecs.getComponentData< bool >( entity, m_ecs.getComponent( Ecs::PickableComponent ) ).getValue() )
-		{
-			if ( doSelectEntity( entity ) )
-			{
-				result = entity;
-			}
-		}
-		else
-		{
-			unselect();
-		}
-
-		return result;
-	}
-
-	void Game::unselect()
-	{
-		m_hud.hideBuild();
-		m_hud.updateTowerInfo( m_ecs, Entity{} );
-		m_selectedCell = nullptr;
-
-		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
-			, [this]()
-			{
-				m_selectedBlock.unselect();
-				m_selectedEntity.unselect();
-			} ) );
 	}
 
 	void Game::killEnemy( Entity entity )
@@ -597,56 +525,56 @@ namespace orastus
 
 	void Game::createDirectTower()
 	{
-		if ( m_selectedCell
-			&& *m_selectedCell
-			&& m_selectedCell->state == GridCell::State::eEmpty )
+		if ( m_player.isEmptyCellSelected() )
 		{
-			String name = cuT( "DirectTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
+			auto & selectedCell = m_player.getSelectedCell();
+			String name = cuT( "DirectTower_" ) + std::to_string( selectedCell.x ) + cuT( "x" ) + std::to_string( selectedCell.y );
 			doCreateTowerBase( name + "Base"
-				, *m_selectedCell
+				, selectedCell
 				, m_towerBaseMesh );
 			auto tower = doCreateTower( name
-				, *m_selectedCell
+				, selectedCell
 				, *m_towerBaseMesh.lock()
 				, m_directTowerMesh );
 
 			if ( tower )
 			{
 				m_towerBuildSound.play();
-				m_selectedCell->entity = m_ecs.createTower( std::make_unique< DirectTower >()
+				selectedCell.entity = m_ecs.createTower( std::make_unique< DirectTower >()
+					, selectedCell
 					, tower
 					, nullptr
 					, std::make_unique< AttackData >( 0_ms )
 					, &m_ballistaShootSound.createSource( *tower->getParent(), false ) );
-				doSelectEntity( m_selectedCell->entity );
+				m_player.selectEntity( selectedCell.entity );
 			}
 		}
 	}
 
 	void Game::createSplashTower()
 	{
-		if ( m_selectedCell
-			&& *m_selectedCell
-			&& m_selectedCell->state == GridCell::State::eEmpty )
+		if ( m_player.isEmptyCellSelected() )
 		{
-			String name = cuT( "SplashTower_" ) + std::to_string( m_selectedCell->x ) + cuT( "x" ) + std::to_string( m_selectedCell->y );
+			auto & selectedCell = m_player.getSelectedCell();
+			String name = cuT( "SplashTower_" ) + std::to_string( selectedCell.x ) + cuT( "x" ) + std::to_string( selectedCell.y );
 			doCreateTowerBase( name + "Base"
-				, *m_selectedCell
+				, selectedCell
 				, m_towerBaseMesh );
 			auto tower = doCreateTower( name
-				, *m_selectedCell
+				, selectedCell
 				, *m_towerBaseMesh.lock()
 				, m_splashTowerMesh );
 
 			if ( tower )
 			{
 				m_towerBuildSound.play();
-				m_selectedCell->entity = m_ecs.createTower( std::make_unique< SplashTower >()
+				selectedCell.entity = m_ecs.createTower( std::make_unique< SplashTower >()
+					, selectedCell
 					, tower
 					, nullptr
 					, std::make_unique< AttackData >( 0_ms )
 					, &m_cannonShootSound.createSource( *tower->getParent(), false ) );
-				doSelectEntity( m_selectedCell->entity );
+				m_player.selectEntity( selectedCell.entity );
 			}
 		}
 	}
@@ -760,7 +688,7 @@ namespace orastus
 			node->setOrientation( orientation );
 			node->attachTo( *m_mapNode );
 			m_scene.getGeometryCache().add( geometry );
-			cell.entity = m_ecs.createMapBlock( geometry, pickable );
+			cell.entity = m_ecs.createMapBlock( cell, geometry, pickable );
 		}
 	}
 
@@ -850,92 +778,6 @@ namespace orastus
 		m_scene.getGeometryCache().add( tower );
 		cell.state = GridCell::State::eTower;
 		return tower;
-	}
-
-	 void Game::doSelectMapBlock( Entity const & entity )
-	 {
-		auto geometry = doGetGeometry( entity );
-
-		if ( geometry )
-		{
-			m_hud.updateTowerInfo( m_ecs, Entity{} );
-			m_hud.showBuild();
-			m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePostRender
-				, [this, geometry, entity]()
-				{
-					m_selectedBlock.select( entity, geometry );
-					m_selectedEntity.unselect();
-				} ) );
-		}
-	}
-
-	 void Game::doSelectTower( Entity const & entity )
-	{
-		auto geometry = doGetGeometry( entity );
-
-		if ( geometry )
-		{
-			m_hud.updateTowerInfo( m_ecs, entity );
-			m_hud.hideBuild();
-			m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePostRender
-				, [this, geometry, entity]()
-				{
-					m_selectedBlock.unselect();
-					m_selectedEntity.select( entity, geometry );
-				} ) );
-		}
-	}
-
-	 castor3d::GeometrySPtr Game::doGetGeometry( Entity const & entity )
-	{
-		 castor3d::GeometrySPtr result;
-
-		try
-		{
-			result = m_ecs.getComponentData< castor3d::GeometrySPtr >( entity
-				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
-		}
-		catch ( Ecs::ComponentDataMatchException & exc )
-		{
-			castor::Logger::logWarning( exc.what() );
-		}
-
-		return result;
-	}
-
-	GridCell & Game::doFindCell( Entity const & entity )
-	{
-		static GridCell invalidCell{ 0u, 0u, GridCell::State::eInvalid };
-		auto it = std::find_if( std::begin( m_grid )
-			, std::end( m_grid )
-			, [&entity]( GridCell const & lookup )
-			{
-				return lookup.entity == entity;
-			} );
-
-		if ( it != std::end( m_grid ) )
-		{
-			return *it;
-		}
-
-		return invalidCell;
-	}
-
-	bool Game::doSelectEntity( Entity const & entity )
-	{
-		bool result = false;
-
-		if ( m_ecs.hasComponent( entity, m_ecs.getComponent( Ecs::TowerStateComponent ) ) )
-		{
-			result = true;
-			doSelectTower( entity );
-		}
-		else
-		{
-			doSelectMapBlock( entity );
-		}
-
-		return result;
 	}
 
 	castor::Point3f Game::doConvert( castor::Point2i const & position )const

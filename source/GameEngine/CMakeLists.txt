@@ -17,6 +17,7 @@ set( ${PROJECT_NAME}_HDR_FILES
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/GridCell.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/GridPathNode.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Hud.hpp
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Player.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Resource.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/Sound.hpp
 	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/TargetSpawner.hpp
@@ -29,6 +30,7 @@ set( ${PROJECT_NAME}_SRC_FILES
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/GameEnginePch.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Grid.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Hud.cpp
+	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Player.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Resource.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/Sound.cpp
 	${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/TargetSpawner.cpp

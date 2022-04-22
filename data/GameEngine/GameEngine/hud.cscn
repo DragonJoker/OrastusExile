@@ -364,7 +364,7 @@ panel_overlay "HUDDetails"
 
 		text_overlay "TowerDamageTitle"
 		{
-			pxl_size 60 30
+			pxl_size 65 30
 			pxl_position 0 0
 			material "White"
 			font "ResourcesValueFont"
@@ -390,7 +390,7 @@ panel_overlay "HUDDetails"
 
 		text_overlay "TowerSpeedTitle"
 		{
-			pxl_size 60 30
+			pxl_size 65 30
 			pxl_position 0 0
 			material "White"
 			font "ResourcesValueFont"
@@ -416,7 +416,7 @@ panel_overlay "HUDDetails"
 
 		text_overlay "TowerRangeTitle"
 		{
-			pxl_size 60 30
+			pxl_size 65 30
 			pxl_position 0 0
 			material "White"
 			font "ResourcesValueFont"

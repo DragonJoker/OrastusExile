@@ -229,9 +229,11 @@ namespace orastus
 	using TowerCategoryPtr = std::unique_ptr< TowerCategory >;
 
 	// Game
-	class Resource;
-	class Game;
 	class Audio;
+	class Game;
+	class Hud;
+	class Player;
+	class Resource;
 	class Sound;
 
 	CU_DeclareCUSmartPtr( orastus, Audio, EFO_API );

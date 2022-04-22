@@ -3,6 +3,7 @@ See licence file in root folder, MIT.txt
 */
 #include "TowerTest.hpp"
 
+#include <GameEngine/GridCell.hpp>
 #include <GameEngine/ECS/Ecs.hpp>
 #include <GameEngine/ECS/SoundSource.hpp>
 #include <GameEngine/ECS/Tower.hpp>
@@ -28,7 +29,8 @@ namespace orastus
 		void TowerTest::Creation()
 		{
 			Ecs ecs;
-			auto tower = ecs.createTower( std::make_unique< DirectTower >(), nullptr, nullptr, nullptr, {} );
+			GridCell cell{ 0u, 0u, GridCell::State::eInvalid };
+			auto tower = ecs.createTower( std::make_unique< DirectTower >(), cell, nullptr, nullptr, nullptr, {} );
 			auto & towerData = ecs.getComponentData< TowerData >( tower, ecs.getComponent( Ecs::TowerStateComponent ) ).getValue();
 			CT_EQUAL( towerData.category->getType(), TowerType::eDirect );
 			CT_EQUAL( towerData.category->getCooldown(), DirectTower::Cooldown );
@@ -37,7 +39,7 @@ namespace orastus
 			CT_EQUAL( towerData.category->getBulletSpeed(), DirectTower::BulletSpeed );
 			CT_EQUAL( towerData.timeout, 0_ms );
 
-			auto splashTower = ecs.createTower( std::make_unique< SplashTower >(), nullptr, nullptr, nullptr, {} );
+			auto splashTower = ecs.createTower( std::make_unique< SplashTower >(), cell, nullptr, nullptr, nullptr, {} );
 			auto & splashTowerData = ecs.getComponentData< TowerData >( splashTower, ecs.getComponent( Ecs::TowerStateComponent ) ).getValue();
 			CT_EQUAL( splashTowerData.category->getType(), TowerType::eSplash );
 			CT_EQUAL( splashTowerData.category->getCooldown(), SplashTower::Cooldown );

@@ -220,6 +220,9 @@ namespace orastus
 					m_towerDamage.lock()->setCaption( castor::string::toString( towerData.category->getDamage() ) );
 					m_towerSpeed.lock()->setCaption( castor::string::toString( towerData.category->getCooldown() ) );
 					m_towerRange.lock()->setCaption( castor::string::toString( towerData.category->getRange() ) );
+					m_towerDamage.lock()->setVisible( true );
+					m_towerSpeed.lock()->setVisible( true );
+					m_towerRange.lock()->setVisible( true );
 				} ) );
 		}
 		else
@@ -243,12 +246,12 @@ namespace orastus
 			text->setCaption( castor::string::toString( m_game.getLives() ) );
 		}
 
-		//text = m_ore.lock();
+		text = m_gold.lock();
 
-		//if ( text )
-		//{
-		//	text->setCaption( StringStream() << m_game.getOre() );
-		//}
+		if ( text )
+		{
+			text->setCaption( castor::string::toString( m_game.getPlayer().getGold() ) );
+		}
 
 		text = m_wave.lock();
 

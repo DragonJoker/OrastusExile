@@ -119,6 +119,7 @@ namespace orastus
 	Tower::Tower( Ecs & ecs )
 		: m_ecs{ ecs }
 		, m_tower{ m_ecs.getComponent( Ecs::TowerStateComponent ) }
+		, m_cell{ m_ecs.getComponent( Ecs::CellComponent ) }
 		, m_geometry{ m_ecs.getComponent( Ecs::GeometryComponent ) }
 		, m_pickable{ m_ecs.getComponent( Ecs::PickableComponent ) }
 		, m_soundSource{ m_ecs.getComponent( Ecs::SoundSourceComponent ) }
@@ -127,6 +128,7 @@ namespace orastus
 
 	void Tower::createData( Entity const & entity
 		, TowerCategoryPtr category
+		, GridCell & cell
 		, castor3d::GeometrySPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
@@ -153,6 +155,9 @@ namespace orastus
 					, 0_ms } );
 		}
 
+		m_ecs.createComponentData( entity
+			, m_cell
+			, &cell );
 		m_ecs.createComponentData( entity
 			, m_geometry
 			, std::move( geometry ) );

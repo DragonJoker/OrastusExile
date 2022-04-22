@@ -9,6 +9,7 @@ See licence file in root folder, MIT.txt
 #include "EnemySpawner.hpp"
 #include "Grid.hpp"
 #include "Hud.hpp"
+#include "Player.hpp"
 #include "TargetSpawner.hpp"
 #include "ECS/Ecs.hpp"
 #include "ECS/SoundSource.hpp"
@@ -37,18 +38,6 @@ namespace orastus
 			eStarted,
 			ePaused,
 			eEnded,
-		};
-
-		struct SelectedEntity
-		{
-			void select( Entity const & entity
-				, castor3d::GeometrySPtr geometry );
-			void unselect();
-
-			Entity entity;
-			castor3d::GeometrySPtr geometry;
-			std::vector< castor3d::MaterialRPtr > materials;
-			std::vector< castor3d::MaterialRPtr > selMaterials;
 		};
 
 	public:
@@ -91,21 +80,6 @@ namespace orastus
 		*	Game loop function.
 		*/
 		EFO_API void update();
-		/**
-		*\brief
-		*	Selects the cell for given geometry.
-		*\param[in] geometry
-		*	The geometry.
-		*\return
-		*	The tower entity at selected cell.
-		*/
-		EFO_API Entity select( castor3d::GeometrySPtr geometry );
-		/**@}*/
-		/**
-		*\brief
-		*	Unselects the current selection.
-		*/
-		EFO_API void unselect();
 		/**
 		*\brief
 		*	Kills an enemy.
@@ -412,6 +386,14 @@ namespace orastus
 		{
 			return *m_audio;
 		}
+		/**
+		*\return
+		*	The player.
+		*/
+		Player & getPlayer()
+		{
+			return m_player;
+		}
 
 	private:
 		void doPrepareGrid();
@@ -434,11 +416,6 @@ namespace orastus
 			, GridCell & cell
 			, castor3d::Mesh const & base
 			, castor3d::MeshResPtr mesh );
-		void doSelectMapBlock( Entity const & entity );
-		void doSelectTower( Entity const & entity );
-		castor3d::GeometrySPtr doGetGeometry( Entity const & entity );
-		GridCell & doFindCell( Entity const & entity );
-		bool doSelectEntity( Entity const & entity );
 		castor::Point3f doConvert( castor::Point2i const & position )const;
 
 	private:
@@ -449,6 +426,7 @@ namespace orastus
 		castor3d::Camera const & m_camera;
 		Grid m_grid;
 		Hud m_hud;
+		Player m_player;
 		GridPath m_path;
 		castor3d::SceneNodeSPtr m_mapNode;
 		castor3d::MeshResPtr m_emptyTileMesh;
@@ -473,15 +451,13 @@ namespace orastus
 		std::random_device m_device;
 		std::default_random_engine m_engine;
 		// Varying data.
-		GridCell * m_selectedCell{ nullptr };
 		Clock::time_point m_saved;
 		std::chrono::milliseconds m_elapsed;
 		State m_state;
-		SelectedEntity m_selectedEntity;
-		SelectedEntity m_selectedBlock;
 		EnemySpawner m_enemySpawner;
 		BulletSpawner m_bulletSpawner;
 		TargetSpawner m_targetSpawner;
+		uint32_t m_gold{};
 	};
 }
 
