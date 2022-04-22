@@ -21,6 +21,8 @@
 #include <Castor3D/Scene/Light/Light.hpp>
 #include <Castor3D/Scene/Light/PointLight.hpp>
 
+#define Cheat 1
+
 namespace orastus
 {
 	//*********************************************************************************************
@@ -525,7 +527,8 @@ namespace orastus
 
 	void Game::createDirectTower()
 	{
-		if ( m_player.isEmptyCellSelected() )
+		if ( m_player.isEmptyCellSelected()
+			&& m_player.canSpendGold( DirectTower::GoldCost ) )
 		{
 			auto & selectedCell = m_player.getSelectedCell();
 			String name = cuT( "DirectTower_" ) + std::to_string( selectedCell.x ) + cuT( "x" ) + std::to_string( selectedCell.y );
@@ -546,6 +549,7 @@ namespace orastus
 					, nullptr
 					, std::make_unique< AttackData >( 0_ms )
 					, &m_ballistaShootSound.createSource( *tower->getParent(), false ) );
+				m_player.spendGold( DirectTower::GoldCost );
 				m_player.selectEntity( selectedCell.entity );
 			}
 		}
@@ -553,7 +557,8 @@ namespace orastus
 
 	void Game::createSplashTower()
 	{
-		if ( m_player.isEmptyCellSelected() )
+		if ( m_player.isEmptyCellSelected()
+			&& m_player.canSpendGold( SplashTower::GoldCost ) )
 		{
 			auto & selectedCell = m_player.getSelectedCell();
 			String name = cuT( "SplashTower_" ) + std::to_string( selectedCell.x ) + cuT( "x" ) + std::to_string( selectedCell.y );
@@ -574,6 +579,7 @@ namespace orastus
 					, nullptr
 					, std::make_unique< AttackData >( 0_ms )
 					, &m_cannonShootSound.createSource( *tower->getParent(), false ) );
+				m_player.spendGold( SplashTower::GoldCost );
 				m_player.selectEntity( selectedCell.entity );
 			}
 		}
