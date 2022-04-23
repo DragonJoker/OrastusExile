@@ -52,6 +52,14 @@ namespace orastus
 		, castor3d::Scene const & scene )
 		: m_game{ game }
 		, m_scene{ scene }
+		, m_titlePanel{ m_scene.getEngine()->getOverlayCache().find( cuT( "TitlePanel" ) ) }
+		, m_gameEndPanel{ m_scene.getEngine()->getOverlayCache().find( cuT( "GameEndPanel" ) ) }
+		, m_helpPanel{ m_scene.getEngine()->getOverlayCache().find( cuT( "HelpPanel" ) ) }
+		, m_hudResources{ m_scene.getEngine()->getOverlayCache().find( cuT( "HUDResources" ) ) }
+		, m_hudScore{ m_scene.getEngine()->getOverlayCache().find( cuT( "HUDScore" ) ) }
+		, m_hudDetails{ m_scene.getEngine()->getOverlayCache().find( cuT( "HUDDetails" ) ) }
+		, m_hudPause{ m_scene.getEngine()->getOverlayCache().find( cuT( "HUDPause" ) ) }
+		, m_hudBuild{ m_scene.getEngine()->getOverlayCache().find( cuT( "HUDBuild" ) ) }
 		, m_lives{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "LivesValue" ) ) }
 		, m_gold{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "GoldValue" ) ) }
 		, m_wave{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "WaveValue" ) ) }
@@ -70,15 +78,14 @@ namespace orastus
 		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
-				auto & cache = m_scene.getEngine()->getOverlayCache();
-				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( true );
-				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
-				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDBuild" ) ).lock()->setVisible( false );
+				m_titlePanel.lock()->setVisible( true );
+				m_hudResources.lock()->setVisible( false );
+				m_hudScore.lock()->setVisible( false );
+				m_hudDetails.lock()->setVisible( false );
+				m_hudPause.lock()->setVisible( false );
+				m_gameEndPanel.lock()->setVisible( false );
+				m_helpPanel.lock()->setVisible( false );
+				m_hudBuild.lock()->setVisible( false );
 			} ) );
 	}
 
@@ -87,14 +94,13 @@ namespace orastus
 		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
-				auto & cache = m_scene.getEngine()->getOverlayCache();
-				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( true );
-				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( true );
-				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( true );
-				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
-				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
+				m_titlePanel.lock()->setVisible( false );
+				m_hudResources.lock()->setVisible( true );
+				m_hudScore.lock()->setVisible( true );
+				m_hudDetails.lock()->setVisible( true );
+				m_hudPause.lock()->setVisible( false );
+				m_gameEndPanel.lock()->setVisible( false );
+				m_helpPanel.lock()->setVisible( false );
 				update();
 			} ) );
 	}
@@ -104,14 +110,13 @@ namespace orastus
 		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
-				auto & cache = m_scene.getEngine()->getOverlayCache();
-				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( true );
-				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
+				m_titlePanel.lock()->setVisible( false );
+				m_hudResources.lock()->setVisible( false );
+				m_hudScore.lock()->setVisible( false );
+				m_hudDetails.lock()->setVisible( false );
+				m_hudPause.lock()->setVisible( true );
+				m_gameEndPanel.lock()->setVisible( false );
+				m_helpPanel.lock()->setVisible( false );
 			} ) );
 	}
 
@@ -120,14 +125,13 @@ namespace orastus
 		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
-				auto & cache = m_scene.getEngine()->getOverlayCache();
-				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( true );
-				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( true );
-				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( true );
-				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
-				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
+				m_titlePanel.lock()->setVisible( false );
+				m_hudResources.lock()->setVisible( true );
+				m_hudScore.lock()->setVisible( true );
+				m_hudDetails.lock()->setVisible( true );
+				m_hudPause.lock()->setVisible( false );
+				m_gameEndPanel.lock()->setVisible( false );
+				m_helpPanel.lock()->setVisible( false );
 			} ) );
 	}
 
@@ -136,14 +140,13 @@ namespace orastus
 		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
-				auto & cache = m_scene.getEngine()->getOverlayCache();
-				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
-				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( true );
+				m_titlePanel.lock()->setVisible( false );
+				m_hudResources.lock()->setVisible( false );
+				m_hudScore.lock()->setVisible( false );
+				m_hudDetails.lock()->setVisible( false );
+				m_hudPause.lock()->setVisible( false );
+				m_gameEndPanel.lock()->setVisible( false );
+				m_helpPanel.lock()->setVisible( true );
 			} ) );
 	}
 
@@ -152,35 +155,54 @@ namespace orastus
 		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
-				auto & cache = m_scene.getEngine()->getOverlayCache();
-				cache.find( cuT( "TitlePanel" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDResources" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDScore" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDDetails" ) ).lock()->setVisible( false );
-				cache.find( cuT( "HUDPause" ) ).lock()->setVisible( false );
-				cache.find( cuT( "GameEndPanel" ) ).lock()->setVisible( true );
-				cache.find( cuT( "HelpPanel" ) ).lock()->setVisible( false );
+				m_titlePanel.lock()->setVisible( false );
+				m_hudResources.lock()->setVisible( false );
+				m_hudScore.lock()->setVisible( false );
+				m_hudDetails.lock()->setVisible( false );
+				m_hudPause.lock()->setVisible( false );
+				m_gameEndPanel.lock()->setVisible( true );
+				m_helpPanel.lock()->setVisible( false );
 
-				getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "ResultWaveValue" ) )->setCaption( castor::string::toString( m_game.getWave() ) );
-				getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "ResultKillsValue" ) )->setCaption( castor::string::toString( m_game.getKills() ) );
+				auto & cache = m_scene.getEngine()->getOverlayCache();
+				getTextOverlay( cache, cuT( "ResultWaveValue" ) )->setCaption( castor::string::toString( m_game.getWave() ) );
+				getTextOverlay( cache, cuT( "ResultKillsValue" ) )->setCaption( castor::string::toString( m_game.getKills() ) );
 			} ) );
 	}
 
 	void Hud::showBuild()
 	{
 		auto userInput = m_scene.getEngine()->getUserInputListener();
-		userInput->registerClickAction( cuT( "Build/Direct/Button" )
-			, [this]()
-			{
-				m_buttonSound.play();
-				m_game.createDirectTower();
-			} );
-		userInput->registerClickAction( cuT( "Build/Splash/Button" )
-			, [this]()
-			{
-				m_buttonSound.play();
-				m_game.createSplashTower();
-			} );
+
+		if ( m_game.getPlayer().canSpendGold( DirectTower::GoldCost ) )
+		{
+			userInput->enableHandler( cuT( "Build/Direct/Button" ) );
+			userInput->registerClickAction( cuT( "Build/Direct/Button" )
+				, [this]()
+				{
+					m_buttonSound.play();
+					m_game.createDirectTower();
+				} );
+		}
+		else
+		{
+			userInput->disableHandler( cuT( "Build/Direct/Button" ) );
+		}
+
+		if ( m_game.getPlayer().canSpendGold( SplashTower::GoldCost ) )
+		{
+			userInput->enableHandler( cuT( "Build/Splash/Button" ) );
+			userInput->registerClickAction( cuT( "Build/Splash/Button" )
+				, [this]()
+				{
+					m_buttonSound.play();
+					m_game.createSplashTower();
+				} );
+		}
+		else
+		{
+			userInput->disableHandler( cuT( "Build/Splash/Button" ) );
+		}
+
 		userInput->registerClickAction( cuT( "HUDBuild" )
 			, []()
 			{
@@ -189,8 +211,7 @@ namespace orastus
 		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
-				auto & cache = m_scene.getEngine()->getOverlayCache();
-				cache.find( cuT( "HUDBuild" ) ).lock()->setVisible( true );
+				m_hudBuild.lock()->setVisible( true );
 			} ) );
 	}
 
@@ -199,8 +220,7 @@ namespace orastus
 		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
 			, [this]()
 			{
-				auto & cache = m_scene.getEngine()->getOverlayCache();
-				cache.find( cuT( "HUDBuild" ) ).lock()->setVisible( false );
+				m_hudBuild.lock()->setVisible( false );
 			} ) );
 		auto userInput = m_scene.getEngine()->getUserInputListener();
 		userInput->unregisterClickAction( cuT( "Build/Direct/Button" ) );

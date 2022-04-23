@@ -156,6 +156,7 @@ target_link_libraries( ${PROJECT_NAME}
 		sdw::CompilerSpirV
 		OpenAL::OpenAL
 		SndFile::sndfile
+		castor::CastorGui
 	PUBLIC
 		castor::CastorUtils
 		castor::Castor3D

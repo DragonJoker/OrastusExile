@@ -115,6 +115,24 @@ material "HUDThumbDirectPush"
 	}
 }
 
+material "HUDThumbDirectDis"
+{
+	pass
+	{
+		albedo 0.031 0.329 0.431 1.0
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbDirectDis.png"
+			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
 material "HUDThumbSplash"
 {
 	pass
@@ -162,6 +180,24 @@ material "HUDThumbSplashPush"
 		texture_unit
 		{
 			image "Textures/ThumbSplash.png"
+			sampler	"Linear"
+			albedo_mask 0x00FFFFFF
+			opacity_mask 0xFF000000
+		}
+	}
+}
+
+material "HUDThumbSplashDis"
+{
+	pass
+	{
+		albedo 0.031 0.329 0.431
+	}
+	pass
+	{
+		texture_unit
+		{
+			image "Textures/ThumbSplashDis.png"
 			sampler	"Linear"
 			albedo_mask 0x00FFFFFF
 			opacity_mask 0xFF000000

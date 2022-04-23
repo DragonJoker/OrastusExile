@@ -479,6 +479,7 @@ gui
 			border_material "HUDButtonBorder"
 			highlighted_background_material "HUDThumbDirectHighlight"
 			pushed_background_material "HUDThumbDirectPush"
+			disabled_background_material "HUDThumbDirectDis"
 		}
 	}
 
@@ -491,6 +492,7 @@ gui
 			border_material "HUDButtonBorder"
 			highlighted_background_material "HUDThumbSplashHighlight"
 			pushed_background_material "HUDThumbSplashPush"
+			disabled_background_material "HUDThumbSplashDis"
 		}
 	}
 

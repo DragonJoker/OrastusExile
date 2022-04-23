@@ -83,6 +83,14 @@ namespace orastus
 	private:
 		Game & m_game;
 		castor3d::Scene const & m_scene;
+		castor3d::OverlayWPtr m_titlePanel;
+		castor3d::OverlayWPtr m_gameEndPanel;
+		castor3d::OverlayWPtr m_helpPanel;
+		castor3d::OverlayWPtr m_hudResources;
+		castor3d::OverlayWPtr m_hudScore;
+		castor3d::OverlayWPtr m_hudDetails;
+		castor3d::OverlayWPtr m_hudPause;
+		castor3d::OverlayWPtr m_hudBuild;
 		castor3d::TextOverlayWPtr m_lives;
 		castor3d::TextOverlayWPtr m_gold;
 		castor3d::TextOverlayWPtr m_wave;
