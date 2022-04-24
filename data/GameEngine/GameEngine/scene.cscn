@@ -1,5 +1,7 @@
 materials specular_glossiness
 
+include "loading_screen.cscn"
+
 scene "Scene"
 {
 	// Scene configuration

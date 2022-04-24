@@ -1,21 +1,3 @@
-font "TitleFont"
-{
-	file "Fonts/neuropolitical.ttf"
-	height 60
-}
-
-font "ResourcesFont"
-{
-	file "Fonts/neuropolitical.ttf"
-	height 16
-}
-
-font "ResourcesValueFont"
-{
-	file "Fonts/neuropolitical.ttf"
-	height 10
-}
-
 panel_overlay "GameEndPanel"
 {
 	size 1 1
@@ -480,6 +462,7 @@ gui
 			highlighted_background_material "HUDThumbDirectHighlight"
 			pushed_background_material "HUDThumbDirectPush"
 			disabled_background_material "HUDThumbDirectDis"
+			disabled_foreground_material "HUDBackground"
 		}
 	}
 
@@ -493,6 +476,7 @@ gui
 			highlighted_background_material "HUDThumbSplashHighlight"
 			pushed_background_material "HUDThumbSplashPush"
 			disabled_background_material "HUDThumbSplashDis"
+			disabled_foreground_material "HUDBackground"
 		}
 	}
 
