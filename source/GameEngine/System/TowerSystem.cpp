@@ -45,19 +45,13 @@ namespace orastus
 		}
 
 		void turnToTarget( Ecs const & ecs
-			, Entity const & enemy
+			, Entity enemy
 			, castor3d::SceneNode & towerNode )
 		{
-			auto enemyNode = Game::getEnemyNode( ecs.getComponentData< EnemyData >( enemy
-				, ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue().geometry );
-			auto targetPosition = enemyNode->getDerivedPosition();
-			targetPosition[1] = towerNode.getDerivedPosition()[1];
-			auto direction = targetPosition - towerNode.getDerivedPosition();
-			direction = castor::point::getNormalised( direction );
-			castor::Point3f up{ 0, 1, 0 };
-			auto right = castor::point::cross( direction, up );
-			auto transform = castor::matrix::lookAt( towerNode.getDerivedPosition(), towerNode.getDerivedPosition() + direction, up );
-			towerNode.setOrientation( castor::Quaternion::fromMatrix( transform ) );
+			orastus::turnToTarget( towerNode
+				, *Game::getEnemyNode( ecs.getComponentData< EnemyData >( enemy
+					, ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue().geometry )
+				, true );
 		}
 
 		bool updateTimeout( Milliseconds const & elapsed
@@ -188,6 +182,26 @@ namespace orastus
 				tower.status = TowerStatus::eIdle;
 			}
 		}
+	}
+
+	void turnToTarget( castor3d::SceneNode & sourceNode
+		, castor3d::SceneNode const & targetNode
+		, bool ignoreY )
+	{
+		auto targetPosition = targetNode.getDerivedPosition();
+		auto sourcePosition = sourceNode.getDerivedPosition();
+
+		if ( ignoreY )
+		{
+			targetPosition->y = sourcePosition->y;
+		}
+
+		auto direction = targetPosition - sourcePosition;
+		direction = castor::point::getNormalised( direction );
+		castor::Point3f up{ 0, 1, 0 };
+		auto right = castor::point::cross( direction, up );
+		auto transform = castor::matrix::lookAt( sourcePosition, sourcePosition + direction, up );
+		sourceNode.setOrientation( castor::Quaternion::fromMatrix( transform ) );
 	}
 
 	TowerSystem::TowerSystem( Ecs & ecs )

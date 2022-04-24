@@ -33,12 +33,12 @@ namespace orastus
 			, BulletData & bullet )
 		{
 			auto & trackData = bullet.track;
-			auto node = Game::getBulletNode( bullet.geometry );
-			auto target = Game::getEnemyNode( ecs.getComponentData< EnemyData >( trackData->target
+			auto bulletNode = Game::getBulletNode( bullet.geometry );
+			auto targetNode = Game::getEnemyNode( ecs.getComponentData< EnemyData >( trackData->target
 				, ecs.getComponent( Ecs::EnemyStateComponent ) ).getValue().geometry );
 			auto distance = float( elapsed.count() ) * trackData->speed / 1000.0f;
-			castor::Point3f nextPosition = target->getPosition();
-			castor::Point3f position{ node->getPosition() };
+			castor::Point3f nextPosition = targetNode->getPosition();
+			castor::Point3f position{ bulletNode->getPosition() };
 			castor::Point3f direction{ nextPosition - position };
 			auto distanceToDst = float( castor::point::length( direction ) );
 			direction[0] *= distance / distanceToDst;
@@ -49,11 +49,20 @@ namespace orastus
 			{
 				if ( isTargetable( ecs, trackData->target ) )
 				{
+					turnToTarget( *bulletNode
+						, *targetNode
+						, false );
+
+					if ( bullet.type == AmmoType::eDirect )
+					{
+						bulletNode->pitch( -90.0_degrees );
+					}
+
 					if ( !reachDst )
 					{
 						// not at destination
 						nextPosition = position + direction;
-						node->setPosition( nextPosition );
+						bulletNode->setPosition( nextPosition );
 					}
 					else if ( distanceToDst < distance )
 					{

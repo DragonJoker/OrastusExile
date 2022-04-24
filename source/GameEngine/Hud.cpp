@@ -15,7 +15,7 @@ namespace orastus
 {
 	namespace
 	{
-		castor3d::TextOverlaySPtr getTextOverlay( castor3d::OverlayCache & cache
+		castor3d::TextOverlaySPtr getTextOverlay( castor3d::OverlayCache const & cache
 			, castor::String const & name )
 		{
 			castor3d::TextOverlaySPtr result;
@@ -52,23 +52,23 @@ namespace orastus
 		, castor3d::Scene const & scene )
 		: m_game{ game }
 		, m_scene{ scene }
-		, m_titlePanel{ m_scene.getEngine()->getOverlayCache().find( cuT( "TitlePanel" ) ) }
-		, m_gameEndPanel{ m_scene.getEngine()->getOverlayCache().find( cuT( "GameEndPanel" ) ) }
-		, m_helpPanel{ m_scene.getEngine()->getOverlayCache().find( cuT( "HelpPanel" ) ) }
-		, m_hudResources{ m_scene.getEngine()->getOverlayCache().find( cuT( "HUDResources" ) ) }
-		, m_hudScore{ m_scene.getEngine()->getOverlayCache().find( cuT( "HUDScore" ) ) }
-		, m_hudDetails{ m_scene.getEngine()->getOverlayCache().find( cuT( "HUDDetails" ) ) }
-		, m_hudPause{ m_scene.getEngine()->getOverlayCache().find( cuT( "HUDPause" ) ) }
-		, m_hudBuild{ m_scene.getEngine()->getOverlayCache().find( cuT( "HUDBuild" ) ) }
-		, m_lives{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "LivesValue" ) ) }
-		, m_gold{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "GoldValue" ) ) }
-		, m_wave{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "WaveValue" ) ) }
-		, m_kills{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "KillsValue" ) ) }
-		, m_enemyLife{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "MonsterLifeValue" ) ) }
-		, m_enemyBounty{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "MonsterBountyValue" ) ) }
-		, m_towerSpeed{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerSpeedValue" ) ) }
-		, m_towerRange{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerRangeValue" ) ) }
-		, m_towerDamage{ getTextOverlay( m_scene.getEngine()->getOverlayCache(), cuT( "TowerDamageValue" ) ) }
+		, m_titlePanel{ m_scene.getOverlayCache().find( cuT( "TitlePanel" ) ) }
+		, m_gameEndPanel{ m_scene.getOverlayCache().find( cuT( "GameEndPanel" ) ) }
+		, m_helpPanel{ m_scene.getOverlayCache().find( cuT( "HelpPanel" ) ) }
+		, m_hudResources{ m_scene.getOverlayCache().find( cuT( "HUDResources" ) ) }
+		, m_hudScore{ m_scene.getOverlayCache().find( cuT( "HUDScore" ) ) }
+		, m_hudDetails{ m_scene.getOverlayCache().find( cuT( "HUDDetails" ) ) }
+		, m_hudPause{ m_scene.getOverlayCache().find( cuT( "HUDPause" ) ) }
+		, m_hudBuild{ m_scene.getOverlayCache().find( cuT( "HUDBuild" ) ) }
+		, m_lives{ getTextOverlay( m_scene.getOverlayCache(), cuT( "LivesValue" ) ) }
+		, m_gold{ getTextOverlay( m_scene.getOverlayCache(), cuT( "GoldValue" ) ) }
+		, m_wave{ getTextOverlay( m_scene.getOverlayCache(), cuT( "WaveValue" ) ) }
+		, m_kills{ getTextOverlay( m_scene.getOverlayCache(), cuT( "KillsValue" ) ) }
+		, m_enemyLife{ getTextOverlay( m_scene.getOverlayCache(), cuT( "MonsterLifeValue" ) ) }
+		, m_enemyBounty{ getTextOverlay( m_scene.getOverlayCache(), cuT( "MonsterBountyValue" ) ) }
+		, m_towerSpeed{ getTextOverlay( m_scene.getOverlayCache(), cuT( "TowerSpeedValue" ) ) }
+		, m_towerRange{ getTextOverlay( m_scene.getOverlayCache(), cuT( "TowerRangeValue" ) ) }
+		, m_towerDamage{ getTextOverlay( m_scene.getOverlayCache(), cuT( "TowerDamageValue" ) ) }
 		, m_buttonSound{ game.addSound( dataFolder / "Sounds" / "hud_button.wav", 1u ).createSource( false ) }
 	{
 	}
@@ -163,7 +163,7 @@ namespace orastus
 				m_gameEndPanel.lock()->setVisible( true );
 				m_helpPanel.lock()->setVisible( false );
 
-				auto & cache = m_scene.getEngine()->getOverlayCache();
+				auto & cache = m_scene.getOverlayCache();
 				getTextOverlay( cache, cuT( "ResultWaveValue" ) )->setCaption( castor::string::toString( m_game.getWave() ) );
 				getTextOverlay( cache, cuT( "ResultKillsValue" ) )->setCaption( castor::string::toString( m_game.getKills() ) );
 			} ) );

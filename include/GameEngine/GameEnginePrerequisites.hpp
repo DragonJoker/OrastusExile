@@ -254,6 +254,10 @@ namespace orastus
 		stream << value.count() << " ms";
 		return stream.str();
 	}
+
+	EFO_API void turnToTarget( castor3d::SceneNode & sourceNode
+		, castor3d::SceneNode const & targetNode
+		, bool ignoreY );
 }
 
 #endif
