@@ -60,6 +60,7 @@ namespace orastus
 		, m_hudDetails{ m_scene.getOverlayCache().find( cuT( "HUDDetails" ) ) }
 		, m_hudPause{ m_scene.getOverlayCache().find( cuT( "HUDPause" ) ) }
 		, m_hudBuild{ m_scene.getOverlayCache().find( cuT( "HUDBuild" ) ) }
+		, m_hudUpgrade{ m_scene.getOverlayCache().find( cuT( "HUDUpgrade" ) ) }
 		, m_lives{ getTextOverlay( m_scene.getOverlayCache(), cuT( "LivesValue" ) ) }
 		, m_gold{ getTextOverlay( m_scene.getOverlayCache(), cuT( "GoldValue" ) ) }
 		, m_wave{ getTextOverlay( m_scene.getOverlayCache(), cuT( "WaveValue" ) ) }
@@ -86,6 +87,7 @@ namespace orastus
 				m_gameEndPanel.lock()->setVisible( false );
 				m_helpPanel.lock()->setVisible( false );
 				m_hudBuild.lock()->setVisible( false );
+				m_hudUpgrade.lock()->setVisible( false );
 			} ) );
 	}
 
@@ -226,6 +228,32 @@ namespace orastus
 		userInput->unregisterClickAction( cuT( "Build/Direct/Button" ) );
 		userInput->unregisterClickAction( cuT( "Build/Splash/Button" ) );
 		userInput->unregisterClickAction( cuT( "HUDBuild" ) );
+	}
+
+	void Hud::showUpgrade()
+	{
+		auto userInput = m_scene.getEngine()->getUserInputListener();
+		userInput->registerClickAction( cuT( "HUDUpgrade" )
+			, []()
+			{
+				// This is to prevent click behind the update overlay.
+			} );
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+			, [this]()
+			{
+				m_hudUpgrade.lock()->setVisible( true );
+			} ) );
+	}
+
+	void Hud::hideUpgrade()
+	{
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+			, [this]()
+			{
+				m_hudUpgrade.lock()->setVisible( false );
+			} ) );
+		auto userInput = m_scene.getEngine()->getUserInputListener();
+		userInput->unregisterClickAction( cuT( "HUDUpgrade" ) );
 	}
 
 	void Hud::updateTowerInfo( Ecs const & ecs

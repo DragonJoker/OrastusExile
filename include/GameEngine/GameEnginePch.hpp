@@ -18,6 +18,7 @@ See licence file in root folder, MIT.txt
 #include <Castor3D/Scene/Geometry.hpp>
 #include <Castor3D/Scene/Scene.hpp>
 
+#include <CastorUtils/Config/BeginExternHeaderGuard.hpp>
 #include <algorithm>
 #include <cassert>
 #include <chrono>
@@ -26,6 +27,7 @@ See licence file in root folder, MIT.txt
 #include <string>
 #include <sstream>
 #include <vector>
+#include <CastorUtils/Config/EndExternHeaderGuard.hpp>
 
 
 #endif

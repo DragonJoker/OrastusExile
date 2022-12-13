@@ -94,7 +94,7 @@ namespace orastus
 		void RenderPanel::setRenderTarget( castor3d::RenderTargetSPtr target )
 		{
 			m_listener = m_renderWindow->getListener();
-			m_renderWindow->initialise( target );
+			m_renderWindow->initialise( *target );
 			auto scene = target->getScene();
 
 			if ( scene )
@@ -125,7 +125,7 @@ namespace orastus
 		{
 			float result = float( x );
 
-			if ( auto camera = m_camera.lock() )
+			if ( auto camera = m_camera )
 			{
 				result *= float( camera->getWidth() ) / float( GetClientSize().x );
 			}
@@ -137,7 +137,7 @@ namespace orastus
 		{
 			float result = float( y );
 
-			if ( auto camera = m_camera.lock() )
+			if ( auto camera = m_camera )
 			{
 				result *= float( camera->getHeight() ) / float( GetClientSize().y );
 			}
@@ -149,7 +149,7 @@ namespace orastus
 		{
 			int result = int( x );
 
-			if ( auto camera = m_camera.lock() )
+			if ( auto camera = m_camera )
 			{
 				result = int( x * float( GetClientSize().x ) / float( camera->getWidth() ) );
 			}
@@ -161,7 +161,7 @@ namespace orastus
 		{
 			int result = int( y );
 
-			if ( auto camera = m_camera.lock() )
+			if ( auto camera = m_camera )
 			{
 				result = int( y * float( GetClientSize().y ) / float( camera->getHeight() ) );
 			}

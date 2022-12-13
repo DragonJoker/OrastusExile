@@ -7,11 +7,13 @@ See licence file in root folder, MIT.txt
 
 #include <Castor3D/Castor3DPrerequisites.hpp>
 
+#include <CastorUtils/Config/BeginExternHeaderGuard.hpp>
 #include <string>
 #include <sstream>
 #include <chrono>
 #include <memory>
 #include <vector>
+#include <CastorUtils/Config/EndExternHeaderGuard.hpp>
 
 #if !defined( _WIN32 )
 #	define EFO_API

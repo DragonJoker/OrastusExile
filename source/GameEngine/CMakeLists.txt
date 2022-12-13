@@ -140,6 +140,7 @@ add_library( orastus::${PROJECT_NAME}
 )
 target_include_directories( ${PROJECT_NAME}
 	PUBLIC
+		${Vulkan_INCLUDE_DIR}
 		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 		$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
 		$<INSTALL_INTERFACE:include>

@@ -3,11 +3,7 @@ See licence file in root folder, MIT.txt
 */
 #pragma once
 
-#pragma warning( push )
-#pragma warning( disable: 4365 )
-#pragma warning( disable: 4371 )
-#pragma warning( disable: 4464 )
-#pragma warning( disable: 5054 )
+#include <CastorUtils/Config/BeginExternHeaderGuard.hpp>
 #ifdef _WIN32
 #	include <winsock2.h>
 #endif
@@ -21,7 +17,7 @@ See licence file in root folder, MIT.txt
 #include <wx/sizer.h>
 #include <wx/timer.h>
 #include <wx/windowptr.h>
-#pragma warning( pop )
+#include <CastorUtils/Config/EndExternHeaderGuard.hpp>
 
 #include <Castor3D/Engine.hpp>
 #include <Castor3D/Event/Frame/FrameListener.hpp>
@@ -52,7 +48,9 @@ See licence file in root folder, MIT.txt
 #include <GameEngine/GridCell.hpp>
 #include <GameEngine/ECS/Entity.hpp>
 
+#include <CastorUtils/Config/BeginExternHeaderGuard.hpp>
 #include <chrono>
 #include <cstdlib>
 #include <thread>
 #include <vector>
+#include <CastorUtils/Config/EndExternHeaderGuard.hpp>

@@ -107,6 +107,7 @@ namespace orastus
 	void Player::unselect()
 	{
 		m_hud.hideBuild();
+		m_hud.hideUpgrade();
 		m_hud.updateTowerInfo( m_ecs, Entity{} );
 		m_selectedCell = nullptr;
 
@@ -147,6 +148,7 @@ namespace orastus
 		if ( geometry )
 		{
 			m_hud.updateTowerInfo( m_ecs, Entity{} );
+			m_hud.hideUpgrade();
 			m_hud.showBuild();
 			m_game.getScene().getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePostRender
 				, [this, geometry, entity]()
@@ -165,6 +167,7 @@ namespace orastus
 		{
 			m_hud.updateTowerInfo( m_ecs, entity );
 			m_hud.hideBuild();
+			m_hud.showUpgrade();
 			m_game.getScene().getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePostRender
 				, [this, geometry, entity]()
 				{

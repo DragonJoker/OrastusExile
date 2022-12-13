@@ -7,7 +7,9 @@ See licence file in root folder, MIT.txt
 
 #include "GameEngine/GameEnginePrerequisites.hpp"
 
+#include <CastorUtils/Config/BeginExternHeaderGuard.hpp>
 #include <sstream>
+#include <CastorUtils/Config/EndExternHeaderGuard.hpp>
 
 namespace orastus
 {

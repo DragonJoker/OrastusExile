@@ -70,6 +70,16 @@ namespace orastus
 		EFO_API void hideBuild();
 		/**
 		*\brief
+		*	Shows the upgrade tower options.
+		*/
+		EFO_API void showUpgrade();
+		/**
+		*\brief
+		*	Shows the upgrade tower options.
+		*/
+		EFO_API void hideUpgrade();
+		/**
+		*\brief
 		*	Updates the HUD.
 		*/
 		EFO_API void update();
@@ -91,6 +101,7 @@ namespace orastus
 		castor3d::OverlayWPtr m_hudDetails;
 		castor3d::OverlayWPtr m_hudPause;
 		castor3d::OverlayWPtr m_hudBuild;
+		castor3d::OverlayWPtr m_hudUpgrade;
 		castor3d::TextOverlayWPtr m_lives;
 		castor3d::TextOverlayWPtr m_gold;
 		castor3d::TextOverlayWPtr m_wave;

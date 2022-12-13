@@ -1,4 +1,4 @@
-materials specular_glossiness
+materials pbr
 
 include "loading_screen.cscn"
 

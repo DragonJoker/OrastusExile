@@ -91,7 +91,7 @@ namespace orastus
 			NodeStatePtr m_cameraState;
 			castor3d::RenderWindowUPtr m_renderWindow;
 			castor3d::FrameListenerSPtr m_listener;
-			castor3d::CameraWPtr m_camera;
+			castor3d::CameraRPtr m_camera;
 			castor3d::SceneRPtr m_scene{};
 			castor3d::GeometryWPtr m_selectedGeometry;
 			Game & m_game;

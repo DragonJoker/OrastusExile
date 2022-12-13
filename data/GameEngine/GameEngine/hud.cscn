@@ -539,6 +539,22 @@ gui
 			}
 		}
 	}
+
+	button "HUDUpgrade"
+	{
+		theme "Build/Base"
+		pixel_size 200 200
+		pixel_position 814 240
+
+		static "Upgrade/Title"
+		{
+			theme "Build/Text"
+			pixel_size 125 15
+			pixel_position 40 45
+			horizontal_align center
+			caption "Upgrade"
+		}
+	}
 }
 
 panel_overlay "HUDPause"
