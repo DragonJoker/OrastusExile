@@ -5,7 +5,7 @@
 
 namespace orastus
 {
-	AnimationData::AnimationData( castor3d::AnimatedObjectGroupSPtr panimation
+	AnimationData::AnimationData( castor3d::AnimatedObjectGroupRPtr panimation
 		, String const & name )
 		: animation{ panimation }
 		, animName{ name }

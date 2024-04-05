@@ -91,17 +91,18 @@ namespace orastus
 			m_renderWindow->cleanup();
 		}
 
-		void RenderPanel::setRenderTarget( castor3d::RenderTargetSPtr target )
+		void RenderPanel::setRenderTarget( castor3d::RenderWindowDesc windowDesc )
 		{
+			auto target = windowDesc.renderTarget;
 			m_listener = m_renderWindow->getListener();
-			m_renderWindow->initialise( *target );
+			m_renderWindow->initialise( windowDesc );
 			auto scene = target->getScene();
 
 			if ( scene )
 			{
 				castor::Size sizeWnd{ makeSize( GetClientSize() ) };
 				castor::Size sizeScreen;
-				castor::System::getScreenSize( 0, sizeScreen );
+				castor::system::getScreenSize( 0, sizeScreen );
 				GetParent()->SetClientSize( int( sizeWnd.getWidth() )
 					, int( sizeWnd.getHeight() ) );
 				sizeWnd = makeSize( GetParent()->GetClientSize() );
@@ -111,7 +112,6 @@ namespace orastus
 
 				if ( camera )
 				{
-					m_renderWindow->addPickingScene( *scene );
 					m_camera = camera;
 					m_cameraState = std::make_unique< NodeState >( scene->getListener(), camera->getParent() );
 					m_timers[size_t( TimerID::eMouse )]->Start( 30 );
@@ -291,7 +291,7 @@ namespace orastus
 				switch ( event.GetKeyCode() )
 				{
 				case WXK_F1:
-					m_listener->postEvent( makeCpuFunctorEvent( EventType::ePostRender
+					m_listener->postEvent( makeCpuFunctorEvent( CpuEventType::ePostCpuStep
 						, [this]()
 						{
 							if ( m_game.isRunning() )
@@ -302,7 +302,7 @@ namespace orastus
 					break;
 				case WXK_RETURN:
 				case WXK_NUMPAD_ENTER:
-					m_listener->postEvent( makeCpuFunctorEvent( EventType::ePostRender
+					m_listener->postEvent( makeCpuFunctorEvent( CpuEventType::ePostCpuStep
 						, [this]()
 						{
 							if ( m_game.isEnded() )
@@ -317,7 +317,7 @@ namespace orastus
 						} ) );
 					break;
 				case WXK_SPACE:
-					m_listener->postEvent( makeCpuFunctorEvent( EventType::ePostRender
+					m_listener->postEvent( makeCpuFunctorEvent( CpuEventType::ePostCpuStep
 						, [this]()
 						{
 							if ( m_game.isStarted() )
@@ -350,14 +350,14 @@ namespace orastus
 					doStopTimer( TimerID::eDown );
 					break;
 				case '1':
-					m_listener->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+					m_listener->postEvent( makeCpuFunctorEvent( CpuEventType::ePreGpuStep
 						, [this]()
 						{
 							m_game.createDirectTower();
 						} ) );
 					break;
 				case '2':
-					m_listener->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+					m_listener->postEvent( makeCpuFunctorEvent( CpuEventType::ePreGpuStep
 						, [this]()
 						{
 							m_game.createSplashTower();
@@ -381,7 +381,7 @@ namespace orastus
 			{
 				if ( auto inputListener = wxGetApp().getCastor().getUserInputListener() )
 				{
-					inputListener->fireMouseButtonPushed( MouseButton::eLeft );
+					inputListener->fireMouseButtonPushed( MouseButton::eLeft, false, false, false );
 				}
 			}
 		}
@@ -398,11 +398,11 @@ namespace orastus
 			{
 				auto inputListener = wxGetApp().getCastor().getUserInputListener();
 
-				if ( !inputListener || !inputListener->fireMouseButtonReleased( MouseButton::eLeft ) )
+				if ( !inputListener || !inputListener->fireMouseButtonReleased( MouseButton::eLeft, false, false, false ) )
 				{
 					auto x = m_oldX;
 					auto y = m_oldY;
-					m_listener->postEvent( makeCpuFunctorEvent( EventType::ePreRender
+					m_listener->postEvent( makeCpuFunctorEvent( CpuEventType::ePreGpuStep
 						, [this, x, y]()
 						{
 							Camera & camera = *m_renderWindow->getCamera();
@@ -413,7 +413,7 @@ namespace orastus
 								&& type != PickNodeType::eBillboard )
 							{
 								auto picked = m_renderWindow->getPickedGeometry();
-								auto geometry = m_selectedGeometry.lock();
+								auto geometry = m_selectedGeometry;
 
 								if ( picked != geometry )
 								{
@@ -423,7 +423,7 @@ namespace orastus
 							}
 							else
 							{
-								m_selectedGeometry.reset();
+								m_selectedGeometry = {};
 								m_game.getPlayer().unselect();
 							}
 						} ) );
@@ -437,7 +437,7 @@ namespace orastus
 		{
 			if ( auto inputListener = wxGetApp().getCastor().getUserInputListener() )
 			{
-				inputListener->fireMouseButtonPushed( MouseButton::eRight );
+				inputListener->fireMouseButtonPushed( MouseButton::eRight, false, false, false );
 			}
 
 			event.Skip();
@@ -447,7 +447,7 @@ namespace orastus
 		{
 			if ( auto inputListener = wxGetApp().getCastor().getUserInputListener() )
 			{
-				inputListener->fireMouseButtonReleased( MouseButton::eRight );
+				inputListener->fireMouseButtonReleased( MouseButton::eRight, false, false, false );
 			}
 
 			event.Skip();
@@ -462,7 +462,7 @@ namespace orastus
 			{
 				auto inputListener = wxGetApp().getCastor().getUserInputListener();
 
-				if ( !inputListener || !inputListener->fireMouseMove( Position{ int( m_x ), int( m_y ) } ) )
+				if ( !inputListener || !inputListener->fireMouseMove( Position{ int( m_x ), int( m_y ) }, false, false, false ) )
 				{
 					static float constexpr mult = 4.0f;
 					float deltaX = 0.0f;
@@ -485,7 +485,7 @@ namespace orastus
 			int wheelRotation = event.GetWheelRotation();
 			auto inputListener = wxGetApp().getCastor().getUserInputListener();
 
-			if ( !inputListener || !inputListener->fireMouseWheel( Position( 0, wheelRotation ) ) )
+			if ( !inputListener || !inputListener->fireMouseWheel( Position( 0, wheelRotation ), false, false, false ) )
 			{
 				if ( wheelRotation < 0 )
 				{

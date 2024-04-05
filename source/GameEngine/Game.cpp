@@ -174,21 +174,21 @@ namespace orastus
 
 	//*********************************************************************************************
 
-	castor3d::AnimatedObjectGroupSPtr createAnimation( castor3d::GeometrySPtr geometry
+	castor3d::AnimatedObjectGroupRPtr createAnimation( castor3d::GeometryRPtr geometry
 		, String const & animName
 		, bool looped
 		, bool paused )
 	{
 		CU_Require( geometry );
 		auto & scene = *geometry->getScene();
-		auto animGroup = scene.getAnimatedObjectGroupCache().add( geometry->getName(), scene ).lock();
+		auto animGroup = scene.getAnimatedObjectGroupCache().add( geometry->getName(), scene );
 		std::chrono::milliseconds time{ 0 };
-		auto mesh = geometry->getMesh().lock();
+		auto mesh = geometry->getMesh();
 		CU_Require( mesh );
 
 		if ( !mesh->getAnimations().empty() )
 		{
-			auto object = animGroup->addObject( *mesh, *geometry, geometry->getName() + cuT( "_Mesh" ) );
+			animGroup->addObject( *mesh, *geometry, geometry->getName() + cuT( "_Mesh" ) );
 			time = std::max( time
 				, mesh->getAnimation( animName ).getLength() );
 		}
@@ -199,7 +199,7 @@ namespace orastus
 		{
 			if ( !skeleton->getAnimations().empty() )
 			{
-				auto object = animGroup->addObject( *skeleton, *mesh, *geometry, geometry->getName() + cuT( "_Skeleton" ) );
+				animGroup->addObject( *skeleton, *mesh, *geometry, geometry->getName() + cuT( "_Skeleton" ) );
 				time = std::max( time
 					, skeleton->getAnimation( animName ).getLength() );
 			}
@@ -241,18 +241,18 @@ namespace orastus
 			, { 15, 23 }
 			, { 17, 23 }
 			, { 17, 27 } }
-		, m_mapNode{ m_scene.getSceneNodeCache().find( cuT( "MapBase" ) ).lock() }
+		, m_mapNode{ m_scene.getSceneNodeCache().find( cuT( "MapBase" ) ) }
 		, m_emptyTileMesh{ m_scene.getMeshCache().find( cuT( "EmptyTile" ) ) }
-		, m_cellDimensions{ m_emptyTileMesh.lock()->getBoundingBox().getDimensions() }
+		, m_cellDimensions{ m_emptyTileMesh->getBoundingBox().getDimensions() }
 		, m_pathStartTileMesh{ m_scene.getMeshCache().find( cuT( "PathStartTile" ) ) }
 		, m_pathStraightTileMesh{ m_scene.getMeshCache().find( cuT( "PathStraightTile" ) ) }
 		, m_pathTurnTileMesh{ m_scene.getMeshCache().find( cuT( "PathTurnTile" ) ) }
 		, m_pathAreaTileMesh{ m_scene.getMeshCache().find( cuT( "PathAreaTile" ) ) }
-		, m_towerBaseMesh{ m_scene.getMeshCache().find( cuT( "TowerBase" ) ).lock() }
-		, m_directTowerMesh{ m_scene.getMeshCache().find( cuT( "Ballista" ) ).lock() }
-		, m_splashTowerMesh{ m_scene.getMeshCache().find( cuT( "Cannon" ) ).lock() }
-		, m_arrowMesh{ m_scene.getMeshCache().find( cuT( "Arrow" ) ).lock() }
-		, m_cannonBallMesh{ m_scene.getMeshCache().find( cuT( "CannonBall" ) ).lock() }
+		, m_towerBaseMesh{ m_scene.getMeshCache().find( cuT( "TowerBase" ) ) }
+		, m_directTowerMesh{ m_scene.getMeshCache().find( cuT( "Ballista" ) ) }
+		, m_splashTowerMesh{ m_scene.getMeshCache().find( cuT( "Cannon" ) ) }
+		, m_arrowMesh{ m_scene.getMeshCache().find( cuT( "Arrow" ) ) }
+		, m_cannonBallMesh{ m_scene.getMeshCache().find( cuT( "CannonBall" ) ) }
 		, m_targetCapturedSounds{ &addSound( dataFolder / "Sounds" / "cow-1.wav", 10u )
 			, &addSound( dataFolder / "Sounds" / "cow-2.wav", 10u )
 			, &addSound( dataFolder / "Sounds" / "cow-3.wav", 10u )
@@ -485,22 +485,23 @@ namespace orastus
 		return m_targetSpawner.selectTarget();
 	}
 
-	castor3d::GeometrySPtr Game::createEnemy( castor::String const & name
+	castor3d::GeometryRPtr Game::createEnemy( castor::String const & name
 		, castor3d::MeshResPtr mesh )
 	{
-		auto baseNode = m_scene.getSceneNodeCache().add( name + cuT( "_Base" ) ).lock();
+		auto baseNode = m_scene.getSceneNodeCache().add( name + cuT( "_Base" ) );
 		baseNode->attachTo( *m_mapNode );
-		auto node = m_scene.getSceneNodeCache().add( name ).lock();
+		auto node = m_scene.getSceneNodeCache().add( name );
 		node->setOrientation( castor::Quaternion::fromAxisAngle( castor::Point3f{ 1, 0, 1 }, 10.0_degrees ) );
 		node->attachTo( *baseNode );
-		auto result = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
-		m_scene.getGeometryCache().add( result );
+		auto geom = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
+		auto result = geom.get();
+		m_scene.getGeometryCache().add( std::move( geom ) );
 		auto light = m_scene.getLightCache().create( name
 			, m_scene
 			, *node
 			, m_scene.getLightsFactory()
 			, castor3d::LightType::ePoint );
-		auto meshName = mesh.lock()->getName();
+		auto meshName = mesh->getName();
 
 		if ( meshName.find( "Red" ) != castor::String::npos )
 		{
@@ -537,7 +538,7 @@ namespace orastus
 				, m_towerBaseMesh );
 			auto tower = doCreateTower( name
 				, selectedCell
-				, *m_towerBaseMesh.lock()
+				, *m_towerBaseMesh
 				, m_directTowerMesh );
 
 			if ( tower )
@@ -567,7 +568,7 @@ namespace orastus
 				, m_towerBaseMesh );
 			auto tower = doCreateTower( name
 				, selectedCell
-				, *m_towerBaseMesh.lock()
+				, *m_towerBaseMesh
 				, m_splashTowerMesh );
 
 			if ( tower )
@@ -638,22 +639,22 @@ namespace orastus
 		return m_audio->addSound( Sound::Type::eSfx, file, maxSources );
 	}
 
-	castor3d::SceneNodeRPtr Game::getEnemyNode( castor3d::GeometrySPtr geometry )
+	castor3d::SceneNodeRPtr Game::getEnemyNode( castor3d::GeometryRPtr geometry )
 	{
 		return geometry->getParent()->getParent();
 	}
 
-	castor3d::SceneNodeRPtr Game::getTowerNode( castor3d::GeometrySPtr geometry )
+	castor3d::SceneNodeRPtr Game::getTowerNode( castor3d::GeometryRPtr geometry )
 	{
 		return geometry->getParent();
 	}
 
-	castor3d::SceneNodeRPtr Game::getBulletNode( castor3d::GeometrySPtr geometry )
+	castor3d::SceneNodeRPtr Game::getBulletNode( castor3d::GeometryRPtr geometry )
 	{
 		return geometry->getParent();
 	}
 
-	castor3d::SceneNodeRPtr Game::getTargetNode( castor3d::GeometrySPtr geometry )
+	castor3d::SceneNodeRPtr Game::getTargetNode( castor3d::GeometryRPtr geometry )
 	{
 		return geometry->getParent();
 	}
@@ -687,14 +688,15 @@ namespace orastus
 
 		if ( !m_scene.getSceneNodeCache().has( name ) )
 		{
-			auto node = m_scene.getSceneNodeCache().add( name ).lock();
+			auto node = m_scene.getSceneNodeCache().add( name );
 			auto geometry = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
 			node->setPosition( doConvert( castor::Point2i{ cell.x, cell.y } )
 				+ castor::Point3f{ 0, m_cellDimensions[1] / 2, 0 } );
 			node->setOrientation( orientation );
 			node->attachTo( *m_mapNode );
-			m_scene.getGeometryCache().add( geometry );
-			cell.entity = m_ecs.createMapBlock( cell, geometry, pickable );
+			auto geom = geometry.get();
+			m_scene.getGeometryCache().add( std::move( geometry ) );
+			cell.entity = m_ecs.createMapBlock( cell, geom, pickable );
 		}
 	}
 
@@ -740,50 +742,53 @@ namespace orastus
 		}
 	}
 
-	castor3d::GeometrySPtr Game::doCreateAmmo( castor3d::SceneNode const & origin
+	castor3d::GeometryRPtr Game::doCreateAmmo( castor3d::SceneNode const & origin
 		, AmmoType type )
 	{
 		String name = getName( type ) + cuT( "Ammo_" ) + toString( m_bulletSpawner.getBulletsCount() );
-		auto node = m_scene.getSceneNodeCache().add( name ).lock();
+		auto node = m_scene.getSceneNodeCache().add( name );
 		auto geometry = m_scene.getGeometryCache().create( name
 			, m_scene
 			, *node
 			, doGetAmmoMesh( type ) );
 		node->setPosition( origin.getDerivedPosition() );
 		node->attachTo( *m_mapNode );
-		m_scene.getGeometryCache().add( geometry );
-		return geometry;
+		auto result = geometry.get();
+		m_scene.getGeometryCache().add( std::move( geometry ) );
+		return result;
 	}
 
-	castor3d::GeometrySPtr Game::doCreateTowerBase( castor::String const & name
+	castor3d::GeometryRPtr Game::doCreateTowerBase( castor::String const & name
 		, GridCell & cell
 		, castor3d::MeshResPtr mesh )
 	{
-		auto node = m_scene.getSceneNodeCache().add( name ).lock();
+		auto node = m_scene.getSceneNodeCache().add( name );
 		node->setPosition( doConvert( castor::Point2i{ cell.x, cell.y } )
 			+ castor::Point3f{ 0, m_cellDimensions[1], 0 }
-			+ castor::Point3f{ 0, mesh.lock().get()->getBoundingBox().getDimensions()[1] / 2.0f, 0 } );
+			+ castor::Point3f{ 0, mesh->getBoundingBox().getDimensions()[1] / 2.0f, 0 } );
 		node->attachTo( *m_mapNode );
 		auto base = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
-		m_scene.getGeometryCache().add( base );
-		return base;
+		auto result = base.get();
+		m_scene.getGeometryCache().add( std::move( base ) );
+		return result;
 	}
 
-	castor3d::GeometrySPtr Game::doCreateTower( String const & name
+	castor3d::GeometryRPtr Game::doCreateTower( String const & name
 		, GridCell & cell
 		, castor3d::Mesh const & base
 		, castor3d::MeshResPtr mesh )
 	{
-		auto node = m_scene.getSceneNodeCache().add( name ).lock();
+		auto node = m_scene.getSceneNodeCache().add( name );
 		node->setPosition( doConvert( castor::Point2i{ cell.x, cell.y } )
 			+ castor::Point3f{ 0, m_cellDimensions[1], 0 }
 			+ castor::Point3f{ 0, base.getBoundingBox().getDimensions()[1], 0 }
-			+ castor::Point3f{ 0, mesh.lock().get()->getBoundingBox().getDimensions()[1] / 2.0f, 0 } );
+			+ castor::Point3f{ 0, mesh->getBoundingBox().getDimensions()[1] / 2.0f, 0 } );
 		node->attachTo( *m_mapNode );
 		auto tower = m_scene.getGeometryCache().create( name, m_scene, *node, mesh );
-		m_scene.getGeometryCache().add( tower );
+		auto result = tower.get();
+		m_scene.getGeometryCache().add( std::move( tower ) );
 		cell.state = GridCell::State::eTower;
-		return tower;
+		return result;
 	}
 
 	castor::Point3f Game::doConvert( castor::Point2i const & position )const

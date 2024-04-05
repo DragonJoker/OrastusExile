@@ -133,7 +133,7 @@ namespace orastus
 		*	The entity for the created block.
 		*/
 		EFO_API Entity createMapBlock( GridCell & cell
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, bool pickable );
 		/**
 		*\brief
@@ -155,7 +155,7 @@ namespace orastus
 		*/
 		EFO_API Entity createTower( TowerCategoryPtr category
 			, GridCell & cell
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack
 			, SoundSource const * shootSound );
@@ -173,7 +173,7 @@ namespace orastus
 		*/
 		EFO_API Entity createEnemy( float speed
 			, uint32_t life
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, WalkDataPtr walkData
 			, SoundSource const * killSound );
 		/**
@@ -193,7 +193,7 @@ namespace orastus
 		EFO_API void resetEnemy( Entity entity
 			, float speed
 			, uint32_t life
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, WalkDataPtr walkData );
 		/**
 		*\brief
@@ -203,7 +203,7 @@ namespace orastus
 		*\param[in] cell
 		*	The cell value.
 		*/
-		EFO_API Entity createTarget( castor3d::GeometrySPtr geometry
+		EFO_API Entity createTarget( castor3d::GeometryRPtr geometry
 			, GridCell cell
 			, SoundSource const * targetCapturedSound );
 		/**
@@ -227,7 +227,7 @@ namespace orastus
 		*	The track value.
 		*/
 		EFO_API Entity createBullet( AmmoType type
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, SoundSource const * soundSource
 			, TrackDataPtr track );
 		/**

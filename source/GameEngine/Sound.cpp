@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <array>
 
-CU_ImplementCUSmartPtr( orastus, Sound )
+CU_ImplementSmartPtr( orastus, Sound )
 
 namespace orastus
 {

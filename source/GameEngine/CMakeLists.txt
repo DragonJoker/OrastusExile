@@ -147,17 +147,8 @@ target_include_directories( ${PROJECT_NAME}
 )
 target_link_libraries( ${PROJECT_NAME}
 	PRIVATE
-		ashes::ashesCommon
-		ashes::ashes
-		ashes::ashespp
-		ashes::ashesVkRenderer
-		crg::RenderGraph
-		sdw::ShaderAST
-		sdw::ShaderWriter
-		sdw::CompilerSpirV
 		OpenAL::OpenAL
 		SndFile::sndfile
-		castor::CastorGui
 	PUBLIC
 		castor::CastorUtils
 		castor::Castor3D
@@ -169,9 +160,10 @@ set_target_properties( ${PROJECT_NAME}
 		FOLDER "GameEngine"
 )
 install_target_ex( ${PROJECT_NAME}
-	${PROJECT_NAME}
-	bin
-	${CASTOR_SOURCE_DIR}/include/${PROJECT_NAME}
+	${MAIN_PROJECT_NAME}
+	${MAIN_PROJECT_NAME}
+	api_dll
+	${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}
 )
 set( OrastusInstall
 	${OrastusInstall}
@@ -189,12 +181,14 @@ target_add_doc( ${PROJECT_NAME}
 	"English"
 	"*.h *.hpp"
 )
-castor3d_copy_files(
-	${PROJECT_NAME}
-	${PROJECTS_BINARIES_OUTPUT_DIR_RELEASE}
-	${PROJECTS_BINARIES_OUTPUT_DIR_RELWITHDEBINFO}
-	${PROJECTS_BINARIES_OUTPUT_DIR_DEBUG}
-)
+if ( NOT ORASTUS_FORCE_C3D_SUBMODULE )
+	castor3d_copy_files(
+		${PROJECT_NAME}
+		${PROJECTS_BINARIES_OUTPUT_DIR_RELEASE}
+		${PROJECTS_BINARIES_OUTPUT_DIR_RELWITHDEBINFO}
+		${PROJECTS_BINARIES_OUTPUT_DIR_DEBUG}
+	)
+endif ()
 file( GLOB DataFiles
 	${CMAKE_SOURCE_DIR}/data/${PROJECT_NAME}/*.zip
 )

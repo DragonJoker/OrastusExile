@@ -29,7 +29,7 @@ namespace orastus
 
 	BulletData::BulletData( Entity pentity
 		, AmmoType ptype
-		, castor3d::GeometrySPtr pgeometry
+		, castor3d::GeometryRPtr pgeometry
 		, TrackDataPtr ptrack )
 		: entity{ pentity }
 		, type{ ptype }
@@ -66,7 +66,7 @@ namespace orastus
 
 	void Bullet::createData( Entity const & entity
 		, AmmoType type
-		, castor3d::GeometrySPtr geometry
+		, castor3d::GeometryRPtr geometry
 		, SoundSource const * soundSource
 		, TrackDataPtr track )
 	{

@@ -296,10 +296,11 @@ namespace orastus
 
 			Logger::setFileName( Engine::getEngineDirectory() / ( ShortName.ToStdString() + cuT( ".log" ) ) );
 			Logger::logInfo( ShortName.ToStdString() + cuT( " - start" ) );
-
-			m_castor = std::make_unique< Engine >( ShortName.ToStdString()
+			EngineConfig config{ ShortName.ToStdString()
 				, castor3d::Version{ OrastusExile_VERSION_MAJOR, OrastusExile_VERSION_MINOR, OrastusExile_VERSION_BUILD }
-				, m_config.validate );
+				, m_config.validate };
+
+			m_castor = std::make_unique< Engine >( std::move( config ) );
 			doLoadPlugins();
 			auto & renderers = m_castor->getRenderersList();
 

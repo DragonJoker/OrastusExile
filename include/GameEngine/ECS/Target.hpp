@@ -13,12 +13,12 @@ namespace orastus
 	struct TargetData
 	{
 		EFO_API TargetData( Entity entity
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, GridCell cell );
 
 		Entity entity;
 		TargetStatus status;
-		castor3d::GeometrySPtr geometry;
+		castor3d::GeometryRPtr geometry;
 		GridCell cell;
 	};
 	/**
@@ -46,7 +46,7 @@ namespace orastus
 		*	The cell value.
 		*/
 		EFO_API void createData( Entity const & entity
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, GridCell cell
 			, SoundSource const * targetCapturedSound );
 		/**

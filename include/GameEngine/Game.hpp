@@ -21,7 +21,7 @@ See licence file in root folder, MIT.txt
 
 namespace orastus
 {
-	castor3d::AnimatedObjectGroupSPtr createAnimation( castor3d::GeometrySPtr geometry
+	castor3d::AnimatedObjectGroupRPtr createAnimation( castor3d::GeometryRPtr geometry
 		, String const & animName
 		, bool looped = false
 		, bool paused = true );
@@ -156,7 +156,7 @@ namespace orastus
 		*\return
 		*	The created geometry.
 		*/
-		EFO_API castor3d::GeometrySPtr createEnemy( castor::String const & name
+		EFO_API castor3d::GeometryRPtr createEnemy( castor::String const & name
 			, castor3d::MeshResPtr mesh );
 		/**
 		*\brief
@@ -206,7 +206,7 @@ namespace orastus
 		*\return
 		*	The scene node.
 		*/
-		EFO_API static castor3d::SceneNodeRPtr getEnemyNode( castor3d::GeometrySPtr geometry );
+		EFO_API static castor3d::SceneNodeRPtr getEnemyNode( castor3d::GeometryRPtr geometry );
 		/**
 		*\brief
 		*	Retrieves the scene node for given tower's geometry.
@@ -215,7 +215,7 @@ namespace orastus
 		*\return
 		*	The scene node.
 		*/
-		EFO_API static castor3d::SceneNodeRPtr getTowerNode( castor3d::GeometrySPtr geometry );
+		EFO_API static castor3d::SceneNodeRPtr getTowerNode( castor3d::GeometryRPtr geometry );
 		/**
 		*\brief
 		*	Retrieves the scene node for given bullet's geometry.
@@ -224,7 +224,7 @@ namespace orastus
 		*\return
 		*	The scene node.
 		*/
-		EFO_API static castor3d::SceneNodeRPtr getBulletNode( castor3d::GeometrySPtr geometry );
+		EFO_API static castor3d::SceneNodeRPtr getBulletNode( castor3d::GeometryRPtr geometry );
 		/**
 		*\brief
 		*	Retrieves the scene node for given target's geometry.
@@ -233,7 +233,7 @@ namespace orastus
 		*\return
 		*	The scene node.
 		*/
-		EFO_API static castor3d::SceneNodeRPtr getTargetNode( castor3d::GeometrySPtr geometry );
+		EFO_API static castor3d::SceneNodeRPtr getTargetNode( castor3d::GeometryRPtr geometry );
 		/**
 		*\return
 		*	\p true if the game is started.
@@ -407,12 +407,12 @@ namespace orastus
 			, castor::Quaternion const & orientation );
 		void doAddTargets( GridCell & cell );
 		castor3d::MeshResPtr doGetAmmoMesh( AmmoType type );
-		castor3d::GeometrySPtr doCreateAmmo( castor3d::SceneNode const & origin
+		castor3d::GeometryRPtr doCreateAmmo( castor3d::SceneNode const & origin
 			, AmmoType type );
-		castor3d::GeometrySPtr doCreateTowerBase( castor::String const & name
+		castor3d::GeometryRPtr doCreateTowerBase( castor::String const & name
 			, GridCell & cell
 			, castor3d::MeshResPtr mesh );
-		castor3d::GeometrySPtr doCreateTower( castor::String const & name
+		castor3d::GeometryRPtr doCreateTower( castor::String const & name
 			, GridCell & cell
 			, castor3d::Mesh const & base
 			, castor3d::MeshResPtr mesh );
@@ -428,7 +428,7 @@ namespace orastus
 		Hud m_hud;
 		Player m_player;
 		GridPath m_path;
-		castor3d::SceneNodeSPtr m_mapNode;
+		castor3d::SceneNodeRPtr m_mapNode;
 		castor3d::MeshResPtr m_emptyTileMesh;
 		castor::Point3f m_cellDimensions;
 		castor3d::MeshResPtr m_pathStartTileMesh;

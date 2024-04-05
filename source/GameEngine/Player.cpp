@@ -11,7 +11,7 @@ namespace orastus
 	//*********************************************************************************************
 
 	void Player::SelectedEntity::select( Entity const & pentity
-		, castor3d::GeometrySPtr pgeometry )
+		, castor3d::GeometryRPtr pgeometry )
 	{
 		unselect();
 
@@ -22,12 +22,12 @@ namespace orastus
 			materials.clear();
 			auto & cache = geometry->getScene()->getEngine()->getMaterialCache();
 
-			for ( auto submesh : *geometry->getMesh().lock() )
+			for ( auto & submesh : *geometry->getMesh() )
 			{
 				auto oldMat = geometry->getMaterial( *submesh );
-				auto newMat = cache.find( oldMat->getName() + cuT( "_sel" ) ).lock();
+				auto newMat = cache.find( oldMat->getName() + cuT( "_sel" ) );
 				CU_Require( newMat );
-				geometry->setMaterial( *submesh, newMat.get() );
+				geometry->setMaterial( *submesh, newMat );
 				materials.push_back( oldMat );
 			}
 		}
@@ -38,7 +38,7 @@ namespace orastus
 		if ( entity && geometry )
 		{
 			uint32_t index{ 0u };
-			auto mesh = geometry->getMesh().lock();
+			auto mesh = geometry->getMesh();
 
 			for ( auto material : materials )
 			{
@@ -46,7 +46,7 @@ namespace orastus
 			}
 
 			materials.clear();
-			geometry.reset();
+			geometry = {};
 			entity = Entity{};
 		}
 	}
@@ -81,7 +81,7 @@ namespace orastus
 		return result;
 	}
 
-	Entity Player::select( castor3d::GeometrySPtr geometry )
+	Entity Player::select( castor3d::GeometryRPtr geometry )
 	{
 		Entity result;
 		auto entity = m_ecs.findEntity( m_ecs.getComponent( Ecs::GeometryComponent ), geometry );
@@ -111,7 +111,7 @@ namespace orastus
 		m_hud.updateTowerInfo( m_ecs, Entity{} );
 		m_selectedCell = nullptr;
 
-		m_game.getScene().getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+		m_game.getScene().getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 			, [this]()
 			{
 				m_selectedBlock.unselect();
@@ -150,7 +150,7 @@ namespace orastus
 			m_hud.updateTowerInfo( m_ecs, Entity{} );
 			m_hud.hideUpgrade();
 			m_hud.showBuild();
-			m_game.getScene().getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePostRender
+			m_game.getScene().getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePostCpuStep
 				, [this, geometry, entity]()
 				{
 					m_selectedBlock.select( entity, geometry );
@@ -168,7 +168,7 @@ namespace orastus
 			m_hud.updateTowerInfo( m_ecs, entity );
 			m_hud.hideBuild();
 			m_hud.showUpgrade();
-			m_game.getScene().getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePostRender
+			m_game.getScene().getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePostCpuStep
 				, [this, geometry, entity]()
 				{
 					m_selectedBlock.unselect();
@@ -177,13 +177,13 @@ namespace orastus
 		}
 	}
 
-	 castor3d::GeometrySPtr Player::doGetGeometry( Entity const & entity )
+	 castor3d::GeometryRPtr Player::doGetGeometry( Entity const & entity )
 	{
-		 castor3d::GeometrySPtr result;
+		 castor3d::GeometryRPtr result{};
 
 		try
 		{
-			result = m_ecs.getComponentData< castor3d::GeometrySPtr >( entity
+			result = m_ecs.getComponentData< castor3d::GeometryRPtr >( entity
 				, m_ecs.getComponent( Ecs::GeometryComponent ) ).getValue();
 		}
 		catch ( Ecs::ComponentDataMatchException & exc )

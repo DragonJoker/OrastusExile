@@ -63,7 +63,7 @@ namespace orastus
 		eDirect,
 		//! Splash damage.
 		eSplash,
-		CU_ScopedEnumBounds( eDirect ),
+		CU_ScopedEnumBounds( eDirect, eSplash ),
 	};
 	/**
 	*\brief
@@ -238,8 +238,8 @@ namespace orastus
 	class Resource;
 	class Sound;
 
-	CU_DeclareCUSmartPtr( orastus, Audio, EFO_API );
-	CU_DeclareCUSmartPtr( orastus, Sound, EFO_API );
+	CU_DeclareSmartPtr( orastus, Audio, EFO_API );
+	CU_DeclareSmartPtr( orastus, Sound, EFO_API );
 
 	// Helpers
 	template< typename T >

@@ -1,6 +1,6 @@
 #include "GameEngine/Audio.hpp"
 
-CU_ImplementCUSmartPtr( orastus, Audio )
+CU_ImplementSmartPtr( orastus, Audio )
 
 namespace orastus
 {

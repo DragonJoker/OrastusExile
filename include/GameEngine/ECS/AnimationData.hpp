@@ -11,10 +11,10 @@ namespace orastus
 {
 	struct AnimationData
 	{
-		EFO_API AnimationData( castor3d::AnimatedObjectGroupSPtr animation
+		EFO_API AnimationData( castor3d::AnimatedObjectGroupRPtr animation
 			, String const & name );
 
-		castor3d::AnimatedObjectGroupSPtr animation;
+		castor3d::AnimatedObjectGroupRPtr animation{};
 		String animName;
 		Milliseconds total;
 		bool started{ false };

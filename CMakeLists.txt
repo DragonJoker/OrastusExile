@@ -5,14 +5,17 @@ set( MAIN_PROJECT_NAME "OrastusExile" )
 set( VERSION_MAJOR 1 )
 set( VERSION_MINOR 0 )
 set( VERSION_BUILD 0 )
-set( VERSION_YEAR 2022 )
+set( VERSION_YEAR 2024 )
 
 set( CMAKE_MODULE_PATH
 	${CMAKE_SOURCE_DIR}/CMake
 	${CMAKE_SOURCE_DIR}/CMake/Modules
 	${CMAKE_SOURCE_DIR}/CMake/Toolchains
 )
+set( CMAKE_MAP_IMPORTED_CONFIG_MINSIZEREL Release )
+set( CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release )
 set( CMAKE_TEMPLATES_DIR ${CMAKE_SOURCE_DIR}/CMake/Templates )
+set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 include( PCHSupport )
 
 set( CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "The configuration types" FORCE )
@@ -63,6 +66,7 @@ add_definitions(
 
 option( ORASTUS_BUILDGRP_TEST "Build test projects" FALSE )
 option( ORASTUS_BUILDGRP_SETUP "Build setup projects" FALSE )
+option( ORASTUS_FORCE_C3D_SUBMODULE "Force submodules use instead of vcpkg for Castor3D" FALSE )
 
 # Small macro to add subdirectory files to current target source and header files
 macro( parse_subdir_files _FOLDER _GROUP )
@@ -85,18 +89,35 @@ set( AshesRenderers_DIR ${Ashes_DIR} )
 find_package( AshesRenderers CONFIG REQUIRED ashesVkRenderer )
 find_package( RenderGraph CONFIG REQUIRED )
 find_package( ShaderWriter CONFIG REQUIRED ShaderAST ShaderWriter CompilerSpirV )
-if ( ORASTUS_BUILDGRP_TEST )
-	find_package( Castor3D CONFIG REQUIRED CastorUtils Castor3D CastorGui CastorTest )
+
+set( Castor3D_SRC_DIR external/Castor3D )
+
+if ( ORASTUS_FORCE_C3D_SUBMODULE AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${Castor3D_SRC_DIR}/CMakeLists.txt )
+	set( CASTOR_BUILD_PLUGINS ON )
+	set( CASTOR_BUILDGRP_DEMO OFF )
+	set( CASTOR_BUILDGRP_INTEROP OFF )
+	set( CASTOR_BUILDGRP_IMPORTER OFF )
+	set( CASTOR_BUILDGRP_TEST OFF )
+	set( CASTOR_BUILDGRP_TOOL OFF )
+	set( CASTOR_FORCE_VCPKG_SUBMODULES ON )
+	set( CASTOR_USE_GLSLANG ON )
+	set( CASTOR_USE_MESH_SHADERS OFF )
+	set( CASTOR_USE_TASK_SHADERS OFF )
+	add_subdirectory( ${Castor3D_SRC_DIR} ${CMAKE_BINARY_DIR}/${Castor3D_SRC_DIR} )
 else ()
-	find_package( Castor3D CONFIG REQUIRED CastorUtils Castor3D CastorGui )
+	if ( ORASTUS_BUILDGRP_TEST )
+		find_package( Castor3D CONFIG REQUIRED CastorUtils Castor3D CastorGui CastorTest )
+	else ()
+		find_package( Castor3D CONFIG REQUIRED CastorUtils Castor3D CastorGui )
+	endif ()
+
+	if ( NOT Castor3D_FOUND )
+		message( SEND_ERROR "Castor3D not found." )
+	endif ()
 endif ()
 
 find_package( OpenAL CONFIG REQUIRED )
 find_package( SndFile CONFIG REQUIRED )
-
-if ( NOT Castor3D_FOUND )
-	message( SEND_ERROR "Castor3D not found." )
-endif ()
 
 if ( MSVC OR NOT "${CMAKE_BUILD_TYPE}" STREQUAL "" )
 	if ( ORASTUS_BUILDGRP_TEST )

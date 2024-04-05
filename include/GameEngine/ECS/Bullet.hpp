@@ -13,13 +13,13 @@ namespace orastus
 	{
 		EFO_API BulletData( Entity entity
 			, AmmoType type
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, TrackDataPtr track );
 
 		Entity entity;
 		AmmoType type;
 		BulletStatus status;
-		castor3d::GeometrySPtr geometry;
+		castor3d::GeometryRPtr geometry;
 		TrackDataPtr track;
 	};
 	/**
@@ -50,7 +50,7 @@ namespace orastus
 		*/
 		EFO_API void createData( Entity const & entity
 			, AmmoType type
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, SoundSource const * soundSource
 			, TrackDataPtr track );
 		/**

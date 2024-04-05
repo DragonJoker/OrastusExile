@@ -21,7 +21,7 @@ namespace orastus
 
 		private:
 			void doLoadScene();
-			castor3d::RenderTargetSPtr doLoadScene( castor3d::Engine & engine
+			castor3d::RenderWindowDesc doLoadScene( castor3d::Engine & engine
 				, castor::Path const & fileName
 				, uint32_t wantedFps
 				, bool threaded );

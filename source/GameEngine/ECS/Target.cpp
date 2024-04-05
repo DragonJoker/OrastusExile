@@ -10,7 +10,7 @@ namespace orastus
 	//*********************************************************************************************
 
 	TargetData::TargetData( Entity pentity
-		, castor3d::GeometrySPtr pgeometry
+		, castor3d::GeometryRPtr pgeometry
 		, GridCell pcell )
 		: entity{ pentity }
 		, status{ TargetStatus::eIdle }
@@ -40,7 +40,7 @@ namespace orastus
 	}
 
 	void Target::createData( Entity const & entity
-		, castor3d::GeometrySPtr geometry
+		, castor3d::GeometryRPtr geometry
 		, GridCell cell
 		, SoundSource const * targetCapturedSound )
 	{

@@ -16,19 +16,19 @@ namespace orastus
 		EFO_API TowerData( Entity entity
 			, TowerCategoryPtr category
 			, AttackDataPtr attack
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, AnimationDataPtr anim );
 		EFO_API TowerData( Entity entity
 			, TowerCategoryPtr category
 			, AttackDataPtr attack
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, Milliseconds timeout );
 
 		Entity entity;
 		TowerCategoryPtr category;
 		TowerStatus status;
 		AttackDataPtr attack;
-		castor3d::GeometrySPtr geometry;
+		castor3d::GeometryRPtr geometry;
 		AnimationDataPtr anim;
 		Milliseconds timeout;
 	};
@@ -67,7 +67,7 @@ namespace orastus
 		EFO_API void createData( Entity const & entity
 			, TowerCategoryPtr category
 			, GridCell & cell
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, AnimationDataPtr animation
 			, AttackDataPtr attack
 			, SoundSource const * shootSound );

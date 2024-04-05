@@ -82,7 +82,7 @@ namespace orastus
 	}
 
 	Entity Ecs::createMapBlock( GridCell & cell
-		, castor3d::GeometrySPtr geometry
+		, castor3d::GeometryRPtr geometry
 		, bool pickable )
 	{
 		auto entity = doCreateEntity( "MapBlock" );
@@ -95,7 +95,7 @@ namespace orastus
 
 	Entity Ecs::createTower( TowerCategoryPtr category
 		, GridCell & cell
-		, castor3d::GeometrySPtr geometry
+		, castor3d::GeometryRPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
 		, SoundSource const * shootSound )
@@ -113,7 +113,7 @@ namespace orastus
 
 	Entity Ecs::createEnemy( float speed
 		, uint32_t life
-		, castor3d::GeometrySPtr geometry
+		, castor3d::GeometryRPtr geometry
 		, WalkDataPtr walkData
 		, SoundSource const * killSound )
 	{
@@ -130,7 +130,7 @@ namespace orastus
 	void Ecs::resetEnemy( Entity entity
 		, float speed
 		, uint32_t life
-		, castor3d::GeometrySPtr geometry
+		, castor3d::GeometryRPtr geometry
 		, WalkDataPtr walkData )
 	{
 		m_enemySet->resetData( entity
@@ -140,7 +140,7 @@ namespace orastus
 			, std::move( walkData ) );
 	}
 
-	Entity Ecs::createTarget( castor3d::GeometrySPtr geometry
+	Entity Ecs::createTarget( castor3d::GeometryRPtr geometry
 		, GridCell cell
 		, SoundSource const * targetCapturedSound )
 	{
@@ -160,7 +160,7 @@ namespace orastus
 	}
 
 	Entity Ecs::createBullet( AmmoType type
-		, castor3d::GeometrySPtr geometry
+		, castor3d::GeometryRPtr geometry
 		, SoundSource const * soundSource
 		, TrackDataPtr track )
 	{

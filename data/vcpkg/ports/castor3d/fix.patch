@@ -1,0 +1,12 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 52f1e80e3..d29cfa7dd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -29,6 +29,7 @@ if ( NOT CMAKE_MODULE_PATH )
+ 		set( CMAKE_MODULE_PATH
+ 			${CMAKE_CURRENT_SOURCE_DIR}/CMake
+ 			${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules
++			${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules/vcpkg
+ 			${CMAKE_CURRENT_SOURCE_DIR}/CMake/Toolchains
+ 		)
+ 		set( CMAKE_MAP_IMPORTED_CONFIG_MINSIZEREL Release )

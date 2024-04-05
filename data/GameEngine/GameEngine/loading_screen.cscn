@@ -21,55 +21,122 @@ loading_screen
 	ambient_light 0.0 0.0 0.0
 	background_colour 0.0 0.0 0.0
 
-	text_overlay "Title"
+	gui
 	{
-		size 1 0.375
-		position 0 0.25
-		material "White"
-		font "TitleFont"
-		horizontal_align center
-		text_wrapping break_words
-		text "Orastus' Exile"
-	}
-
-	panel_overlay "Progress"
-	{
-		pxl_size 0.5 0.1
-		position 0.25 0.75
-		material "TransparentBlack"
-
-		text_overlay "ProgressTitle"
+		theme "C3DGE_LoadingScreen"
 		{
-			size 1.0 0.5
-			position 0.0 0.0
-			material "White"
-			font "ResourcesFont"
-			text "Title"
-		}
+			default_font "Arial16"
 
-		border_panel_overlay "ProgressBarCont"
-		{
-			size 1.0 0.4
-			position 0.0 0.6
-			material "TransparentBlack"
-			pxl_border_size 4 4 4 4
-			border_position external
-			border_material "Black"
-
-			panel_overlay "ProgressBar"
+			static_style "Static"
 			{
-				size 0.0 1.0
-				position 0.0 0.0
-				material "Green"
+				background_invisible true
+				text_material "White"
+				font "TitleFont"
 			}
 
-			text_overlay "ProgressLabel"
+			panel_style "Panel"
 			{
-				pxl_size 240 8
-				pxl_position 8 12
-				material "Black"
-				font "ResourcesValueFont"
-				text "Label"
+				background_material "TransparentBlack"
+				border_material "TransparentBlack"
+			}
+
+			progress_style "Progress"
+			{
+				background_invisible true
+				foreground_invisible true
+				title_font "Arial16"
+				title_material "White"
+				text_font "Arial12"
+				text_material "White"
+
+				container_style
+				{
+					background_material "TransparentBlack"
+					foreground_material "White"
+				}
+
+				bar_style
+				{
+					background_material "White"
+					foreground_invisible true
+				}
+			}
+		}
+
+		static "C3DGE_Title"
+		{
+			theme "C3DGE_LoadingScreen"
+			pixel_position 16 16
+			pixel_size 256 50
+			pixel_border_size 0 0 0 0
+			horizontal_align center
+			vertical_align center
+			caption "Oh my cows !"
+		}
+
+		panel "C3D_LoadingScreen"
+		{
+			theme "C3DGE_LoadingScreen"
+			pixel_size 264 264
+			pixel_position 16 16
+
+			progress "GlobalProgress"
+			{
+				theme "C3DGE_LoadingScreen"
+				pixel_size 264 64
+				pixel_position 5 138
+				container_border_size 4 4 4 4
+				bar_border_size 0 0 0 0
+			}
+
+			progress "LocalProgress"
+			{
+				theme "C3DGE_LoadingScreen"
+				hide_title true
+				pixel_size 264 44
+				pixel_position 5 207
+				container_border_size 4 4 4 4
+				bar_border_size 0 0 0 0
+			}
+
+			box_layout
+			{
+				layout_ctrl "Panel"
+				{
+					horizontal_align center
+					stretch true
+					padding 5 5 5 5
+				}
+				layout_ctrl "GlobalProgress"
+				{
+					horizontal_align center
+					stretch true
+					padding 5 5 5 5
+				}
+				layout_ctrl "LocalProgress"
+				{
+					horizontal_align center
+					stretch true
+					padding 5 5 5 5
+				}
+			}
+		}
+
+		box_layout
+		{
+			layout_dynspace
+			horizontal false
+			layout_ctrl "C3DGE_Title"
+			{
+				horizontal_align center
+				stretch true
+				padding 10 10 10 10
+			}
+			layout_ctrl "C3D_LoadingScreen"
+			{
+				horizontal_align left
+				stretch true
+				padding 10 10 10 10
 			}
 		}
 	}

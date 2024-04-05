@@ -19,10 +19,10 @@ namespace orastus
 		, m_game{ game }
 	{
 		auto & scene = m_game.getScene();
-		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoGreen" ) ).lock() );
-		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoPurple" ) ).lock() );
-		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoRed" ) ).lock() );
-		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoYellow" ) ).lock() );
+		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoGreen" ) ) );
+		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoPurple" ) ) );
+		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoRed" ) ) );
+		m_enemyMeshes.push_back( scene.getMeshCache().find( cuT( "UfoYellow" ) ) );
 		reset();
 	}
 
@@ -126,7 +126,7 @@ namespace orastus
 		m_category->upgrade();
 		auto index = getWave() % uint32_t( m_enemyMeshes.size() );
 		m_currentEnemies = m_enemyMeshes[index];
-		m_enemiesCache = &m_allEnemiesCache.emplace( m_currentEnemies.lock().get(), EntityList{} ).first->second;
+		m_enemiesCache = &m_allEnemiesCache.emplace( m_currentEnemies, EntityList{} ).first->second;
 		m_game.getWaveStartSound().play();
 		std::cout << "\nStarting wave " << m_totalsWaves << std::endl;
 	}

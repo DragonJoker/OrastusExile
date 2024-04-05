@@ -35,7 +35,7 @@ namespace orastus
 		*/
 		EFO_API void createData( Entity const & entity
 			, GridCell & cell
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, bool pickable );
 		/**
 		*\brief

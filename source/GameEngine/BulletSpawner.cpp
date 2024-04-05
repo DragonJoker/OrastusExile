@@ -68,7 +68,7 @@ namespace orastus
 	void BulletSpawner::fireBullet( TowerData const & source
 		, Entity target
 		, Sound & sound
-		, castor3d::GeometrySPtr geometry )
+		, castor3d::GeometryRPtr geometry )
 	{
 		auto & liveBullets = m_liveBullets[size_t( source.category->getAmmoType() )];
 		auto sourceNode = Game::getTowerNode( source.geometry );

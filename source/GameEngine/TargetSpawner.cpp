@@ -19,7 +19,7 @@ namespace orastus
 		, Game & game )
 		: m_ecs{ ecs }
 		, m_game{ game }
-		, m_targetMesh{ m_game.getScene().getMeshCache().find( cuT( "Cow" ) ).lock() }
+		, m_targetMesh{ m_game.getScene().getMeshCache().find( cuT( "Cow" ) ) }
 	{
 		reset();
 	}
@@ -35,16 +35,17 @@ namespace orastus
 		{
 			auto & scene = m_game.getScene();
 			auto name = cuT( "Target" ) + castor::string::toString( ++m_count );
-			auto node = scene.getSceneNodeCache().add( name ).lock();
+			auto node = scene.getSceneNodeCache().add( name );
 			node->setPosition( m_game.convert( castor::Point2i{ cell.x, cell.y } )
 				+ castor::Point3f{ 0, m_game.getCellHeight() / 5.0f, 0 } );
 			node->yaw( castor::Angle::fromDegrees( m_distribution( m_game.getRandomEngine() ) ) );
 			node->setScale( { 0.05f, 0.05f, 0.05f } );
 			node->attachTo( m_game.getMapNode() );
 			auto geometry = scene.getGeometryCache().create( name, scene, *node, m_targetMesh );
-			createAnimation( geometry, "C4D Animation Take", true, false );
-			scene.getGeometryCache().add( geometry );
-			m_liveTargets.push_back( m_ecs.createTarget( geometry
+			auto geom = geometry.get();
+			createAnimation( geom, "C4D Animation Take", true, false );
+			scene.getGeometryCache().add( std::move( geometry ) );
+			m_liveTargets.push_back( m_ecs.createTarget( geom
 				, std::move( cell )
 				, &m_game.getTargetCapturedSound().createSource( *node, false ) ) );
 		}

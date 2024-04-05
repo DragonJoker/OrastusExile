@@ -34,7 +34,7 @@ namespace orastus
 			RenderPanel( wxWindow * parent, wxSize const & size, Game & game );
 			~RenderPanel();
 			void reset();
-			void setRenderTarget( castor3d::RenderTargetSPtr target );
+			void setRenderTarget( castor3d::RenderWindowDesc windowDesc );
 
 			castor3d::RenderWindow & getRenderWindow()const
 			{
@@ -90,10 +90,10 @@ namespace orastus
 			std::array< wxTimer *, size_t( TimerID::eCount ) > m_timers;
 			NodeStatePtr m_cameraState;
 			castor3d::RenderWindowUPtr m_renderWindow;
-			castor3d::FrameListenerSPtr m_listener;
+			castor3d::FrameListenerRPtr m_listener;
 			castor3d::CameraRPtr m_camera;
 			castor3d::SceneRPtr m_scene{};
-			castor3d::GeometryWPtr m_selectedGeometry;
+			castor3d::GeometryRPtr m_selectedGeometry{};
 			Game & m_game;
 			Entity m_selectedTower;
 		};

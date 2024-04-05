@@ -1,0 +1,110 @@
+{
+	"version": 3,
+	"cmakeMinimumRequired": {
+		"major": 3,
+		"minor": 21,
+		"patch": 0
+	},
+	"configurePresets": [
+		{
+			"name": "user-base",
+			"hidden": true,
+			"installDir": "${sourceDir}/package/OrastusExile",
+			"cacheVariables": {
+				"VCPKG_MANIFEST_FEATURES": "vcpkg-deps",
+				"ORASTUS_FORCE_C3D_SUBMODULE": false,
+				"PROJECTS_OUTPUT_DIR": "${sourceDir}",
+				"PROJECTS_UNITY_BUILD": true,
+				"PROJECTS_USE_PRECOMPILED_HEADERS": false,
+				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/external/vcpkg/scripts/buildsystems/vcpkg.cmake"
+			}
+		},
+		{
+			"name": "user-msvc",
+			"displayName": "OrastusExile User Visual Studio Config",
+			"description": "Build configuration using Visual Studio, for OrastusExile users",
+			"inherits": "user-base",
+			"generator": "Visual Studio 17 2022",
+			"condition": {
+				"type": "equals",
+				"lhs": "${hostSystemName}",
+				"rhs": "Windows"
+			}
+		},
+		{
+			"name": "user-ninja",
+			"hidden": true,
+			"inherits": "user-base",
+			"generator": "Ninja"
+		},
+		{
+			"name": "user-ninja-debug",
+			"displayName": "OrastusExile User Ninja Config, Debug",
+			"description": "Build configuration using Ninja, for OrastusExile users, Debug",
+			"inherits": "user-ninja",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug"
+			}
+		},
+		{
+			"name": "user-ninja-release",
+			"displayName": "OrastusExile User Ninja Config, Release",
+			"description": "Build configuration using Ninja, for OrastusExile users, Release",
+			"inherits": "user-ninja",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release"
+			}
+		},
+		{
+			"name": "dev-base",
+			"hidden": true,
+			"installDir": "${sourceDir}/package/OrastusExile",
+			"cacheVariables": {
+				"VCPKG_MANIFEST_FEATURES": "submodule-deps",
+				"ORASTUS_FORCE_C3D_SUBMODULE": true,
+				"PROJECTS_UNITY_BUILD": false,
+				"PROJECTS_USE_PRECOMPILED_HEADERS": true
+			}
+		},
+		{
+			"name": "dev-msvc",
+			"displayName": "OrastusExile Developer Visual Studio Config",
+			"description": "Build configuration using Visual Studio, for OrastusExile developers",
+			"inherits": "dev-base",
+			"generator": "Visual Studio 17 2022",
+			"condition": {
+				"type": "equals",
+				"lhs": "${hostSystemName}",
+				"rhs": "Windows"
+			}
+		},
+		{
+			"name": "dev-ninja",
+			"inherits": "dev-base",
+			"generator": "Ninja",
+			"hidden": true,
+			"cacheVariables": {
+				"CASTOR_USE_SYSTEM_ASSIMP": true,
+				"CASTOR_USE_SYSTEM_WXWIDGETS": true
+			}
+		},
+		{
+			"name": "dev-ninja-debug",
+			"displayName": "OrastusExile Developer Ninja Config, Debug",
+			"description": "Build configuration using Ninja, for OrastusExile developers, Debug",
+			"inherits": "dev-ninja",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug"
+			}
+		},
+		{
+			"name": "dev-ninja-release",
+			"displayName": "OrastusExile Developer Ninja Config, Release",
+			"description": "Build configuration using Ninja, for OrastusExile developers, Release",
+			"inherits": "dev-ninja",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release"
+			}
+		}
+	]
+}

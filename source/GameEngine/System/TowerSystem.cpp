@@ -8,6 +8,8 @@ See licence file in root folder, MIT.txt
 #include "GameEngine/ECS/Enemy.hpp"
 #include "GameEngine/ECS/Tower.hpp"
 
+#include <Castor3D/Scene/Animation/AnimatedObjectGroup.hpp>
+
 namespace orastus
 {
 	namespace tower
@@ -197,11 +199,12 @@ namespace orastus
 		}
 
 		auto direction = targetPosition - sourcePosition;
+		direction->y = 0.0f;
 		direction = castor::point::getNormalised( direction );
 		castor::Point3f up{ 0, 1, 0 };
 		auto right = castor::point::cross( direction, up );
 		auto transform = castor::matrix::lookAt( sourcePosition, sourcePosition + direction, up );
-		sourceNode.setOrientation( castor::Quaternion::fromMatrix( transform ) );
+		sourceNode.setOrientation( -castor::Quaternion::fromMatrix( transform ) );
 	}
 
 	TowerSystem::TowerSystem( Ecs & ecs )

@@ -57,7 +57,7 @@ namespace orastus
 			m_scalarVelocityY = 0.0f;
 			m_scalarVelocityZ = 0.0f;
 
-			m_listener.postEvent( makeCpuFunctorEvent( EventType::ePostRender
+			m_listener.postEvent( makeCpuFunctorEvent( CpuEventType::ePostCpuStep
 				, [this]()
 				{
 					m_node->setOrientation( m_originalOrientation );
@@ -109,7 +109,7 @@ namespace orastus
 			if ( result )
 			{
 				angles = m_angles;
-				m_listener.postEvent( makeCpuFunctorEvent( EventType::ePostRender
+				m_listener.postEvent( makeCpuFunctorEvent( CpuEventType::ePostCpuStep
 					, [this, translate, angles]()
 					{
 						m_node->translate( translate );

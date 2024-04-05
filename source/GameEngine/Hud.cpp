@@ -15,13 +15,12 @@ namespace orastus
 {
 	namespace
 	{
-		castor3d::TextOverlaySPtr getTextOverlay( castor3d::OverlayCache const & cache
+		castor3d::TextOverlayRPtr getTextOverlay( castor3d::OverlayCache const & cache
 			, castor::String const & name )
 		{
-			castor3d::TextOverlaySPtr result;
-			auto overlay = cache.find( name ).lock();
-
-			if ( overlay )
+			castor3d::TextOverlayRPtr result{};
+			
+			if ( auto overlay = cache.tryFind( name ) )
 			{
 				result = overlay->getTextOverlay();
 			}
@@ -33,7 +32,7 @@ namespace orastus
 		void doUpdateText( Ecs const & ecs
 			, Entity const & entity
 			, ComponentId const & component
-			, castor3d::TextOverlayWPtr const & ptext )
+			, castor3d::TextOverlayRPtr const & ptext )
 		{
 			auto & data = ecs.getComponentData< T >( entity
 				, ecs.getComponent( component ) );
@@ -76,98 +75,98 @@ namespace orastus
 
 	void Hud::initialise()
 	{
-		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 			, [this]()
 			{
-				m_titlePanel.lock()->setVisible( true );
-				m_hudResources.lock()->setVisible( false );
-				m_hudScore.lock()->setVisible( false );
-				m_hudDetails.lock()->setVisible( false );
-				m_hudPause.lock()->setVisible( false );
-				m_gameEndPanel.lock()->setVisible( false );
-				m_helpPanel.lock()->setVisible( false );
-				m_hudBuild.lock()->setVisible( false );
-				m_hudUpgrade.lock()->setVisible( false );
+				m_titlePanel->setVisible( true );
+				m_hudResources->setVisible( false );
+				m_hudScore->setVisible( false );
+				m_hudDetails->setVisible( false );
+				m_hudPause->setVisible( false );
+				m_gameEndPanel->setVisible( false );
+				m_helpPanel->setVisible( false );
+				m_hudBuild->setVisible( false );
+				m_hudUpgrade->setVisible( false );
 			} ) );
 	}
 
 	void Hud::start()
 	{
-		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 			, [this]()
 			{
-				m_titlePanel.lock()->setVisible( false );
-				m_hudResources.lock()->setVisible( true );
-				m_hudScore.lock()->setVisible( true );
-				m_hudDetails.lock()->setVisible( true );
-				m_hudPause.lock()->setVisible( false );
-				m_gameEndPanel.lock()->setVisible( false );
-				m_helpPanel.lock()->setVisible( false );
+				m_titlePanel->setVisible( false );
+				m_hudResources->setVisible( true );
+				m_hudScore->setVisible( true );
+				m_hudDetails->setVisible( true );
+				m_hudPause->setVisible( false );
+				m_gameEndPanel->setVisible( false );
+				m_helpPanel->setVisible( false );
 				update();
 			} ) );
 	}
 
 	void Hud::pause()
 	{
-		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 			, [this]()
 			{
-				m_titlePanel.lock()->setVisible( false );
-				m_hudResources.lock()->setVisible( false );
-				m_hudScore.lock()->setVisible( false );
-				m_hudDetails.lock()->setVisible( false );
-				m_hudPause.lock()->setVisible( true );
-				m_gameEndPanel.lock()->setVisible( false );
-				m_helpPanel.lock()->setVisible( false );
+				m_titlePanel->setVisible( false );
+				m_hudResources->setVisible( false );
+				m_hudScore->setVisible( false );
+				m_hudDetails->setVisible( false );
+				m_hudPause->setVisible( true );
+				m_gameEndPanel->setVisible( false );
+				m_helpPanel->setVisible( false );
 			} ) );
 	}
 
 	void Hud::resume()
 	{
-		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 			, [this]()
 			{
-				m_titlePanel.lock()->setVisible( false );
-				m_hudResources.lock()->setVisible( true );
-				m_hudScore.lock()->setVisible( true );
-				m_hudDetails.lock()->setVisible( true );
-				m_hudPause.lock()->setVisible( false );
-				m_gameEndPanel.lock()->setVisible( false );
-				m_helpPanel.lock()->setVisible( false );
+				m_titlePanel->setVisible( false );
+				m_hudResources->setVisible( true );
+				m_hudScore->setVisible( true );
+				m_hudDetails->setVisible( true );
+				m_hudPause->setVisible( false );
+				m_gameEndPanel->setVisible( false );
+				m_helpPanel->setVisible( false );
 			} ) );
 	}
 
 	void Hud::help()
 	{
-		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 			, [this]()
 			{
-				m_titlePanel.lock()->setVisible( false );
-				m_hudResources.lock()->setVisible( false );
-				m_hudScore.lock()->setVisible( false );
-				m_hudDetails.lock()->setVisible( false );
-				m_hudPause.lock()->setVisible( false );
-				m_gameEndPanel.lock()->setVisible( false );
-				m_helpPanel.lock()->setVisible( true );
+				m_titlePanel->setVisible( false );
+				m_hudResources->setVisible( false );
+				m_hudScore->setVisible( false );
+				m_hudDetails->setVisible( false );
+				m_hudPause->setVisible( false );
+				m_gameEndPanel->setVisible( false );
+				m_helpPanel->setVisible( true );
 			} ) );
 	}
 
 	void Hud::gameOver()
 	{
-		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 			, [this]()
 			{
-				m_titlePanel.lock()->setVisible( false );
-				m_hudResources.lock()->setVisible( false );
-				m_hudScore.lock()->setVisible( false );
-				m_hudDetails.lock()->setVisible( false );
-				m_hudPause.lock()->setVisible( false );
-				m_gameEndPanel.lock()->setVisible( true );
-				m_helpPanel.lock()->setVisible( false );
+				m_titlePanel->setVisible( false );
+				m_hudResources->setVisible( false );
+				m_hudScore->setVisible( false );
+				m_hudDetails->setVisible( false );
+				m_hudPause->setVisible( false );
+				m_gameEndPanel->setVisible( true );
+				m_helpPanel->setVisible( false );
 
 				auto & cache = m_scene.getOverlayCache();
-				getTextOverlay( cache, cuT( "ResultWaveValue" ) )->setCaption( castor::string::toString( m_game.getWave() ) );
-				getTextOverlay( cache, cuT( "ResultKillsValue" ) )->setCaption( castor::string::toString( m_game.getKills() ) );
+				getTextOverlay( cache, cuT( "ResultWaveValue" ) )->setCaption( castor::toUtf8U32String( castor::string::toString( m_game.getWave() ) ) );
+				getTextOverlay( cache, cuT( "ResultKillsValue" ) )->setCaption( castor::toUtf8U32String( castor::string::toString( m_game.getKills() ) ) );
 			} ) );
 	}
 
@@ -177,8 +176,8 @@ namespace orastus
 
 		if ( m_game.getPlayer().canSpendGold( DirectTower::GoldCost ) )
 		{
-			userInput->enableHandler( cuT( "Build/Direct/Button" ) );
-			userInput->registerClickAction( cuT( "Build/Direct/Button" )
+			userInput->enableHandler( cuT( "HUDBuild/Direct/Button" ) );
+			userInput->registerClickAction( cuT( "HUDBuild/Direct/Button" )
 				, [this]()
 				{
 					m_buttonSound.play();
@@ -187,13 +186,13 @@ namespace orastus
 		}
 		else
 		{
-			userInput->disableHandler( cuT( "Build/Direct/Button" ) );
+			userInput->disableHandler( cuT( "HUDBuild/Direct/Button" ) );
 		}
 
 		if ( m_game.getPlayer().canSpendGold( SplashTower::GoldCost ) )
 		{
-			userInput->enableHandler( cuT( "Build/Splash/Button" ) );
-			userInput->registerClickAction( cuT( "Build/Splash/Button" )
+			userInput->enableHandler( cuT( "HUDBuild/Splash/Button" ) );
+			userInput->registerClickAction( cuT( "HUDBuild/Splash/Button" )
 				, [this]()
 				{
 					m_buttonSound.play();
@@ -202,7 +201,7 @@ namespace orastus
 		}
 		else
 		{
-			userInput->disableHandler( cuT( "Build/Splash/Button" ) );
+			userInput->disableHandler( cuT( "HUDBuild/Splash/Button" ) );
 		}
 
 		userInput->registerClickAction( cuT( "HUDBuild" )
@@ -210,23 +209,23 @@ namespace orastus
 			{
 				// This is to prevent click behind the build overlay.
 			} );
-		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 			, [this]()
 			{
-				m_hudBuild.lock()->setVisible( true );
+				m_hudBuild->setVisible( true );
 			} ) );
 	}
 
 	void Hud::hideBuild()
 	{
-		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 			, [this]()
 			{
-				m_hudBuild.lock()->setVisible( false );
+				m_hudBuild->setVisible( false );
 			} ) );
 		auto userInput = m_scene.getEngine()->getUserInputListener();
-		userInput->unregisterClickAction( cuT( "Build/Direct/Button" ) );
-		userInput->unregisterClickAction( cuT( "Build/Splash/Button" ) );
+		userInput->unregisterClickAction( cuT( "HUDBuild/Direct/Button" ) );
+		userInput->unregisterClickAction( cuT( "HUDBuild/Splash/Button" ) );
 		userInput->unregisterClickAction( cuT( "HUDBuild" ) );
 	}
 
@@ -238,19 +237,19 @@ namespace orastus
 			{
 				// This is to prevent click behind the update overlay.
 			} );
-		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 			, [this]()
 			{
-				m_hudUpgrade.lock()->setVisible( true );
+				m_hudUpgrade->setVisible( true );
 			} ) );
 	}
 
 	void Hud::hideUpgrade()
 	{
-		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+		m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 			, [this]()
 			{
-				m_hudUpgrade.lock()->setVisible( false );
+				m_hudUpgrade->setVisible( false );
 			} ) );
 		auto userInput = m_scene.getEngine()->getUserInputListener();
 		userInput->unregisterClickAction( cuT( "HUDUpgrade" ) );
@@ -261,72 +260,60 @@ namespace orastus
 	{
 		if ( entity )
 		{
-			m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+			m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 				, [this, &ecs, entity]()
 				{
 					auto & towerData = ecs.getComponentData< TowerData >( entity, ecs.getComponent( Ecs::TowerStateComponent ) ).getValue();
-					m_towerDamage.lock()->setCaption( castor::string::toString( towerData.category->getDamage() ) );
-					m_towerSpeed.lock()->setCaption( castor::string::toString( towerData.category->getCooldown() ) );
-					m_towerRange.lock()->setCaption( castor::string::toString( towerData.category->getRange() ) );
-					m_towerDamage.lock()->setVisible( true );
-					m_towerSpeed.lock()->setVisible( true );
-					m_towerRange.lock()->setVisible( true );
+					m_towerDamage->setCaption( castor::toUtf8U32String( castor::string::toString( towerData.category->getDamage() ) ) );
+					m_towerSpeed->setCaption( castor::toUtf8U32String( castor::string::toString( towerData.category->getCooldown() ) ) );
+					m_towerRange->setCaption( castor::toUtf8U32String( castor::string::toString( towerData.category->getRange() ) ) );
+					m_towerDamage->setVisible( true );
+					m_towerSpeed->setVisible( true );
+					m_towerRange->setVisible( true );
 				} ) );
 		}
 		else
 		{
-			m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::EventType::ePreRender
+			m_scene.getEngine()->postEvent( castor3d::makeCpuFunctorEvent( castor3d::CpuEventType::ePreGpuStep
 				, [this]()
 				{
-					m_towerDamage.lock()->setVisible( false );
-					m_towerSpeed.lock()->setVisible( false );
-					m_towerRange.lock()->setVisible( false );
+					m_towerDamage->setVisible( false );
+					m_towerSpeed->setVisible( false );
+					m_towerRange->setVisible( false );
 				} ) );
 		}
 	}
 
 	void Hud::update()
 	{
-		auto text = m_lives.lock();
-
-		if ( text )
+		if ( auto text = m_lives )
 		{
-			text->setCaption( castor::string::toString( m_game.getLives() ) );
+			text->setCaption( castor::toUtf8U32String( castor::string::toString( m_game.getLives() ) ) );
 		}
 
-		text = m_gold.lock();
-
-		if ( text )
+		if ( auto text = m_gold )
 		{
-			text->setCaption( castor::string::toString( m_game.getPlayer().getGold() ) );
+			text->setCaption( castor::toUtf8U32String( castor::string::toString( m_game.getPlayer().getGold() ) ) );
 		}
 
-		text = m_wave.lock();
-
-		if ( text )
+		if ( auto text = m_wave )
 		{
-			text->setCaption( castor::string::toString( m_game.getWave() ) );
+			text->setCaption( castor::toUtf8U32String( castor::string::toString( m_game.getWave() ) ) );
 		}
 
-		text = m_kills.lock();
-
-		if ( text )
+		if ( auto text = m_kills )
 		{
-			text->setCaption( castor::string::toString( m_game.getKills() ) );
+			text->setCaption( castor::toUtf8U32String( castor::string::toString( m_game.getKills() ) ) );
 		}
 
-		text = m_enemyLife.lock();
-
-		if ( text )
+		if ( auto text = m_enemyLife )
 		{
-			text->setCaption( castor::string::toString( m_game.getEnemiesLife() ) );
+			text->setCaption( castor::toUtf8U32String( castor::string::toString( m_game.getEnemiesLife() ) ) );
 		}
 
-		text = m_enemyBounty.lock();
-
-		if ( text )
+		if ( auto text = m_enemyBounty )
 		{
-			text->setCaption( castor::string::toString( m_game.getEnemiesBounty() ) );
+			text->setCaption( castor::toUtf8U32String( castor::string::toString( m_game.getEnemiesBounty() ) ) );
 		}
 	}
 }

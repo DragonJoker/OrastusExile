@@ -3,11 +3,11 @@ See licence file in root folder, MIT.txt
 */
 #pragma once
 
-#include <Castor3D/Castor3DPrerequisites.hpp>
-#include <GameEngine/GameEnginePrerequisites.hpp>
-
 #include <wx/wx.h>
 #include <wx/windowptr.h>
+
+#include <Castor3D/Castor3DPrerequisites.hpp>
+#include <GameEngine/GameEnginePrerequisites.hpp>
 
 #include <chrono>
 #include <vector>

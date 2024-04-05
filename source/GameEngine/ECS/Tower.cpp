@@ -46,7 +46,7 @@ namespace orastus
 	TowerData::TowerData( Entity pentity
 		, TowerCategoryPtr pcategory
 		, AttackDataPtr pattack
-		, castor3d::GeometrySPtr pgeometry
+		, castor3d::GeometryRPtr pgeometry
 		, AnimationDataPtr panim )
 		: entity{ pentity }
 		, category{ std::move( pcategory ) }
@@ -82,7 +82,7 @@ namespace orastus
 	TowerData::TowerData( Entity pentity
 		, TowerCategoryPtr pcategory
 		, AttackDataPtr pattack
-		, castor3d::GeometrySPtr pgeometry
+		, castor3d::GeometryRPtr pgeometry
 		, Milliseconds ptimeout )
 		: entity{ pentity }
 		, category{ std::move( pcategory ) }
@@ -129,7 +129,7 @@ namespace orastus
 	void Tower::createData( Entity const & entity
 		, TowerCategoryPtr category
 		, GridCell & cell
-		, castor3d::GeometrySPtr geometry
+		, castor3d::GeometryRPtr geometry
 		, AnimationDataPtr animation
 		, AttackDataPtr attack
 		, SoundSource const * shootSound )

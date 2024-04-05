@@ -422,6 +422,7 @@ gui
 	theme "Build/Base"
 	{
 		default_font "ResourcesValueFont"
+
 		button_style
 		{
 			background_material "HUDBuild"
@@ -431,11 +432,23 @@ gui
 			highlighted_foreground_material "HUDBackground"
 			pushed_foreground_material "HUDBackground"
 		}
+
+		panel_style
+		{
+			background_material "HUDBuild"
+			foreground_material "HUDBackground"
+		}
 	}
 
 	theme "Build/Back"
 	{
 		default_font "ResourcesValueFont"
+
+		panel_style
+		{
+			background_material "HUDBackground"
+		}
+
 		static_style
 		{
 			background_material "HUDBackground"
@@ -445,6 +458,7 @@ gui
 	theme "Build/Text"
 	{
 		default_font "ResourcesValueFont"
+
 		static_style
 		{
 			background_material "HUDBackground"
@@ -480,13 +494,13 @@ gui
 		}
 	}
 
-	button "HUDBuild"
+	panel "HUDBuild"
 	{
 		theme "Build/Base"
 		pixel_size 200 200
 		pixel_position 814 240
 
-		static "Build/Title"
+		static "Title"
 		{
 			theme "Build/Text"
 			pixel_size 125 15
@@ -495,20 +509,20 @@ gui
 			caption "Build"
 		}
 
-		static "Build/Direct"
+		panel "Direct"
 		{
 			theme "Build/Back"
 			pixel_size 125 30
 			pixel_position 40 70
 
-			button "Build/Direct/Button"
+			button "Button"
 			{
 				theme "Build/Direct"
 				pixel_size 30 30
 				pixel_position 0 0
 			}
 
-			static "Build/Direct/Desc"
+			static "Desc"
 			{
 				theme "Build/Text"
 				pixel_size 90 30
@@ -517,20 +531,20 @@ gui
 			}
 		}
 
-		static "Build/Splash"
+		panel "Splash"
 		{
 			theme "Build/Back"
 			pixel_size 125 30
 			pixel_position 40 105
 
-			button "Build/Splash/Button"
+			button "Button"
 			{
 				theme "Build/Splash"
 				pixel_size 30 30
 				pixel_position 0 0
 			}
 
-			static "Build/Splash/Desc"
+			static "Desc"
 			{
 				theme "Build/Text"
 				pixel_size 90 30
@@ -540,7 +554,7 @@ gui
 		}
 	}
 
-	button "HUDUpgrade"
+	panel "HUDUpgrade"
 	{
 		theme "Build/Base"
 		pixel_size 200 200

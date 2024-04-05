@@ -1,3 +1,9 @@
 [submodule "CMake"]
 	path = CMake
 	url = https://github.com/DragonJoker/CMakeUtils.git
+[submodule "external/vcpkg"]
+	path = external/vcpkg
+	url = https://github.com/microsoft/vcpkg.git
+[submodule "external/Castor3D"]
+	path = external/Castor3D
+	url = https://github.com/DragonJoker/Castor3D.git

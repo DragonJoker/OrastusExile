@@ -35,7 +35,7 @@ namespace orastus
 				if ( !wxGetApp().getCastor().isCleaned() )
 				{
 					game.update();
-					wxGetApp().getCastor().postEvent( makeCpuFunctorEvent( EventType::ePostRender, [&game]()
+					wxGetApp().getCastor().postEvent( makeCpuFunctorEvent( CpuEventType::ePostCpuStep, [&game]()
 					{
 						doUpdate( game );
 					} ) );
@@ -76,18 +76,18 @@ namespace orastus
 		void MainFrame::doLoadScene()
 		{
 			auto & engine = wxGetApp().getCastor();
-			auto target = doLoadScene( engine
+			auto windowDesc = doLoadScene( engine
 				, File::getExecutableDirectory().getPath() / cuT( "share" ) / cuT( "GameEngine" ) / cuT( "GameEngine.zip" )
 				, engine.getRenderLoop().getWantedFps()
 				, engine.isThreaded() );
 
-			if ( target )
+			if ( auto target = windowDesc.renderTarget )
 			{
 				m_game = std::make_unique< Game >( castor3d::Engine::getEngineDirectory() / cuT( "GameEngine" )
 					, *target->getScene()
 					, *target->getCamera() );
 				m_panel = wxMakeWindowPtr< RenderPanel >( this, MainFrameSize, *m_game );
-				m_panel->setRenderTarget( target );
+				m_panel->setRenderTarget( std::move( windowDesc ) );
 				auto & window = m_panel->getRenderWindow();
 				wxSize size = makeWxSize( window.getSize() );
 
@@ -119,7 +119,7 @@ namespace orastus
 				if ( engine.isThreaded() )
 				{
 					engine.getRenderLoop().beginRendering();
-					engine.postEvent( makeCpuFunctorEvent( EventType::ePostRender
+					engine.postEvent( makeCpuFunctorEvent( CpuEventType::ePostCpuStep
 						, [this]()
 						{
 							doUpdate( *m_game );
@@ -133,12 +133,12 @@ namespace orastus
 			}
 		}
 
-		RenderTargetSPtr MainFrame::doLoadScene( Engine & engine
+		RenderWindowDesc MainFrame::doLoadScene( Engine & engine
 			, castor::Path const & fileName
 			, uint32_t wantedFps
 			, bool threaded )
 		{
-			RenderTargetSPtr result;
+			RenderWindowDesc result;
 
 			if ( File::fileExists( fileName ) )
 			{
@@ -153,7 +153,7 @@ namespace orastus
 
 						if ( preprocessed.parse() )
 						{
-							result = parser.getRenderWindow().renderTarget;
+							result = parser.getRenderWindow();
 						}
 						else
 						{

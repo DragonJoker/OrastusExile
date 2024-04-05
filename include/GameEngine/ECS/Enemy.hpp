@@ -18,14 +18,14 @@ namespace orastus
 		EFO_API EnemyData( Entity entity
 			, float speed
 			, uint32_t life
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, WalkDataPtr walkData );
 
 		Entity entity;
 		EnemyStatus status;
 		float speed;
 		uint32_t life;
-		castor3d::GeometrySPtr geometry;
+		castor3d::GeometryRPtr geometry;
 		WalkDataPtr walkData;
 		Entity target;
 		Milliseconds timeout;
@@ -63,7 +63,7 @@ namespace orastus
 		EFO_API void createData( Entity const & entity
 			, float speed
 			, uint32_t life
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, WalkDataPtr walkData
 			, SoundSource const * killSound );
 		/**
@@ -83,7 +83,7 @@ namespace orastus
 		EFO_API void resetData( Entity const & entity
 			, float speed
 			, uint32_t life
-			, castor3d::GeometrySPtr geometry
+			, castor3d::GeometryRPtr geometry
 			, WalkDataPtr walkData );
 		/**
 		*\brief

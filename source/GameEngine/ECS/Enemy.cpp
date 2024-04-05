@@ -4,6 +4,9 @@
 #include "GameEngine/ECS/Ecs.hpp"
 #include "GameEngine/ECS/SoundSource.hpp"
 
+#include <Castor3D/Scene/Geometry.hpp>
+#include <Castor3D/Scene/Animation/AnimatedObjectGroup.hpp>
+
 namespace orastus
 {
 	//*********************************************************************************************
@@ -11,7 +14,7 @@ namespace orastus
 	EnemyData::EnemyData( Entity pentity
 		, float pspeed
 		, uint32_t plife
-		, castor3d::GeometrySPtr pgeometry
+		, castor3d::GeometryRPtr pgeometry
 		, WalkDataPtr pwalkData )
 		: entity{ pentity }
 		, status{ EnemyStatus::eSpawning }
@@ -52,7 +55,7 @@ namespace orastus
 	void Enemy::createData( Entity const & entity
 		, float speed
 		, uint32_t life
-		, castor3d::GeometrySPtr geometry
+		, castor3d::GeometryRPtr geometry
 		, WalkDataPtr walkData
 		, SoundSource const * killSound )
 	{
@@ -74,7 +77,7 @@ namespace orastus
 	void Enemy::resetData( Entity const & entity
 		, float speed
 		, uint32_t life
-		, castor3d::GeometrySPtr geometry
+		, castor3d::GeometryRPtr geometry
 		, WalkDataPtr walkData )
 	{
 		auto & data = m_ecs.getComponentData< EnemyData >( entity

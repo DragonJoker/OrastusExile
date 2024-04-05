@@ -23,7 +23,7 @@ namespace orastus
 		EFO_API void fireBullet( TowerData const & source
 			, Entity target
 			, Sound & sound
-			, castor3d::GeometrySPtr geometry );
+			, castor3d::GeometryRPtr geometry );
 		EFO_API void killBullet( BulletData const & bullet );
 
 		inline bool hasFreeBullet( AmmoType ammo )const

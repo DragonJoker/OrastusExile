@@ -20,11 +20,11 @@ namespace orastus
 		struct SelectedEntity
 		{
 			void select( Entity const & entity
-				, castor3d::GeometrySPtr geometry );
+				, castor3d::GeometryRPtr geometry );
 			void unselect();
 
 			Entity entity;
-			castor3d::GeometrySPtr geometry;
+			castor3d::GeometryRPtr geometry;
 			std::vector< castor3d::MaterialRPtr > materials;
 			std::vector< castor3d::MaterialRPtr > selMaterials;
 		};
@@ -50,7 +50,7 @@ namespace orastus
 		*\return
 		*	The tower entity at selected cell.
 		*/
-		EFO_API Entity select( castor3d::GeometrySPtr geometry );
+		EFO_API Entity select( castor3d::GeometryRPtr geometry );
 		/**
 		*\brief
 		*	Selects the cell for given geometry.
@@ -107,7 +107,7 @@ namespace orastus
 	private:
 		void doSelectMapBlock( Entity const & entity );
 		void doSelectTower( Entity const & entity );
-		castor3d::GeometrySPtr doGetGeometry( Entity const & entity );
+		castor3d::GeometryRPtr doGetGeometry( Entity const & entity );
 		GridCell & doFindCell( Entity const & entity );
 
 	private:

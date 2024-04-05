@@ -1,0 +1,86 @@
+{
+  "name": "castor3d",
+  "version": "0.16.0",
+  "description": "C++17 and Vulkan 3D engine.",
+  "homepage": "https://github.com/DragonJoker/Castor3D",
+  "license": "MIT",
+  "dependencies": [
+    "ashes",
+    "convectionkernels",
+    "freetype",
+    "gli",
+    "meshoptimizer",
+    "mikktspace",
+    "minizip",
+    "rendergraph",
+    {
+      "name": "shaderwriter",
+      "features": [
+        "glsl",
+        "hlsl",
+        "spirv"
+      ]
+    },
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    },
+    "vulkan-headers",
+    "zlib"
+  ],
+  "default-features": [
+    "assimp",
+    "freeimage",
+    "glsl",
+    "gltf",
+    "vkfft"
+  ],
+  "vcpkg-configuration": {
+    "overlay-ports": [
+      "./deps/ashes",
+      "./deps/draco",
+      "./deps/fastgltf",
+      "./deps/liblzma",
+      "./deps/rendergraph",
+      "./deps/shaderwriter"
+    ]
+  },
+  "features": {
+    "assimp": {
+      "description": "Use Assimp library to import external scenes.",
+      "dependencies": [
+        "assimp"
+      ]
+    },
+    "freeimage": {
+      "description": "Use FreeImage library over stb_image to import TIF, PNG or RAW images.",
+      "dependencies": [
+        "freeimage"
+      ]
+    },
+    "glsl": {
+      "description": "Enable GLSL shaders import support.",
+      "dependencies": [
+        "glslang",
+        "spirv-cross"
+      ]
+    },
+    "gltf": {
+      "description": "Use fastgltf library to import glTF scenes.",
+      "dependencies": [
+        "fastgltf",
+        "simdjson"
+      ]
+    },
+    "vkfft": {
+      "description": "Use VkFFT to compute Fast Fourier Transforms (Necessary for FFTOcean plugin).",
+      "dependencies": [
+        "vkfft"
+      ]
+    }
+  }
+}

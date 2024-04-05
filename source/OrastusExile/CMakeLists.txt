@@ -80,7 +80,8 @@ if( wxWidgets_FOUND AND GTK_FOUND )
 			FOLDER "Outputs"
 	)
 	install_target_ex( ${PROJECT_NAME}
-		${PROJECT_NAME}
+		${MAIN_PROJECT_NAME}
+		${MAIN_PROJECT_NAME}
 		bin
 		${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}
 	)

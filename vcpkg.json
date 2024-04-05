@@ -1,0 +1,66 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "orastus-exile",
+  "version": "0.1.0",
+  "builtin-baseline": "11ed79186fe850bd3a98cfbf1854514d2b3070a2",
+  "dependencies": [
+    "openal-soft",
+    "sndfile",
+    "wxwidgets"
+  ],
+  "vcpkg-configuration": {
+    "overlay-ports": [
+      "./data/vcpkg/ports/castor3d",
+      "./data/vcpkg/ports/castor3d/deps/ashes",
+      "./data/vcpkg/ports/castor3d/deps/draco",
+      "./data/vcpkg/ports/castor3d/deps/fastgltf",
+      "./data/vcpkg/ports/castor3d/deps/liblzma",
+      "./data/vcpkg/ports/castor3d/deps/rendergraph",
+      "./data/vcpkg/ports/castor3d/deps/shaderwriter"
+    ]
+  },
+  "features": {
+    "submodule-deps": {
+      "description": "Use submodule's castor3d.",
+      "dependencies": [
+        {
+          "name": "ashes",
+          "features": [
+            "vulkan"
+          ]
+        },
+        "convectionkernels",
+        "freetype",
+        "gli",
+        "glslang",
+        "meshoptimizer",
+        "mikktspace",
+        "minizip",
+        "rendergraph",
+        {
+          "name": "shaderwriter",
+          "features": [
+            "spirv"
+          ]
+        },
+        "spirv-cross",
+        "vkfft",
+        "vulkan-headers",
+        "zlib"
+      ]
+    },
+    "vcpkg-deps": {
+      "description": "Use vcpkg's castor3d.",
+      "dependencies": [
+        {
+          "name": "castor3d",
+          "default-features": false,
+          "features": [
+            "glsl",
+            "vkfft"
+          ]
+        }
+      ]
+    }
+  }
+}
